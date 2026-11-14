@@ -235,7 +235,24 @@ async def lifespan(app: FastAPI):
     except Exception as exc:
         logger.error("Failed to discover CrewAI agents on startup: %s", exc, exc_info=True)
 
+    # Document Management & Indexing Startup Reconciliation (Phase 5D.3)
+    doc_service = None
+    try:
+        from backend.services.document_service import DocumentService
+        doc_service = DocumentService()
+        reconciled_count = doc_service.reconcile_on_startup()
+        if reconciled_count > 0:
+            logger.info("Reconciled %d abandoned document indexing jobs on startup.", reconciled_count)
+    except Exception as exc:
+        logger.warning("Document indexing startup reconciliation notice: %s", exc)
+
     yield
+
+    if doc_service is not None:
+        try:
+            doc_service.close()
+        except Exception:
+            pass
 
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
@@ -341,6 +358,10 @@ app.include_router(mcp_router)
 # Mount Observability, Monitoring & Langfuse router
 from backend.observability import observability_router
 app.include_router(observability_router)
+
+# Mount Document Management & Indexing router (Phase 5D.3)
+from backend.app.routers.documents import router as documents_router
+app.include_router(documents_router)
 
 @app.get("/.well-known/agent-card.json", tags=["A2A Protocol"])
 @app.get("/.well-known/agent.json", tags=["A2A Protocol"])

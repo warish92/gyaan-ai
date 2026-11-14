@@ -415,6 +415,30 @@ def init_db(custom_path: Optional[Path | str] = None) -> None:
                 CREATE INDEX IF NOT EXISTS idx_lesson_sess_stud ON lesson_sessions(student_id);
                 CREATE INDEX IF NOT EXISTS idx_lesson_sess_chap ON lesson_sessions(chapter_id);
                 CREATE INDEX IF NOT EXISTS idx_stud_bookmarks_stud ON student_bookmarks(student_id);
+
+                -- 5. Phase 5D Student Document Management
+                CREATE TABLE IF NOT EXISTS student_documents (
+                    id TEXT PRIMARY KEY,
+                    student_id TEXT NOT NULL,
+                    filename TEXT NOT NULL,
+                    storage_path TEXT NOT NULL,
+                    file_size INTEGER NOT NULL,
+                    content_type TEXT NOT NULL DEFAULT 'application/pdf',
+                    file_hash TEXT NOT NULL,
+                    page_count INTEGER NOT NULL DEFAULT 0,
+                    chunk_count INTEGER NOT NULL DEFAULT 0,
+                    indexing_status TEXT NOT NULL DEFAULT 'PENDING' CHECK (indexing_status IN ('PENDING', 'PROCESSING', 'INDEXED', 'FAILED', 'DELETING')),
+                    error_message TEXT,
+                    lease_token TEXT,
+                    lease_expires_at TEXT,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL,
+                    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_student_documents_student_id ON student_documents(student_id);
+                CREATE INDEX IF NOT EXISTS idx_student_documents_status ON student_documents(indexing_status);
+                CREATE INDEX IF NOT EXISTS idx_student_documents_hash ON student_documents(student_id, file_hash);
             """)
 
             # Automatically seed CBSE Class 10 curriculum if needed
@@ -2574,3 +2598,276 @@ def get_student_bookmarks(
         return [dict(r) for r in cursor.fetchall()]
     finally:
         conn.close()
+
+
+# ==============================================================================
+# Phase 5D: Student Document Management Persistence
+# ==============================================================================
+
+
+def create_document_record(
+    document_id: str,
+    student_id: str,
+    filename: str,
+    storage_path: str,
+    file_size: int,
+    file_hash: str,
+    content_type: str = "application/pdf",
+    indexing_status: str = "PENDING",
+    lease_token: Optional[str] = None,
+    lease_expires_at: Optional[str] = None,
+    custom_path: Optional[Path | str] = None,
+) -> Dict[str, Any]:
+    """Create a new student document record in SQLite."""
+    conn = get_db_connection(custom_path)
+    now = datetime.now(timezone.utc).isoformat()
+    try:
+        with conn:
+            conn.execute(
+                """
+                INSERT INTO student_documents (
+                    id, student_id, filename, storage_path, file_size, content_type,
+                    file_hash, page_count, chunk_count, indexing_status, error_message,
+                    lease_token, lease_expires_at, created_at, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, ?, NULL, ?, ?, ?, ?);
+                """,
+                (
+                    document_id,
+                    student_id,
+                    filename,
+                    storage_path,
+                    file_size,
+                    content_type,
+                    file_hash,
+                    indexing_status,
+                    lease_token,
+                    lease_expires_at,
+                    now,
+                    now,
+                ),
+            )
+        rec = get_document_record(document_id, custom_path=custom_path)
+        if rec is None:
+            raise RuntimeError(f"Failed to retrieve created document record {document_id}")
+        return rec
+    finally:
+        conn.close()
+
+
+def get_document_record(
+    document_id: str,
+    student_id: Optional[str] = None,
+    custom_path: Optional[Path | str] = None,
+) -> Optional[Dict[str, Any]]:
+    """Retrieve a document record by ID, optionally verifying student ownership."""
+    conn = get_db_connection(custom_path)
+    try:
+        if student_id is not None:
+            cursor = conn.execute(
+                "SELECT * FROM student_documents WHERE id = ? AND student_id = ?;",
+                (document_id, student_id),
+            )
+        else:
+            cursor = conn.execute(
+                "SELECT * FROM student_documents WHERE id = ?;",
+                (document_id,),
+            )
+        row = cursor.fetchone()
+        return dict(row) if row else None
+    finally:
+        conn.close()
+
+
+def list_student_documents(
+    student_id: str,
+    status: Optional[str] = None,
+    limit: int = 50,
+    offset: int = 0,
+    custom_path: Optional[Path | str] = None,
+) -> List[Dict[str, Any]]:
+    """List documents belonging to a student with optional status filtering and pagination."""
+    conn = get_db_connection(custom_path)
+    try:
+        query = "SELECT * FROM student_documents WHERE student_id = ?"
+        params: List[Any] = [student_id]
+        if status:
+            query += " AND indexing_status = ?"
+            params.append(status)
+        query += " ORDER BY created_at DESC LIMIT ? OFFSET ?;"
+        params.extend([max(1, limit), max(0, offset)])
+
+        cursor = conn.execute(query, tuple(params))
+        return [dict(r) for r in cursor.fetchall()]
+    finally:
+        conn.close()
+
+
+def count_student_documents(
+    student_id: str,
+    status: Optional[str] = None,
+    custom_path: Optional[Path | str] = None,
+) -> int:
+    """Count documents belonging to a student with optional status filter."""
+    conn = get_db_connection(custom_path)
+    try:
+        query = "SELECT COUNT(*) FROM student_documents WHERE student_id = ?"
+        params: List[Any] = [student_id]
+        if status:
+            query += " AND indexing_status = ?"
+            params.append(status)
+        cursor = conn.execute(query, tuple(params))
+        row = cursor.fetchone()
+        return int(row[0]) if row else 0
+    finally:
+        conn.close()
+
+
+def update_document_status(
+    document_id: str,
+    status: str,
+    page_count: Optional[int] = None,
+    chunk_count: Optional[int] = None,
+    error_message: Optional[str] = None,
+    lease_token: Optional[str] = None,
+    lease_expires_at: Optional[str] = None,
+    clear_lease: bool = False,
+    custom_path: Optional[Path | str] = None,
+) -> bool:
+    """Update document indexing status and metadata."""
+    conn = get_db_connection(custom_path)
+    now = datetime.now(timezone.utc).isoformat()
+    try:
+        updates = ["indexing_status = ?", "updated_at = ?"]
+        params: List[Any] = [status, now]
+
+        if page_count is not None:
+            updates.append("page_count = ?")
+            params.append(page_count)
+        if chunk_count is not None:
+            updates.append("chunk_count = ?")
+            params.append(chunk_count)
+        if error_message is not None:
+            updates.append("error_message = ?")
+            params.append(error_message)
+
+        if clear_lease:
+            updates.append("lease_token = NULL")
+            updates.append("lease_expires_at = NULL")
+        else:
+            if lease_token is not None:
+                updates.append("lease_token = ?")
+                params.append(lease_token)
+            if lease_expires_at is not None:
+                updates.append("lease_expires_at = ?")
+                params.append(lease_expires_at)
+
+        params.append(document_id)
+        sql = f"UPDATE student_documents SET {', '.join(updates)} WHERE id = ?;"
+
+        with conn:
+            cursor = conn.execute(sql, tuple(params))
+            return cursor.rowcount > 0
+    finally:
+        conn.close()
+
+
+def delete_document_record(
+    document_id: str,
+    student_id: str,
+    custom_path: Optional[Path | str] = None,
+) -> bool:
+    """Delete a document record if owned by the specified student."""
+    conn = get_db_connection(custom_path)
+    try:
+        with conn:
+            cursor = conn.execute(
+                "DELETE FROM student_documents WHERE id = ? AND student_id = ?;",
+                (document_id, student_id),
+            )
+            return cursor.rowcount > 0
+    finally:
+        conn.close()
+
+
+def find_document_by_hash(
+    student_id: str,
+    file_hash: str,
+    include_failed: bool = False,
+    custom_path: Optional[Path | str] = None,
+) -> Optional[Dict[str, Any]]:
+    """Check for duplicate document by content hash for a specific student."""
+    conn = get_db_connection(custom_path)
+    try:
+        if include_failed:
+            cursor = conn.execute(
+                """
+                SELECT * FROM student_documents
+                WHERE student_id = ? AND file_hash = ?
+                ORDER BY created_at DESC LIMIT 1;
+                """,
+                (student_id, file_hash),
+            )
+        else:
+            cursor = conn.execute(
+                """
+                SELECT * FROM student_documents
+                WHERE student_id = ? AND file_hash = ? AND indexing_status != 'FAILED'
+                ORDER BY created_at DESC LIMIT 1;
+                """,
+                (student_id, file_hash),
+            )
+        row = cursor.fetchone()
+        return dict(row) if row else None
+    finally:
+        conn.close()
+
+
+def reconcile_stale_documents(
+    stale_threshold_seconds: int = 300,
+    custom_path: Optional[Path | str] = None,
+) -> List[Dict[str, Any]]:
+    """Find and reconcile interrupted or abandoned document indexing jobs.
+
+    Returns the list of stale documents that were reconciled to FAILED.
+    """
+    from datetime import timedelta
+    conn = get_db_connection(custom_path)
+    now_dt = datetime.now(timezone.utc)
+    now_iso = now_dt.isoformat()
+    stale_cutoff = (now_dt - timedelta(seconds=stale_threshold_seconds)).isoformat()
+
+    try:
+        with conn:
+            cursor = conn.execute(
+                """
+                SELECT * FROM student_documents
+                WHERE indexing_status IN ('PROCESSING', 'DELETING')
+                AND (
+                    (lease_expires_at IS NOT NULL AND lease_expires_at < ?)
+                    OR (lease_expires_at IS NULL AND updated_at < ?)
+                );
+                """,
+                (now_iso, stale_cutoff),
+            )
+            stale_records = [dict(r) for r in cursor.fetchall()]
+
+            if stale_records:
+                for rec in stale_records:
+                    if rec["indexing_status"] == "PROCESSING":
+                        conn.execute(
+                            """
+                            UPDATE student_documents
+                            SET indexing_status = 'FAILED',
+                                error_message = 'Indexing lease expired or worker interrupted',
+                                lease_token = NULL,
+                                lease_expires_at = NULL,
+                                updated_at = ?
+                            WHERE id = ?;
+                            """,
+                            (now_iso, rec["id"]),
+                        )
+
+            return stale_records
+    finally:
+        conn.close()
+
