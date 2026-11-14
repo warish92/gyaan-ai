@@ -1,0 +1,20 @@
+# Gyaan AI — Backend Core Dependencies
+# Python 3.11 Virtual Environment: D:\Gyaan AI\.venv
+
+fastapi==0.141.1
+uvicorn==0.54.0
+crewai==1.15.30
+crewai-tools>=0.1.0
+pydantic==2.12.5
+pydantic-settings==2.15.0
+PyJWT==2.15.0
+bcrypt==5.0.0
+json-repair==0.60.1
+requests==2.34.2
+httpx==0.28.1
+openai==2.54.0
+pytest==9.1.1
+python-multipart==0.0.32
+aiosqlite==0.21.0
+python-dotenv==1.2.4
+rich==14.3.4
