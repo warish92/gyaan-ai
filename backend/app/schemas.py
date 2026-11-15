@@ -227,6 +227,7 @@ class ResourceRequest(BaseModel):
     subject: str = Field(..., min_length=2, max_length=100, description="Subject matter (e.g. 'Science').")
     topic: str = Field(..., min_length=2, max_length=150, description="Topic or unit to curate resources for.")
     learning_objective: Optional[str] = Field(None, max_length=300, description="Target learning objective.")
+    document_ids: Optional[List[str]] = Field(None, description="Optional target student document IDs for RAG retrieval.")
 
 
 class ResourceResponse(BaseModel):
@@ -237,6 +238,7 @@ class ResourceResponse(BaseModel):
     is_verified: bool = Field(..., description="Whether source excerpts were verified against local NCERT corpus.")
     source_type: str = Field(..., description="Corpus type (e.g. 'Verified Local NCERT Corpus' or 'Provisional').")
     sources: List[Dict[str, Any]] = Field(default_factory=list, description="Retrieved source excerpts and metadata.")
+    student_documents: List[Dict[str, Any]] = Field(default_factory=list, description="Retrieved student document excerpts with full provenance.")
     model: str = Field(..., description="Model used for curation analysis.")
     duration_ms: float = Field(..., description="Total execution duration in milliseconds.")
 
@@ -637,6 +639,7 @@ class LearningJourneyStartRequest(BaseModel):
     grade: str = Field(default="Class 10", min_length=2, description="Student's academic grade.")
     language: str = Field(default="English", description="Target language for instruction and mentoring.")
     student_id: Optional[str] = Field(None, description="Optional student ID if already authenticated.")
+    document_ids: Optional[List[str]] = Field(None, description="Optional target student document IDs to ground chapter learning in student uploads.")
     student_input_evidence: Optional[str] = Field(None, description="Diagnostic input or answers for Task 2.")
     student_answers: Optional[Dict[str, str]] = Field(None, description="Assessment answers submitted by student.")
     is_remediation: bool = Field(default=False, description="Whether this is a repeated remediation iteration.")

@@ -31,7 +31,7 @@ from backend.agents.assessment import (
     create_quiz_generation_task,
     create_answer_evaluation_task,
 )
-from backend.services.resource_retriever import retrieve_local_resources
+from backend.services.resource_retriever import retrieve_local_resources, retrieve_educational_resources
 
 logger = logging.getLogger("gyaan_ai.workflow")
 
@@ -154,13 +154,19 @@ def run_resource_workflow(
     subject: str,
     topic: str,
     learning_objective: Optional[str] = None,
+    student_id: Optional[str] = None,
+    document_ids: Optional[List[str]] = None,
+    document_service: Optional[Any] = None,
 ) -> Dict[str, Any]:
-    """Execute Resource Agent analysis against retrieved local educational content."""
-    # Step 1: Perform local text retrieval
-    retrieved_data = retrieve_local_resources(
+    """Execute Resource Agent analysis against retrieved educational content and student documents."""
+    # Step 1: Perform educational text & student document retrieval
+    retrieved_data = retrieve_educational_resources(
         subject=subject,
         topic=topic,
         grade=grade,
+        student_id=student_id,
+        document_ids=document_ids,
+        document_service=document_service,
     )
 
     resource_agent = create_resource_agent()
@@ -189,6 +195,7 @@ def run_resource_workflow(
         "is_verified": retrieved_data.get("is_verified", False),
         "source_type": retrieved_data.get("source_type", "Provisional"),
         "sources": retrieved_data.get("sources", []),
+        "student_documents": retrieved_data.get("student_documents", []),
     }
 
 

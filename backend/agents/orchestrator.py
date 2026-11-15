@@ -397,12 +397,26 @@ def handle_resource_search(
     subject = params.get("subject") or request.subject or "Science"
     grade = params.get("grade") or request.grade
     objective = (request.context or {}).get("learning_objective") or params.get("learning_objective")
+    document_ids = (request.context or {}).get("document_ids")
+
+    # 1. Enforce strict authentication when targeting specific document IDs
+    if document_ids:
+        if not current_student:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Authentication required to access student documents.",
+            )
+        student_id = current_student["id"]
+    else:
+        student_id = current_student["id"] if current_student else None
 
     result = run_resource_workflow(
         grade=grade,
         subject=subject,
         topic=topic,
         learning_objective=objective,
+        student_id=student_id,
+        document_ids=document_ids,
     )
 
     if current_student:
@@ -427,6 +441,7 @@ def handle_resource_search(
         "is_verified": result["is_verified"],
         "source_type": result["source_type"],
         "sources": result["sources"],
+        "student_documents": result.get("student_documents", []),
     }
 
 
@@ -665,7 +680,19 @@ def handle_chapter_learning_journey(
     chapter = params.get("topic") or params.get("chapter") or context.get("chapter") or request.request[:80]
     subject = params.get("subject") or request.subject or "Science"
     grade = params.get("grade") or request.grade
-    student_id = current_student["id"] if current_student else context.get("student_id")
+    document_ids = context.get("document_ids")
+
+    # 1. Enforce strict authentication when targeting specific document IDs
+    if document_ids:
+        if not current_student:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Authentication required to access student documents.",
+            )
+        student_id = current_student["id"]
+    else:
+        student_id = current_student["id"] if current_student else None
+
     student_goal = context.get("learning_goal") or request.request
 
     return run_chapter_learning_journey(
@@ -681,6 +708,7 @@ def handle_chapter_learning_journey(
         journey_id=context.get("journey_id"),
         is_remediation=context.get("is_remediation", False),
         max_retries=context.get("max_retries", 3),
+        document_ids=document_ids,
     )
 
 

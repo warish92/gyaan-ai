@@ -48,6 +48,7 @@ from backend.agents.workflow import (
     run_quiz_generation_workflow,
     run_resource_workflow,
 )
+from backend.services.document_service import OwnershipError, DocumentNotFoundError
 from backend.agents.progress_workflow import (
     run_progress_analysis_workflow,
     run_progress_and_mentor_workflow,
@@ -2077,6 +2078,17 @@ async def get_educational_resources(
     workflow_id = str(uuid.uuid4())
     start_time = time.perf_counter()
 
+    # 1. Enforce strict authentication when targeting specific document IDs
+    if request.document_ids:
+        if not current_student:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Authentication required to access student documents.",
+            )
+        student_id = current_student["id"]
+    else:
+        student_id = current_student["id"] if current_student else None
+
     try:
         result = await asyncio.to_thread(
             run_resource_workflow,
@@ -2084,6 +2096,8 @@ async def get_educational_resources(
             subject=request.subject,
             topic=request.topic,
             learning_objective=request.learning_objective,
+            student_id=student_id,
+            document_ids=request.document_ids,
         )
         duration_ms = round((time.perf_counter() - start_time) * 1000, 2)
 
@@ -2107,12 +2121,23 @@ async def get_educational_resources(
             is_verified=result["is_verified"],
             source_type=result["source_type"],
             sources=result["sources"],
+            student_documents=result.get("student_documents", []),
             model=LOCAL_MODEL,
             duration_ms=duration_ms,
         )
 
     except HTTPException:
         raise
+    except OwnershipError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(exc),
+        )
+    except DocumentNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        )
     except Exception as exc:
         duration_ms = round((time.perf_counter() - start_time) * 1000, 2)
         logger.error("Resource workflow failed: %s", exc)
@@ -2586,7 +2611,17 @@ async def start_chapter_learning_journey(
     """
     from backend.agents.chapter_journey import run_chapter_learning_journey
 
-    student_id = current_student["id"] if current_student else request.student_id
+    # 1. Enforce strict authentication when targeting specific document IDs
+    if request.document_ids:
+        if not current_student:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Authentication required to access student documents.",
+            )
+        auth_student_id = current_student["id"]
+    else:
+        auth_student_id = current_student["id"] if current_student else None
+
     journey_id = f"jrn_{uuid.uuid4().hex[:12]}"
 
     if request.run_in_background:
@@ -2595,7 +2630,7 @@ async def start_chapter_learning_journey(
         # Create initial record in SQLite immediately
         create_learning_journey(
             journey_id=journey_id,
-            student_id=student_id or "stu_anonymous",
+            student_id=auth_student_id or "stu_anonymous",
             subject=request.subject,
             chapter=request.chapter,
             learning_goal=request.learning_goal,
@@ -2608,7 +2643,7 @@ async def start_chapter_learning_journey(
                 run_chapter_learning_journey(
                     subject=request.subject,
                     chapter=request.chapter,
-                    student_id=student_id,
+                    student_id=auth_student_id,
                     student_goal=request.learning_goal,
                     grade=request.grade,
                     language=request.language,
@@ -2618,6 +2653,7 @@ async def start_chapter_learning_journey(
                     journey_id=journey_id,
                     is_remediation=request.is_remediation,
                     max_retries=request.max_retries,
+                    document_ids=request.document_ids,
                 )
             except Exception as e:
                 logger.error("Background learning journey error: %s", e)
@@ -2634,7 +2670,7 @@ async def start_chapter_learning_journey(
         now_str = datetime.now(timezone.utc).isoformat()
         return LearningJourneyResponse(
             journey_id=journey_id,
-            student_id=student_id,
+            student_id=auth_student_id,
             subject=request.subject,
             chapter=request.chapter,
             learning_goal=request.learning_goal,
@@ -2655,7 +2691,7 @@ async def start_chapter_learning_journey(
             run_chapter_learning_journey,
             subject=request.subject,
             chapter=request.chapter,
-            student_id=student_id,
+            student_id=auth_student_id,
             student_goal=request.learning_goal,
             grade=request.grade,
             language=request.language,
@@ -2665,6 +2701,7 @@ async def start_chapter_learning_journey(
             journey_id=journey_id,
             is_remediation=request.is_remediation,
             max_retries=request.max_retries,
+            document_ids=request.document_ids,
         )
 
         persisted_record = get_learning_journey(journey_id)
@@ -2690,7 +2727,7 @@ async def start_chapter_learning_journey(
 
         return LearningJourneyResponse(
             journey_id=journey_id,
-            student_id=student_id,
+            student_id=auth_student_id,
             subject=request.subject,
             chapter=request.chapter,
             learning_goal=request.learning_goal,
@@ -2708,6 +2745,16 @@ async def start_chapter_learning_journey(
         )
     except HTTPException:
         raise
+    except OwnershipError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(exc),
+        )
+    except DocumentNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        )
     except Exception as exc:
         logger.error("Chapter learning journey execution failed: %s", exc)
         raise HTTPException(
