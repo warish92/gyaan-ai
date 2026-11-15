@@ -69,6 +69,10 @@ class AskRequest(BaseModel):
         max_length=50,
         description="Response language (e.g. 'English', 'Hindi').",
     )
+    document_ids: Optional[List[str]] = Field(
+        default=None,
+        description="Optional list of student document IDs to ground pedagogical explanation in student uploads.",
+    )
 
     @field_validator("question")
     @classmethod
@@ -92,6 +96,7 @@ class AskResponse(BaseModel):
     selected_agents: Optional[List[str]] = Field(default=None, description="List of agents involved in processing the request.")
     workflow_executed: Optional[str] = Field(default=None, description="The workflow executed by the multi-agent system.")
     detected_intent: Optional[str] = Field(default=None, description="The educational intent detected by the Orchestrator.")
+    student_documents: Optional[List[Dict[str, Any]]] = Field(default=None, description="Optional list of retrieved student document chunks with 7-field provenance grounding the lesson.")
 
 
 # ==============================================================================

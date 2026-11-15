@@ -54,4 +54,6 @@ def create_teacher_agent(llm: LLM | None = None) -> Agent:
         llm=llm,
         verbose=True,
         memory=False,
+        allow_delegation=False,
+        tools=[],
     )

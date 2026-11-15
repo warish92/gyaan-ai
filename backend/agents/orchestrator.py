@@ -274,12 +274,55 @@ def handle_teacher_answer(
     routing: RoutingDecision,
     current_student: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
-    """Execute Teacher Agent tutoring workflow."""
+    """Execute Teacher Agent tutoring workflow with optional student document grounding."""
+    from backend.services.resource_retriever import retrieve_educational_resources
+
+    context = request.context or {}
+    document_ids = context.get("document_ids")
+
+    # 1. Enforce strict authentication when targeting specific document IDs
+    if document_ids:
+        if not current_student:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Authentication required to access student documents.",
+            )
+        student_id = current_student["id"]
+    else:
+        student_id = current_student["id"] if current_student else None
+
+    params = routing.extracted_parameters or {}
+    topic = params.get("topic") or context.get("topic") or (routing.normalized_request or request.request)[:80]
+    subject = params.get("subject") or request.subject or "Science"
+    grade = params.get("grade") or request.grade or "Class 10"
+
+    student_documents = None
+    verified_sources = None
+
+    if document_ids or student_id:
+        retrieved = retrieve_educational_resources(
+            subject=subject,
+            topic=topic,
+            grade=grade,
+            student_id=student_id,
+            document_ids=document_ids,
+            document_service=context.get("document_service"),
+        )
+        student_documents = retrieved.get("student_documents")
+        verified_sources = retrieved.get("sources")
+
     crew = build_teacher_crew(
         student_question=routing.normalized_request or request.request,
-        grade=request.grade,
-        subject=request.subject,
+        grade=grade,
+        subject=subject,
         language=request.language,
+        chapter=context.get("chapter"),
+        topic=topic,
+        subtopic=context.get("subtopic"),
+        learning_objectives=context.get("learning_objectives"),
+        lesson_mode=context.get("lesson_mode", "conceptual"),
+        student_documents=student_documents,
+        verified_sources=verified_sources,
     )
     result = crew.kickoff()
     answer_text = str(result.raw if hasattr(result, "raw") else result).strip()
@@ -289,8 +332,8 @@ def handle_teacher_answer(
             create_learning_session(
                 session_id=f"sess_{uuid.uuid4().hex[:12]}",
                 student_id=current_student["id"],
-                subject=request.subject,
-                topic=(routing.normalized_request or request.request)[:80],
+                subject=subject,
+                topic=topic[:80],
                 activity_type="lesson",
                 status="completed",
                 details={"question": request.request, "workflow": "teacher_answer"},
@@ -300,9 +343,10 @@ def handle_teacher_answer(
 
     return {
         "answer": answer_text,
-        "grade": request.grade,
-        "subject": request.subject,
+        "grade": grade,
+        "subject": subject,
         "language": request.language,
+        "student_documents": student_documents or [],
     }
 
 

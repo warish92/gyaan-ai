@@ -1541,6 +1541,17 @@ async def ask_teacher(
         )
 
     try:
+        # 1. Enforce strict authentication when targeting specific document IDs
+        if request.document_ids:
+            if not current_student:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Authentication required to access student documents.",
+                )
+            auth_student_id = current_student["id"]
+        else:
+            auth_student_id = current_student["id"] if current_student else None
+
         q_raw = request.question.strip()
         target_topic = request.topic or request.chapter or request.question[:80]
         target_subject = request.subject or "Science"
@@ -1556,6 +1567,7 @@ async def ask_teacher(
                 "subtopic": request.subtopic,
                 "learning_objectives": request.learning_objectives,
                 "lesson_mode": request.lesson_mode,
+                "document_ids": request.document_ids,
             },
         )
 
@@ -1898,17 +1910,38 @@ async def ask_teacher(
 
         else:
             # Pure conceptual tutoring delivered by Teacher Agent
-            crew = build_teacher_crew(
-                student_question=request.question,
-                grade=request.grade,
-                subject=request.subject,
-                language=request.language,
-                chapter=request.chapter,
-                topic=request.topic,
-                subtopic=request.subtopic,
-                learning_objectives=request.learning_objectives,
-                lesson_mode=request.lesson_mode or "conceptual",
-            )
+            from backend.services.resource_retriever import retrieve_educational_resources
+            student_docs = None
+            verified_sources = None
+
+            if request.document_ids or auth_student_id:
+                retrieved = retrieve_educational_resources(
+                    subject=target_subject,
+                    topic=target_topic,
+                    grade=target_grade,
+                    student_id=auth_student_id,
+                    document_ids=request.document_ids,
+                )
+                student_docs = retrieved.get("student_documents")
+                verified_sources = retrieved.get("sources")
+
+            crew_kwargs = {
+                "student_question": request.question,
+                "grade": request.grade,
+                "subject": request.subject,
+                "language": request.language,
+                "chapter": request.chapter,
+                "topic": request.topic,
+                "subtopic": request.subtopic,
+                "learning_objectives": request.learning_objectives,
+                "lesson_mode": request.lesson_mode or "conceptual",
+            }
+            if student_docs is not None:
+                crew_kwargs["student_documents"] = student_docs
+            if verified_sources is not None:
+                crew_kwargs["verified_sources"] = verified_sources
+
+            crew = build_teacher_crew(**crew_kwargs)
             activity_type = "lesson"
             workflow_executed = "teacher_answer"
             agent_display_name = "Teacher Agent (Class 10 CBSE Science Teacher and Concept Specialist)"
@@ -1946,10 +1979,21 @@ async def ask_teacher(
             selected_agents=selected_agents,
             workflow_executed=workflow_executed,
             detected_intent=reason,
+            student_documents=student_docs or None,
         )
 
     except HTTPException:
         raise
+    except OwnershipError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(exc),
+        )
+    except DocumentNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        )
     except Exception as exc:
         duration_ms = round((time.perf_counter() - start_time) * 1000, 2)
         logger.error("Teacher Agent execution failed [id=%s]: %s", request_id, exc)
@@ -2505,8 +2549,16 @@ async def orchestrate_request(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={"error": "Orchestration routing error.", "message": str(val_exc)},
         )
-    except HTTPException:
-        raise
+    except OwnershipError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(exc),
+        )
+    except DocumentNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        )
     except Exception as exc:
         logger.error("Orchestrator execution error: %s", exc)
         raise HTTPException(
