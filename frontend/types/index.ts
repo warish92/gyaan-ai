@@ -189,6 +189,7 @@ export interface AskRequest {
   learning_objectives?: string[] | null;
   lesson_mode?: "conceptual" | "simplified" | "real_world" | "practice" | "doubt_clearing" | string;
   language?: string;
+  document_ids?: string[] | null;
 }
 
 /**
@@ -204,6 +205,7 @@ export interface AskResponse {
   selected_agents?: string[];
   workflow_executed?: string;
   detected_intent?: string;
+  student_documents?: DocumentProvenance[] | null;
 }
 
 /**
@@ -249,6 +251,7 @@ export interface ChatMessage {
     status?: string;
     workflowExecuted?: string;
     detectedIntent?: string;
+    studentDocuments?: DocumentProvenance[];
   };
   isError?: boolean;
 }
@@ -974,4 +977,59 @@ export interface ComprehensiveProgressDashboardResponse {
   duration_ms: number;
 }
 
+/**
+ * Phase 5D: Student Document Management & RAG Schemas
+ */
+export interface DocumentProvenance {
+  document_id: string;
+  filename: string;
+  chunk_id: string;
+  page_number: number;
+  chunk_index: number;
+  similarity_score: number;
+  text: string;
+}
+
+export interface DocumentMetadataResponse {
+  id: string;
+  student_id: string;
+  filename: string;
+  file_size: number;
+  content_type: string;
+  page_count: number;
+  chunk_count: number;
+  indexing_status: "INDEXED" | "PROCESSING" | "FAILED" | string;
+  error_message?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DocumentSearchRequest {
+  query: string;
+  document_ids?: string[] | null;
+  max_results?: number;
+  min_score?: number;
+}
+
+export interface DocumentSearchResultItem {
+  chunk_id: string;
+  document_id: string;
+  student_id: string;
+  page_number: number;
+  chunk_index: number;
+  text: string;
+  similarity_score: number;
+}
+
+export interface DocumentSearchResponse {
+  query: string;
+  results_count: number;
+  results: DocumentSearchResultItem[];
+}
+
+export interface DocumentDeleteResponse {
+  success: boolean;
+  message: string;
+  document_id: string;
+}
 

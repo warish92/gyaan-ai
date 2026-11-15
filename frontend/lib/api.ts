@@ -68,6 +68,10 @@ import {
   SavePracticeSessionRequest,
   SavePracticeSessionResponse,
   ComprehensiveProgressDashboardResponse,
+  DocumentMetadataResponse,
+  DocumentSearchRequest,
+  DocumentSearchResponse,
+  DocumentDeleteResponse,
 } from "../types";
 
 export interface RequestOptions extends RequestInit {
@@ -114,8 +118,9 @@ export async function apiFetch<T>(endpoint: string, options: RequestOptions = {}
     ...((headers as Record<string, string>) || {}),
   };
 
-  // Add JSON Content-Type if body is present and not explicitly set
-  if (restOptions.body && !requestHeaders["Content-Type"]) {
+  // Add JSON Content-Type if body is present, not FormData, and not explicitly set
+  const isFormData = typeof FormData !== "undefined" && restOptions.body instanceof FormData;
+  if (restOptions.body && !isFormData && !requestHeaders["Content-Type"]) {
     requestHeaders["Content-Type"] = "application/json";
   }
 
@@ -414,6 +419,7 @@ export const apiClient = {
         subtopic: request.subtopic,
         learning_objectives: request.learning_objectives,
         lesson_mode: request.lesson_mode,
+        document_ids: request.document_ids,
       }),
       token: activeToken,
       signal: options?.signal,
@@ -1079,6 +1085,88 @@ export const apiClient = {
     const activeToken = token ?? getStoredToken();
     return apiFetch<ComprehensiveProgressDashboardResponse>("/api/v1/students/me/dashboard-progress", {
       method: "GET",
+      token: activeToken,
+    });
+  },
+
+  /**
+   * Phase 5D: Upload and Index PDF Document
+   * Endpoint: POST /api/v1/documents/upload
+   */
+  async uploadDocument(
+    file: File,
+    token?: string | null
+  ): Promise<DocumentMetadataResponse> {
+    const activeToken = token ?? getStoredToken();
+    const formData = new FormData();
+    formData.append("file", file, file.name);
+
+    return apiFetch<DocumentMetadataResponse>("/api/v1/documents/upload", {
+      method: "POST",
+      body: formData,
+      token: activeToken,
+      timeoutMs: 120000,
+    });
+  },
+
+  /**
+   * Phase 5D: List Student Documents
+   * Endpoint: GET /api/v1/documents
+   */
+  async listDocuments(
+    params?: { status?: string; limit?: number; offset?: number },
+    token?: string | null
+  ): Promise<DocumentMetadataResponse[]> {
+    const activeToken = token ?? getStoredToken();
+    return apiFetch<DocumentMetadataResponse[]>("/api/v1/documents", {
+      method: "GET",
+      params: params as Record<string, string | number | boolean>,
+      token: activeToken,
+    });
+  },
+
+  /**
+   * Phase 5D: Get Single Document Metadata
+   * Endpoint: GET /api/v1/documents/{document_id}
+   */
+  async getDocument(
+    documentId: string,
+    token?: string | null
+  ): Promise<DocumentMetadataResponse> {
+    const activeToken = token ?? getStoredToken();
+    return apiFetch<DocumentMetadataResponse>(`/api/v1/documents/${encodeURIComponent(documentId)}`, {
+      method: "GET",
+      token: activeToken,
+    });
+  },
+
+  /**
+   * Phase 5D: Delete Document and Vectors
+   * Endpoint: DELETE /api/v1/documents/{document_id}
+   */
+  async deleteDocument(
+    documentId: string,
+    token?: string | null
+  ): Promise<DocumentDeleteResponse> {
+    const activeToken = token ?? getStoredToken();
+    return apiFetch<DocumentDeleteResponse>(`/api/v1/documents/${encodeURIComponent(documentId)}`, {
+      method: "DELETE",
+      token: activeToken,
+    });
+  },
+
+  /**
+   * Phase 5D: Semantic Search Across Student Documents
+   * Endpoint: POST /api/v1/documents/search
+   */
+  async searchDocuments(
+    req: DocumentSearchRequest,
+    token?: string | null
+  ): Promise<DocumentSearchResponse> {
+    const activeToken = token ?? getStoredToken();
+    return apiFetch<DocumentSearchResponse>("/api/v1/documents/search", {
+      method: "POST",
+      body: JSON.stringify(req),
       token: activeToken,
     });
   },

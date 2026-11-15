@@ -10,6 +10,7 @@ import {
   Compass,
   Activity,
   Library,
+  FolderArchive,
   CheckSquare,
   TrendingUp,
   HeartHandshake,
@@ -54,6 +55,7 @@ export const navigationGroups: NavGroup[] = [
     items: [
       { name: "Diagnostic", href: "/diagnostic", icon: Activity, tag: "Diagnostic", tagVariant: "teal" },
       { name: "Resources", href: "/resources", icon: Library, tag: "NCERT", tagVariant: "teal" },
+      { name: "Document Library", href: "/documents", icon: FolderArchive, tag: "PDF RAG", tagVariant: "teal" },
       { name: "Practice & Assessments", href: "/practice", icon: CheckSquare, tag: "Quizzes", tagVariant: "teal" },
     ],
   },

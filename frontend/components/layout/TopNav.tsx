@@ -28,6 +28,7 @@ const routeTitles: Record<string, { title: string; category: string }> = {
   "/learning-plans": { title: "Personalized Learning Plans", category: "Learning Core" },
   "/diagnostic": { title: "Knowledge Gap Diagnostic", category: "Assessment & Resources" },
   "/resources": { title: "NCERT Educational Resources", category: "Assessment & Resources" },
+  "/documents": { title: "Document Library & Notes", category: "Assessment & Resources" },
   "/practice": { title: "Practice & Assessments", category: "Assessment & Resources" },
   "/progress": { title: "My Progress & Analytics", category: "Coaching & System" },
   "/mentor": { title: "AI Mentor & Coach", category: "Coaching & System" },

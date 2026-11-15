@@ -25,12 +25,16 @@ import {
   Minimize2,
   Square,
   X,
+  Paperclip,
+  FileText,
+  Info,
 } from "lucide-react";
 import { PageHeader } from "../../components/ui/PageHeader";
 import { Button } from "../../components/ui/Button";
 import { Badge } from "../../components/ui/Badge";
 import { FormattedMessage } from "../../components/ui/FormattedMessage";
 import { useBackendHealth } from "../../components/layout/AppShell";
+import { useAuth } from "../../components/auth/AuthContext";
 import { apiClient } from "../../lib/api";
 import {
   ChatMessage,
@@ -38,6 +42,8 @@ import {
   CurriculumSubjectResponse,
   CurriculumChapterSummary,
   CurriculumTopicSummary,
+  DocumentProvenance,
+  DocumentMetadataResponse,
 } from "../../types";
 
 const suggestedPrompts = [
@@ -108,10 +114,53 @@ function TeacherStudioContent() {
   const [selectedTopicId, setSelectedTopicId] = useState<string>("");
   const [lessonMode, setLessonMode] = useState<string>("conceptual");
 
+  // Authentication & Document RAG State
+  const { isAuthenticated, token } = useAuth();
+  const [availableDocs, setAvailableDocs] = useState<DocumentMetadataResponse[]>([]);
+  const [loadingDocs, setLoadingDocs] = useState<boolean>(false);
+  const [selectedDocIds, setSelectedDocIds] = useState<string[]>([]);
+  const [showDocSelector, setShowDocSelector] = useState<boolean>(false);
+  const [expandedCitations, setExpandedCitations] = useState<Record<string, boolean>>({});
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const focusTextareaRef = useRef<HTMLTextAreaElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Fetch student indexed documents when authenticated
+  useEffect(() => {
+    if (!isAuthenticated || !token) {
+      setAvailableDocs([]);
+      setSelectedDocIds([]);
+      return;
+    }
+
+    let isMounted = true;
+    async function loadStudentDocs() {
+      setLoadingDocs(true);
+      try {
+        const docs = await apiClient.listDocuments({ status: "INDEXED" }, token);
+        if (isMounted) {
+          setAvailableDocs(docs);
+        }
+      } catch (err) {
+        console.warn("Could not load student documents for teacher studio:", err);
+      } finally {
+        if (isMounted) setLoadingDocs(false);
+      }
+    }
+
+    loadStudentDocs();
+    return () => {
+      isMounted = false;
+    };
+  }, [isAuthenticated, token]);
+
+  const toggleDocSelection = (docId: string) => {
+    setSelectedDocIds((prev) =>
+      prev.includes(docId) ? prev.filter((id) => id !== docId) : [...prev, docId]
+    );
+  };
 
   // Load Curriculum Subjects
   useEffect(() => {
@@ -290,8 +339,9 @@ function TeacherStudioContent() {
           topic: currentTopic ? currentTopic.title : undefined,
           lesson_mode: lessonMode,
           language: "English",
+          document_ids: selectedDocIds.length > 0 ? selectedDocIds : undefined,
         },
-        undefined,
+        token || undefined,
         {
           signal: abortControllerRef.current.signal,
           timeoutMs: 75000,
@@ -317,6 +367,7 @@ function TeacherStudioContent() {
           status: response.status,
           workflowExecuted: response.workflow_executed,
           detectedIntent: response.detected_intent,
+          studentDocuments: response.student_documents || undefined,
         },
       };
 
@@ -478,6 +529,59 @@ function TeacherStudioContent() {
                   <FormattedMessage content={msg.text} />
                 )}
 
+                {!isStudent && !msg.isError && msg.metadata?.studentDocuments && msg.metadata.studentDocuments.length > 0 && (
+                  <div className="mt-3 pt-3 border-t border-slate-200">
+                    <div className="flex items-center gap-1.5 text-xs font-semibold text-blue-700 mb-2">
+                      <BookOpen className="w-3.5 h-3.5" />
+                      <span>
+                        Grounded in Your Attached Notes ({msg.metadata.studentDocuments.length} source{msg.metadata.studentDocuments.length > 1 ? "s" : ""})
+                      </span>
+                    </div>
+                    <div className="space-y-1.5">
+                      {msg.metadata.studentDocuments.map((doc, idx) => {
+                        const citeKey = `${msg.id}-${doc.chunk_id || idx}`;
+                        const isExpanded = !!expandedCitations[citeKey];
+                        return (
+                          <div
+                            key={idx}
+                            className="bg-white rounded-lg border border-blue-100 p-2 text-xs shadow-2xs"
+                          >
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-1.5 font-medium text-slate-800 truncate">
+                                <FileText className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                                <span className="truncate max-w-[180px] sm:max-w-xs">{doc.filename}</span>
+                                <span className="px-1.5 py-0.5 rounded text-[10px] bg-slate-100 text-slate-600">
+                                  Page {doc.page_number}
+                                </span>
+                                <span className="px-1.5 py-0.5 rounded text-[10px] bg-emerald-50 text-emerald-700 font-mono">
+                                  {Math.round(doc.similarity_score * 100)}% match
+                                </span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setExpandedCitations((prev) => ({
+                                    ...prev,
+                                    [citeKey]: !prev[citeKey],
+                                  }))
+                                }
+                                className="text-[10px] text-blue-600 hover:text-blue-800 font-medium shrink-0"
+                              >
+                                {isExpanded ? "Hide excerpt" : "View excerpt"}
+                              </button>
+                            </div>
+                            {isExpanded && (
+                              <div className="mt-2 p-2 bg-slate-50 rounded border border-slate-200 text-slate-700 text-[11px] font-sans whitespace-pre-wrap leading-relaxed max-h-40 overflow-y-auto">
+                                {doc.text}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 {!isStudent && !msg.isError && msg.metadata && (
                   <div className="mt-3 pt-3 border-t border-slate-200/80 flex flex-wrap items-center justify-between gap-2 text-[10px] text-[#64748B]">
                     <div className="flex items-center gap-2">
@@ -578,6 +682,135 @@ function TeacherStudioContent() {
           >
             Common Pitfalls
           </button>
+        </div>
+      )}
+
+      {/* Document Attachment Controls Bar */}
+      <div className="flex items-center justify-between gap-2 text-xs">
+        <div className="flex items-center gap-1.5 overflow-x-auto py-0.5">
+          <button
+            type="button"
+            onClick={() => setShowDocSelector((v) => !v)}
+            className={`px-2 py-1 rounded-md text-[11px] font-medium flex items-center gap-1 transition-all ${
+              selectedDocIds.length > 0
+                ? "bg-blue-600 text-white shadow-2xs"
+                : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
+            }`}
+            title="Attach student PDF notes for Teacher RAG grounding"
+          >
+            <Paperclip className="w-3 h-3" />
+            <span>
+              {selectedDocIds.length > 0
+                ? `${selectedDocIds.length} Note${selectedDocIds.length > 1 ? "s" : ""} Attached`
+                : "Attach Notes"}
+            </span>
+          </button>
+
+          {selectedDocIds.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setSelectedDocIds([])}
+              className="text-[10px] text-slate-500 hover:text-red-600 underline"
+            >
+              Clear
+            </button>
+          )}
+
+          {/* Horizontal chips of selected documents */}
+          {selectedDocIds.map((docId) => {
+            const doc = availableDocs.find((d) => d.id === docId);
+            if (!doc) return null;
+            return (
+              <span
+                key={docId}
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 border border-blue-200 text-blue-700 text-[10px] font-medium shrink-0"
+              >
+                <FileText className="w-2.5 h-2.5" />
+                <span className="max-w-[120px] truncate">{doc.filename}</span>
+                <button
+                  type="button"
+                  onClick={() => toggleDocSelection(docId)}
+                  className="hover:text-red-500 ml-0.5"
+                  title="Remove attachment"
+                >
+                  <X className="w-2.5 h-2.5" />
+                </button>
+              </span>
+            );
+          })}
+        </div>
+
+        <Link
+          href="/documents"
+          className="text-[10px] text-slate-400 hover:text-blue-600 transition-colors shrink-0 flex items-center gap-1"
+        >
+          <span>Document Library</span>
+          <ArrowRight className="w-2.5 h-2.5" />
+        </Link>
+      </div>
+
+      {/* Collapsible Document Attachment Selector Tray */}
+      {showDocSelector && (
+        <div className="p-2.5 bg-white border border-slate-200 rounded-xl space-y-2 text-xs shadow-xs animate-in fade-in duration-150">
+          {!isAuthenticated ? (
+            <div className="flex items-center justify-between text-[11px] text-slate-600 py-1">
+              <span className="flex items-center gap-1.5">
+                <Info className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                Sign in to attach your uploaded PDF notes to Teacher Agent queries.
+              </span>
+              <Link
+                href="/login"
+                className="font-semibold text-blue-600 hover:underline shrink-0 ml-2"
+              >
+                Sign In
+              </Link>
+            </div>
+          ) : loadingDocs ? (
+            <div className="text-[11px] text-slate-500 py-1 flex items-center gap-1.5">
+              <RefreshCw className="w-3 h-3 animate-spin text-blue-600" />
+              <span>Loading your indexed documents...</span>
+            </div>
+          ) : availableDocs.length === 0 ? (
+            <div className="flex items-center justify-between text-[11px] text-slate-600 py-1">
+              <span>No indexed PDF notes found in your library.</span>
+              <Link
+                href="/documents"
+                className="font-semibold text-blue-600 hover:underline"
+              >
+                Upload PDFs in Document Library &rarr;
+              </Link>
+            </div>
+          ) : (
+            <div>
+              <div className="flex items-center justify-between text-[10px] font-bold uppercase text-slate-400 mb-1.5">
+                <span>Select notes to ground teacher answers:</span>
+                <span className="font-normal text-slate-500">
+                  {selectedDocIds.length} of {availableDocs.length} selected
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto">
+                {availableDocs.map((doc) => {
+                  const isSelected = selectedDocIds.includes(doc.id);
+                  return (
+                    <button
+                      key={doc.id}
+                      type="button"
+                      onClick={() => toggleDocSelection(doc.id)}
+                      className={`px-2 py-1 rounded-lg text-[11px] flex items-center gap-1.5 transition-all border ${
+                        isSelected
+                          ? "bg-blue-50 border-blue-300 text-blue-700 font-medium"
+                          : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                      }`}
+                    >
+                      <FileText className={`w-3 h-3 ${isSelected ? "text-blue-600" : "text-slate-400"}`} />
+                      <span className="truncate max-w-[180px]">{doc.filename}</span>
+                      {isSelected && <CheckCircle2 className="w-3 h-3 text-blue-600 shrink-0" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
