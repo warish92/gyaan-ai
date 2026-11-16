@@ -344,7 +344,7 @@ function TeacherStudioContent() {
         token || undefined,
         {
           signal: abortControllerRef.current.signal,
-          timeoutMs: 75000,
+          timeoutMs: 180000,
         }
       );
 
@@ -380,7 +380,7 @@ function TeacherStudioContent() {
           err.message.includes("timed out"));
 
       const errorMsg = isAbort
-        ? "Question was stopped or timed out after 75 seconds. Local Ollama may be busy with another task."
+        ? "Question was stopped or timed out after 180 seconds. Local Ollama may be busy with another task."
         : err instanceof Error
         ? err.message
         : "Failed to obtain response from AI Learning Agents.";

@@ -10,6 +10,8 @@ services:
       - "11434:11434"
     volumes:
       - ollama_models:/root/.ollama
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
 
   # 2. FastAPI Multi-Agent Backend
   backend:
