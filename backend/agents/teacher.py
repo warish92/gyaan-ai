@@ -4,11 +4,12 @@ Defines the Teacher Agent responsible for concept explanations aligned
 with the CBSE Class 10 curriculum, powered by a local Ollama LLM.
 """
 
+import os
 from crewai import Agent, LLM
 
-# Configuration for local Ollama instance
-OLLAMA_BASE_URL = "http://127.0.0.1:11434"
-LOCAL_MODEL = "ollama/qwen2.5:3b"
+# Configuration for local Ollama instance (configurable via env for Docker/Cloud deployment)
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434")
+LOCAL_MODEL = os.getenv("LOCAL_MODEL", "ollama/qwen2.5:3b")
 
 
 def get_local_llm() -> LLM:

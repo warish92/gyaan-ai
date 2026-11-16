@@ -428,7 +428,7 @@ class AgentRegistry:
             "error_agents": error_count,
             "model": "ollama/qwen2.5:3b",
             "provider": "ollama",
-            "base_url": "http://127.0.0.1:11434",
+            "base_url": os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434"),
             "status": "healthy" if error_count == 0 else "degraded",
             "canonical_roster": [a.name for a in agents],
         }
