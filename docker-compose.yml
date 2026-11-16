@@ -12,6 +12,7 @@ services:
       - ollama_models:/root/.ollama
     environment:
       - OLLAMA_KEEP_ALIVE=24h
+      - OLLAMA_NUM_PARALLEL=1
 
   # 2. FastAPI Multi-Agent Backend
   backend:
@@ -26,7 +27,7 @@ services:
       - "8000:8000"
     environment:
       - OLLAMA_BASE_URL=http://ollama:11434
-      - LOCAL_MODEL=ollama/qwen2.5:3b
+      - LOCAL_MODEL=ollama/qwen2.5:1.5b
       - PYTHONUNBUFFERED=1
     env_file:
       - path: .env

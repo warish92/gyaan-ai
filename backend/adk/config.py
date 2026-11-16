@@ -9,7 +9,7 @@ from typing import Optional
 from google.adk.models.lite_llm import LiteLlm
 
 # Model and Endpoint Settings
-DEFAULT_ADK_MODEL = "ollama_chat/qwen2.5:3b"
+DEFAULT_ADK_MODEL = "ollama_chat/qwen2.5:1.5b"
 DEFAULT_OLLAMA_API_BASE = "http://127.0.0.1:11434"
 DEFAULT_APP_NAME = "gyaan_ai_adk"
 DEFAULT_TIMEOUT_SECONDS = 90

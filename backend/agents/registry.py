@@ -426,7 +426,7 @@ class AgentRegistry:
             "running_agents": active_count,
             "idle_agents": ready_count,
             "error_agents": error_count,
-            "model": "ollama/qwen2.5:3b",
+            "model": os.getenv("LOCAL_MODEL", "ollama/qwen2.5:1.5b"),
             "provider": "ollama",
             "base_url": os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434"),
             "status": "healthy" if error_count == 0 else "degraded",

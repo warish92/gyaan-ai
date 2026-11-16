@@ -9,7 +9,7 @@ from crewai import Agent, LLM
 
 # Configuration for local Ollama instance (configurable via env for Docker/Cloud deployment)
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434")
-LOCAL_MODEL = os.getenv("LOCAL_MODEL", "ollama/qwen2.5:3b")
+LOCAL_MODEL = os.getenv("LOCAL_MODEL", "ollama/qwen2.5:1.5b")
 
 
 def get_local_llm() -> LLM:
@@ -18,6 +18,7 @@ def get_local_llm() -> LLM:
         model=LOCAL_MODEL,
         base_url=OLLAMA_BASE_URL,
         temperature=0.3,
+        max_tokens=400,
     )
 
 
