@@ -216,15 +216,15 @@ async def lifespan(app: FastAPI):
 
     try:
         target_db = get_db_path()
-        if target_db != DEFAULT_DB_PATH:
+        conn = get_db_connection()
+        table_exists = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='students';").fetchone()
+        conn.close()
+        if not table_exists or target_db != DEFAULT_DB_PATH:
             init_db()
             logger.info("SQLite database tables and migrations verified on application startup.")
             from backend.services.curriculum_bank_seeder import seed_canonical_banks_if_missing
             seed_canonical_banks_if_missing()
         else:
-            conn = get_db_connection()
-            conn.execute("SELECT 1;").fetchone()
-            conn.close()
             logger.info("Canonical SQLite database verified intact at %s.", target_db)
     except HTTPException:
         raise
@@ -525,6 +525,7 @@ async def get_optional_current_student(
 # ==============================================================================
 
 @app.get("/health", response_model=HealthResponse, tags=["System"])
+@app.get("/api/health", response_model=HealthResponse, tags=["System"])
 async def health_check() -> HealthResponse:
     """Check service health, SQLite database, and local Ollama model availability without triggering generation."""
     ollama_connected = False
