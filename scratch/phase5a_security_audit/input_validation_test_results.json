@@ -1,0 +1,92 @@
+[
+  {
+    "test_name": "Malformed JSON on /api/v1/auth/login",
+    "endpoint": "/api/v1/auth/login",
+    "method": "POST",
+    "status_code": 422,
+    "expected_status": 422,
+    "passed": true,
+    "detail": "{\"detail\":[{\"type\":\"json_invalid\",\"loc\":[\"body\",1],\"msg\":\"JSON decode error\",\"input\":{},\"ctx\":{\"erro"
+  },
+  {
+    "test_name": "Missing required fields on login",
+    "endpoint": "/api/v1/auth/login",
+    "method": "POST",
+    "status_code": 422,
+    "expected_status": 422,
+    "passed": true,
+    "detail": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"body\",\"email\"],\"msg\":\"Field required\",\"input\":{}},{\"type\":\"miss"
+  },
+  {
+    "test_name": "Incorrect data types on login",
+    "endpoint": "/api/v1/auth/login",
+    "method": "POST",
+    "status_code": 422,
+    "expected_status": 422,
+    "passed": true,
+    "detail": "{\"detail\":[{\"type\":\"string_type\",\"loc\":[\"body\",\"email\"],\"msg\":\"Input should be a valid string\",\"inpu"
+  },
+  {
+    "test_name": "Extremely long email string on login",
+    "endpoint": "/api/v1/auth/login",
+    "method": "POST",
+    "status_code": 422,
+    "expected_status": [
+      400,
+      422
+    ],
+    "passed": true,
+    "detail": "{\"detail\":[{\"type\":\"value_error\",\"loc\":[\"body\",\"email\"],\"msg\":\"value is not a valid email address: L"
+  },
+  {
+    "test_name": "Extra unexpected fields on login",
+    "endpoint": "/api/v1/auth/login",
+    "method": "POST",
+    "status_code": 401,
+    "expected_status": [
+      200,
+      401,
+      422
+    ],
+    "passed": true,
+    "detail": "Status: 401 (Pydantic ignores extra by default)"
+  },
+  {
+    "test_name": "Directory traversal in MCP execute",
+    "endpoint": "/api/v1/mcp/execute",
+    "method": "POST",
+    "status_code": 422,
+    "expected_status": [
+      400,
+      403,
+      422
+    ],
+    "passed": true,
+    "detail": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"body\",\"correlation_id\"],\"msg\":\"Field required\",\"input\":{\"server"
+  },
+  {
+    "test_name": "Disallowed tool in MCP execute",
+    "endpoint": "/api/v1/mcp/execute",
+    "method": "POST",
+    "status_code": 422,
+    "expected_status": [
+      400,
+      403,
+      422
+    ],
+    "passed": true,
+    "detail": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"body\",\"correlation_id\"],\"msg\":\"Field required\",\"input\":{\"server"
+  },
+  {
+    "test_name": "Malformed JSON-RPC in A2A endpoint",
+    "endpoint": "/api/v1/a2a",
+    "method": "POST",
+    "status_code": 200,
+    "expected_status": [
+      200,
+      400
+    ],
+    "passed": true,
+    "detail": "{\"jsonrpc\":\"2.0\",\"id\":null,\"error\":{\"code\":-32600,\"message\":\"Invalid Request: missing method\"}}"
+  }
+]

@@ -1,0 +1,210 @@
+{
+  "traces_endpoint": {
+    "status_code": 200,
+    "total_traces_returned": 2
+  },
+  "curriculum_trace_endpoint": {
+    "status_code": 200,
+    "body": {
+      "trace_id": "6cdd0eca80c341df9552bbd3caf803f3",
+      "root_name": "Curriculum Agent Live Execution",
+      "workflow_id": null,
+      "student_id": null,
+      "session_id": null,
+      "status": "completed",
+      "start_time": "2026-11-12T07:56:22.344131+00:00",
+      "end_time": "2026-11-12T07:56:58.569642+00:00",
+      "duration_ms": 36225.51,
+      "total_spans": 2,
+      "error_count": 0,
+      "spans": [
+        {
+          "span_id": "f5f9aadb1729485f",
+          "parent_span_id": "95f9e9e2ede7412d",
+          "trace_id": "6cdd0eca80c341df9552bbd3caf803f3",
+          "name": "task:You are designing a structured CBSE curriculum roadmap for a Class 10 student in...",
+          "span_type": "system",
+          "agent_name": "Curriculum Agent",
+          "task_name": null,
+          "status": "completed",
+          "start_time": "2026-11-12T08:16:43.472351+00:00",
+          "end_time": null,
+          "duration_ms": 0.0,
+          "input_data": null,
+          "output_data": null,
+          "error": null,
+          "error_category": null,
+          "metadata": {},
+          "token_usage": null
+        },
+        {
+          "span_id": "95f9e9e2ede7412d",
+          "parent_span_id": null,
+          "trace_id": "6cdd0eca80c341df9552bbd3caf803f3",
+          "name": "Curriculum Agent Live Execution",
+          "span_type": "system",
+          "agent_name": "Curriculum Agent",
+          "task_name": null,
+          "status": "completed",
+          "start_time": "2026-11-12T08:16:43.472351+00:00",
+          "end_time": null,
+          "duration_ms": 36223.18,
+          "input_data": null,
+          "output_data": null,
+          "error": null,
+          "error_category": null,
+          "metadata": {},
+          "token_usage": null
+        }
+      ],
+      "metadata": {}
+    }
+  },
+  "mentor_trace_endpoint": {
+    "status_code": 200,
+    "body": {
+      "trace_id": "d84f6a68c7634317b91a77e688060f21",
+      "root_name": "Mentor Agent Live Execution",
+      "workflow_id": null,
+      "student_id": null,
+      "session_id": null,
+      "status": "completed",
+      "start_time": "2026-11-12T07:56:58.571293+00:00",
+      "end_time": "2026-11-12T07:57:18.193700+00:00",
+      "duration_ms": 19622.41,
+      "total_spans": 2,
+      "error_count": 0,
+      "spans": [
+        {
+          "span_id": "42236991253d4814",
+          "parent_span_id": "08b09d3bf39147ae",
+          "trace_id": "d84f6a68c7634317b91a77e688060f21",
+          "name": "task:You are formulating personalized mentoring recommendations for student 'Syntheti...",
+          "span_type": "system",
+          "agent_name": "Mentor Agent",
+          "task_name": null,
+          "status": "completed",
+          "start_time": "2026-11-12T08:16:43.472351+00:00",
+          "end_time": null,
+          "duration_ms": 0.0,
+          "input_data": null,
+          "output_data": null,
+          "error": null,
+          "error_category": null,
+          "metadata": {},
+          "token_usage": null
+        },
+        {
+          "span_id": "08b09d3bf39147ae",
+          "parent_span_id": null,
+          "trace_id": "d84f6a68c7634317b91a77e688060f21",
+          "name": "Mentor Agent Live Execution",
+          "span_type": "system",
+          "agent_name": "Mentor Agent",
+          "task_name": null,
+          "status": "completed",
+          "start_time": "2026-11-12T08:16:43.472351+00:00",
+          "end_time": null,
+          "duration_ms": 19617.77,
+          "input_data": null,
+          "output_data": null,
+          "error": null,
+          "error_category": null,
+          "metadata": {},
+          "token_usage": null
+        }
+      ],
+      "metadata": {}
+    }
+  },
+  "agents_endpoint": {
+    "status_code": 200,
+    "body": [
+      {
+        "agent_name": "Orchestrator Agent",
+        "canonical_role": "Intent classification, routing, and lifecycle coordination",
+        "total_invocations": 0,
+        "total_errors": 0,
+        "last_active": null,
+        "avg_duration_ms": 0.0,
+        "status": "idle"
+      },
+      {
+        "agent_name": "Diagnostic Agent",
+        "canonical_role": "Prerequisite gap detection and diagnostic evaluations",
+        "total_invocations": 0,
+        "total_errors": 0,
+        "last_active": null,
+        "avg_duration_ms": 0.0,
+        "status": "idle"
+      },
+      {
+        "agent_name": "Curriculum Agent",
+        "canonical_role": "NCERT Class 10 curriculum alignment and sequential roadmap",
+        "total_invocations": 2,
+        "total_errors": 0,
+        "last_active": "2026-11-12T08:16:43.472351+00:00",
+        "avg_duration_ms": 18111.59,
+        "status": "idle"
+      },
+      {
+        "agent_name": "Resource Agent",
+        "canonical_role": "Verified textbook corpora and MCP research tool execution",
+        "total_invocations": 0,
+        "total_errors": 0,
+        "last_active": null,
+        "avg_duration_ms": 0.0,
+        "status": "idle"
+      },
+      {
+        "agent_name": "Teacher Agent",
+        "canonical_role": "Pedagogical concept explanation and step-by-step tutoring",
+        "total_invocations": 0,
+        "total_errors": 0,
+        "last_active": null,
+        "avg_duration_ms": 0.0,
+        "status": "idle"
+      },
+      {
+        "agent_name": "Assessment Agent",
+        "canonical_role": "Bloom's taxonomy quiz generation and scoring",
+        "total_invocations": 0,
+        "total_errors": 0,
+        "last_active": null,
+        "avg_duration_ms": 0.0,
+        "status": "idle"
+      },
+      {
+        "agent_name": "Progress Agent",
+        "canonical_role": "Mastery updates, learning velocity, and milestone tracking",
+        "total_invocations": 0,
+        "total_errors": 0,
+        "last_active": null,
+        "avg_duration_ms": 0.0,
+        "status": "idle"
+      },
+      {
+        "agent_name": "Mentor Agent",
+        "canonical_role": "Metacognitive motivation, study habit guidance, and feedback",
+        "total_invocations": 2,
+        "total_errors": 0,
+        "last_active": "2026-11-12T08:16:43.472351+00:00",
+        "avg_duration_ms": 9808.89,
+        "status": "idle"
+      },
+      {
+        "agent_name": "Learning Intelligence Agent (ADK)",
+        "canonical_role": "Deep learning trajectory and session intelligence",
+        "total_invocations": 0,
+        "total_errors": 0,
+        "last_active": null,
+        "avg_duration_ms": 0.0,
+        "status": "idle"
+      }
+    ]
+  },
+  "errors_endpoint": {
+    "status_code": 200,
+    "body": []
+  }
+}

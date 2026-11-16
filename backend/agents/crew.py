@@ -8,6 +8,13 @@ from typing import Any, Dict, List, Optional, Tuple
 from crewai import Agent, Crew, Process, Task
 from backend.agents.teacher import create_teacher_agent
 
+# Ensure class-level task execution instrumentation is active
+try:
+    from backend.observability import setup_class_level_task_instrumentation
+    setup_class_level_task_instrumentation()
+except Exception:
+    pass
+
 
 def create_teacher_task(
     agent: Agent,

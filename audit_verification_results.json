@@ -1,0 +1,280 @@
+{
+  "started_at": "2026-11-01T12:54:34.147389",
+  "steps": [
+    {
+      "step": "1. Health Endpoint Probe",
+      "status": "PASS",
+      "timestamp": "2026-11-01T12:54:34.499343",
+      "details": {
+        "status_code": 200,
+        "ollama_connected": true,
+        "model_available": true,
+        "model_name": "qwen2.5:3b",
+        "summary": "FastAPI healthy, Ollama connected (qwen2.5:3b)"
+      }
+    },
+    {
+      "step": "2. Student Registration",
+      "status": "PASS",
+      "timestamp": "2026-11-01T12:54:34.585701",
+      "details": {
+        "status_code": 201,
+        "student_id": "stu_5539b6e07ee8",
+        "email": "audit_student_a_1793517874@gyaan.ai",
+        "summary": "Student registered with ID stu_5539b6e07ee8"
+      }
+    },
+    {
+      "step": "3. Student Login (Valid Credentials)",
+      "status": "PASS",
+      "timestamp": "2026-11-01T12:54:34.673339",
+      "details": {
+        "status_code": 200,
+        "token_type": "bearer",
+        "summary": "JWT Token generated successfully"
+      }
+    },
+    {
+      "step": "4. Authentication Rejection (Invalid Password)",
+      "status": "PASS",
+      "timestamp": "2026-11-01T12:54:34.754451",
+      "details": {
+        "status_code": 401,
+        "summary": "Invalid login rejected with HTTP 401"
+      }
+    },
+    {
+      "step": "5. Student Profile Retrieval (/students/me)",
+      "status": "PASS",
+      "timestamp": "2026-11-01T12:54:34.770621",
+      "details": {
+        "status_code": 200,
+        "display_name": "Audit Student Alpha",
+        "grade": "10",
+        "summary": "Profile matches display_name=Audit Student Alpha"
+      }
+    },
+    {
+      "step": "6. Student Profile Update (PATCH /students/me)",
+      "status": "PASS",
+      "timestamp": "2026-11-01T12:54:34.794935",
+      "details": {
+        "status_code": 200,
+        "updated_lang": "Hindi",
+        "summary": "Language successfully updated to Hindi"
+      }
+    },
+    {
+      "step": "7. Security Isolation (Cross-Student Access Prevention)",
+      "status": "PASS",
+      "timestamp": "2026-11-01T12:54:34.991743",
+      "details": {
+        "status_code": 403,
+        "summary": "Cross-student access strictly blocked with HTTP 403 Forbidden"
+      }
+    },
+    {
+      "step": "8. Security Protection (Missing Token)",
+      "status": "PASS",
+      "timestamp": "2026-11-01T12:54:35.016752",
+      "details": {
+        "status_code": 401,
+        "summary": "Missing token rejected with HTTP 401"
+      }
+    },
+    {
+      "step": "9. Security Protection (Invalid Token)",
+      "status": "PASS",
+      "timestamp": "2026-11-01T12:54:35.036239",
+      "details": {
+        "status_code": 401,
+        "summary": "Malformed token rejected with HTTP 401"
+      }
+    },
+    {
+      "step": "10. Workflow 1: AI Teacher Studio (Teacher Agent)",
+      "status": "PASS",
+      "timestamp": "2026-11-01T12:54:46.825333",
+      "details": {
+        "status_code": 200,
+        "duration_s": 11.79,
+        "model": "ollama/qwen2.5:3b",
+        "answer_sample": "Sure, here is a structured educational response explaining Newton's Third Law of Motion according to the 9th CBSE standa...",
+        "summary": "Teacher Agent responded in 11.79s with valid explanation"
+      }
+    },
+    {
+      "step": "11. Workflows 2 & 3: Diagnostic & Curriculum Plan Agents",
+      "status": "PASS",
+      "timestamp": "2026-11-01T12:55:14.602174",
+      "details": {
+        "status_code": 200,
+        "duration_s": 27.78,
+        "persisted": true,
+        "diagnostic_id": "diag_9e8a6e026ded",
+        "plan_id": "plan_b487f0430a71",
+        "summary": "Diagnostic & Curriculum generated and persisted in 27.78s"
+      }
+    },
+    {
+      "step": "12. Workflow 4: Learning Resources (Resource Agent)",
+      "status": "PASS",
+      "timestamp": "2026-11-01T12:55:42.610381",
+      "details": {
+        "status_code": 200,
+        "duration_s": 28.01,
+        "is_verified": true,
+        "source_type": "Verified Local NCERT Corpus",
+        "sources_count": 3,
+        "summary": "Curated verified NCERT resources in 28.01s"
+      }
+    },
+    {
+      "step": "13. Workflow 5: Quiz Generation (Assessment Agent)",
+      "status": "PASS",
+      "timestamp": "2026-11-01T12:55:51.046450",
+      "details": {
+        "status_code": 200,
+        "duration_s": 8.44,
+        "quiz_id": "quiz_4fa86c4bba4b",
+        "questions_count": 2,
+        "summary": "Generated 2 quiz questions in 8.44s"
+      }
+    },
+    {
+      "step": "14. Workflow 6: Assessment Submission & Grading",
+      "status": "PASS",
+      "timestamp": "2026-11-01T12:55:57.576785",
+      "details": {
+        "status_code": 200,
+        "duration_s": 6.53,
+        "attempt_id": "att_6c7613e65ab5",
+        "score": 1.0,
+        "persisted": true,
+        "summary": "Evaluated and persisted score 1.0 in 6.53s"
+      }
+    },
+    {
+      "step": "15. Workflow 7: Student Progress Analytics (Progress Agent)",
+      "status": "PASS",
+      "timestamp": "2026-11-01T12:56:07.345727",
+      "details": {
+        "status_code": 200,
+        "duration_s": 9.77,
+        "has_history": true,
+        "assessments_completed": 1,
+        "summary": "Progress Agent analyzed student data in 9.77s"
+      }
+    },
+    {
+      "step": "16. Workflow 8: AI Learning Mentor (Mentor Agent)",
+      "status": "PASS",
+      "timestamp": "2026-11-01T12:56:24.727211",
+      "details": {
+        "status_code": 200,
+        "duration_s": 17.38,
+        "recommendations_count": 1,
+        "study_tip": "Create a study schedule that includes regular review sessions for Trigonometry. ...",
+        "summary": "Mentor Agent delivered 1 tailored recommendations in 17.38s"
+      }
+    },
+    {
+      "step": "17. Workflow 9a: Intent Routing (Educational Request)",
+      "status": "PASS",
+      "timestamp": "2026-11-01T12:56:47.169285",
+      "details": {
+        "status_code": 200,
+        "duration_s": 22.44,
+        "detected_intent": "Explain the concept of electric current and Ohm's Law",
+        "selected_workflow": "teacher_answer",
+        "selected_agents": [
+          "Teacher Agent"
+        ],
+        "summary": "Routed to 'teacher_answer' (Explain the concept of electric current and Ohm's Law) in 22.44s"
+      }
+    },
+    {
+      "step": "18. Workflow 9b: Ambiguous Query Clarification",
+      "status": "PASS",
+      "timestamp": "2026-11-01T12:56:50.862371",
+      "details": {
+        "status_code": 200,
+        "clarification_required": true,
+        "question": "Could you please specify which Class 10 topic or concept you would like help with?",
+        "summary": "Ambiguous input correctly triggered clarifying response"
+      }
+    },
+    {
+      "step": "19. Workflow 9c: Out-of-Scope Query Scope Enforcement",
+      "status": "PASS",
+      "timestamp": "2026-11-01T12:56:54.643014",
+      "details": {
+        "status_code": 200,
+        "detected_intent": "The student is requesting information about booking a flight, which is not related to Class 10 Science or any educational topic.",
+        "summary": "Handled out-of-scope query safely without fabricating non-educational workflows"
+      }
+    },
+    {
+      "step": "20. Student Dashboard Aggregation (/students/me/dashboard)",
+      "status": "PASS",
+      "timestamp": "2026-11-01T12:56:54.675984",
+      "details": {
+        "status_code": 200,
+        "stats": {
+          "total_sessions": 7,
+          "total_quizzes_taken": 1,
+          "topics_mastered": 0,
+          "topics_in_progress": 0,
+          "topics_needing_revision": 1
+        },
+        "summary": "Dashboard aggregates profile, sessions, diagnostics, and assessments"
+      }
+    },
+    {
+      "step": "21. Topic Mastery Retrieval (/students/me/topic-mastery)",
+      "status": "PASS",
+      "timestamp": "2026-11-01T12:56:54.702752",
+      "details": {
+        "status_code": 200,
+        "items_count": 1,
+        "summary": "Retrieved 1 mastery items"
+      }
+    },
+    {
+      "step": "22. Database Direct Integrity & Foreign Keys",
+      "status": "PASS",
+      "timestamp": "2026-11-01T12:56:54.726629",
+      "details": {
+        "integrity_check": "ok",
+        "fk_violations": [],
+        "table_counts": {
+          "students": 411,
+          "user_sessions": "Error: no such table: user_sessions",
+          "learning_sessions": 195,
+          "diagnostic_records": 77,
+          "curriculum_plans": 75,
+          "quizzes": 114,
+          "quiz_questions": "Error: no such table: quiz_questions",
+          "assessment_attempts": 113,
+          "assessment_answers": "Error: no such table: assessment_answers",
+          "topic_mastery": "Error: no such table: topic_mastery"
+        },
+        "summary": "PRAGMA integrity=ok, 0 FK violations, records verified"
+      }
+    },
+    {
+      "step": "23. Student Session Logout",
+      "status": "PASS",
+      "timestamp": "2026-11-01T12:56:54.751408",
+      "details": {
+        "status_code": 200,
+        "summary": "Session ended cleanly via /auth/logout"
+      }
+    }
+  ],
+  "summary": {
+    "total": 23,
+    "passed": 23,
+    "failed": 0
+  }
+}

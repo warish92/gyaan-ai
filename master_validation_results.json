@@ -1,0 +1,116 @@
+{
+  "started_at": "2026-11-01T14:17:23.640864",
+  "steps": [
+    {
+      "step": "1. Windows UTF-8 Encoding Safety in CrewAI Event Handlers",
+      "status": "PASS",
+      "timestamp": "2026-11-01T14:17:29.654855",
+      "details": {
+        "summary": "Rendered '\ud83d\udccb Task Started' and '\ud83d\udccb Task Completion' with 0 charmap errors"
+      }
+    },
+    {
+      "step": "2. Scenario A: Complete 8-Agent Journey with Mastery (>= 70%)",
+      "status": "PASS",
+      "timestamp": "2026-11-01T14:18:29.972040",
+      "details": {
+        "journey_id": "jrn_a419a6ac2684",
+        "student_id": "stu_04965dd4fc9a",
+        "duration_s": 60.18,
+        "mastery_score": 75.0,
+        "mastery_achieved": true,
+        "adaptive_action": "advance_to_next_topic",
+        "all_8_agents_executed": true,
+        "summary": "Scenario A achieved 75.0% mastery in 60.18s -> advance to next topic"
+      }
+    },
+    {
+      "step": "3. Scenario B: Assessment Evaluation & Remediation Identification",
+      "status": "PASS",
+      "timestamp": "2026-11-01T14:19:24.207539",
+      "details": {
+        "journey_id": "jrn_0404dfaebb58",
+        "student_id": "stu_c54a229cf269",
+        "duration_s": 54.14,
+        "mastery_score": 75.0,
+        "mastery_achieved": true,
+        "adaptive_action": "advance_to_next_topic",
+        "summary": "Scenario B completed in 54.14s with adaptive action: advance_to_next_topic"
+      }
+    },
+    {
+      "step": "4. Adaptive Loop Controls: Pause, Resume & Remediation Iteration",
+      "status": "PASS",
+      "timestamp": "2026-11-01T14:19:55.833966",
+      "details": {
+        "pause_ok": true,
+        "resume_ok": true,
+        "remediation_ok": true,
+        "new_loop_iteration": 2,
+        "summary": "Pause: True, Resume: True, Remediation loop iteration incremented to 2"
+      }
+    },
+    {
+      "step": "5. SQLite Database Persistence Across All 5 Core Tables",
+      "status": "PASS",
+      "timestamp": "2026-11-01T14:19:55.837276",
+      "details": {
+        "journey_row": [
+          "jrn_a419a6ac2684",
+          "stu_04965dd4fc9a",
+          "Science",
+          "Chemical Reactions and Equations",
+          "completed",
+          "completed",
+          75.0,
+          1
+        ],
+        "diagnostic_count": 1,
+        "curriculum_count": 1,
+        "attempts_count": 1,
+        "topic_mastery": [
+          1.5,
+          "in_progress"
+        ],
+        "sessions_count": 1,
+        "summary": "Verified persistent records in journeys, diagnostics, plans, assessments, mastery, and sessions"
+      }
+    },
+    {
+      "step": "6. Multi-Student Tenant Data Isolation (403 Forbidden)",
+      "status": "PASS",
+      "timestamp": "2026-11-01T14:19:55.861509",
+      "details": {
+        "view_foreign_journey_status": 403,
+        "list_foreign_student_journeys_status": 403,
+        "summary": "Cross-student access strictly blocked with HTTP 403 Forbidden"
+      }
+    },
+    {
+      "step": "7. Central Orchestrator Workflow Dispatch Verification",
+      "status": "PASS",
+      "timestamp": "2026-11-01T14:20:41.803495",
+      "details": {
+        "status_code": 200,
+        "duration_s": 45.94,
+        "selected_workflow": "chapter_learning_journey",
+        "selected_agents": [
+          "Orchestrator Agent",
+          "Diagnostic Agent",
+          "Curriculum Agent",
+          "Resource Agent",
+          "Teacher Agent",
+          "Assessment Agent",
+          "Progress Agent",
+          "Mentor Agent"
+        ],
+        "summary": "Orchestrator routed intent to 'chapter_learning_journey' in 45.94s"
+      }
+    }
+  ],
+  "summary": {
+    "total": 7,
+    "passed": 7,
+    "failed": 0
+  }
+}

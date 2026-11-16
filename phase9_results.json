@@ -1,0 +1,553 @@
+{
+  "metadata": {
+    "timestamp": "2026-10-30 17:03:38",
+    "phase": "9.0",
+    "active_project": "D:\\Gyaan AI",
+    "protected_legacy_project": "D:\\GYAN Ai"
+  },
+  "initial_db_counts": {
+    "students": 366,
+    "diagnostic_records": 68,
+    "curriculum_plans": 66,
+    "quizzes": 100,
+    "assessment_attempts": 99,
+    "student_sessions": 369,
+    "learning_sessions": 160,
+    "student_topic_mastery": 88
+  },
+  "agents": {
+    "Orchestrator Agent": {
+      "role": "Educational AI Workflow Orchestrator",
+      "goal": "Interpret the student's educational request and select the most appropriate registered agent or multi-agent workflow based on the user's intent, supplied context, and available capabilities.",
+      "backstory": "You are an experienced educational AI coordinator familiar with the platform's supported agents, their responsibilities,...",
+      "llm_model": "qwen2.5:3b",
+      "llm_base_url": "http://127.0.0.1:11434/v1",
+      "python_type": "crewai.agent.core.Agent",
+      "definition_verified": true,
+      "configuration_verified": true,
+      "task_execution_verified": true,
+      "live_llm_inference_verified": true
+    },
+    "Teacher Agent": {
+      "role": "Class 10 CBSE Science Teacher",
+      "goal": "Explain scientific concepts clearly, accurately, and pedagogically according to the NCERT/CBSE Class 10 curriculum.",
+      "backstory": "You are a dedicated, student-centered Class 10 science tutor. You adhere strictly to NCERT concepts, explaining principl...",
+      "llm_model": "qwen2.5:3b",
+      "llm_base_url": "http://127.0.0.1:11434/v1",
+      "python_type": "crewai.agent.core.Agent",
+      "definition_verified": true,
+      "configuration_verified": true,
+      "task_execution_verified": true,
+      "live_llm_inference_verified": true
+    },
+    "Diagnostic Agent": {
+      "role": "Student Learning Diagnostic Specialist",
+      "goal": "Analyze student answers meticulously against assessment questions, identify demonstrated understanding, uncover precise misconceptions and knowledge gaps, and recommend targeted focus areas.",
+      "backstory": "You are a seasoned diagnostic educational evaluator specializing in the CBSE Class 10 curriculum. You rely strictly on t...",
+      "llm_model": "qwen2.5:3b",
+      "llm_base_url": "http://127.0.0.1:11434/v1",
+      "python_type": "crewai.agent.core.Agent",
+      "definition_verified": true,
+      "configuration_verified": true,
+      "task_execution_verified": true,
+      "live_llm_inference_verified": true
+    },
+    "Curriculum Agent": {
+      "role": "Personalized Curriculum Planning Specialist",
+      "goal": "Transform diagnostic assessment findings into an actionable, logically sequenced, and prioritized personalized study plan tailored to the student's specific knowledge gaps.",
+      "backstory": "You are a pedagogical architect who designs personalized learning roadmaps for Class 10 CBSE students. You receive diagn...",
+      "llm_model": "qwen2.5:3b",
+      "llm_base_url": "http://127.0.0.1:11434/v1",
+      "python_type": "crewai.agent.core.Agent",
+      "definition_verified": true,
+      "configuration_verified": true,
+      "task_execution_verified": true,
+      "live_llm_inference_verified": true
+    },
+    "Resource Agent": {
+      "role": "Educational Resource Retrieval Specialist",
+      "goal": "Analyze student learning topics and curricular objectives, review retrieved source excerpts, and provide evidence-based educational resource recommendations that prioritize verified NCERT content while explicitly reporting provisional guidelines when verified material is unavailable.",
+      "backstory": "You are an expert curriculum resource curator specializing in the CBSE Class 10 curriculum. You cross-reference student ...",
+      "llm_model": "qwen2.5:3b",
+      "llm_base_url": "http://127.0.0.1:11434/v1",
+      "python_type": "crewai.agent.core.Agent",
+      "definition_verified": true,
+      "configuration_verified": true,
+      "task_execution_verified": true,
+      "live_llm_inference_verified": true
+    },
+    "Assessment Agent": {
+      "role": "Educational Assessment and Feedback Specialist",
+      "goal": "Generate balanced diagnostic quizzes (MCQs and conceptual short answers) strictly aligned with Class 10 CBSE standards, and evaluate student submissions with objective scoring, recognition of partial understanding, and constructive revision guidance.",
+      "backstory": "You are an expert CBSE Class 10 examiner and educational assessment specialist. You craft clear, unambiguous questions t...",
+      "llm_model": "qwen2.5:3b",
+      "llm_base_url": "http://127.0.0.1:11434/v1",
+      "python_type": "crewai.agent.core.Agent",
+      "definition_verified": true,
+      "configuration_verified": true,
+      "task_execution_verified": true,
+      "live_llm_inference_verified": true
+    },
+    "Progress Agent": {
+      "role": "Student Learning Progress Analyst",
+      "goal": "Analyse a student's actual persisted learning history and produce an accurate, evidence-based summary of learning progress, strengths, weaknesses, assessment performance, and unresolved learning needs.",
+      "backstory": "You are an expert secondary education learning analyst specializing in CBSE curriculum mastery. You interpret verified a...",
+      "llm_model": "qwen2.5:3b",
+      "llm_base_url": "http://127.0.0.1:11434/v1",
+      "python_type": "crewai.agent.core.Agent",
+      "definition_verified": true,
+      "configuration_verified": true,
+      "task_execution_verified": true,
+      "live_llm_inference_verified": true
+    },
+    "Mentor Agent": {
+      "role": "Personalized Student Learning Mentor",
+      "goal": "Recommend practical next steps that help a student improve based on their actual learning progress, curriculum context, and available resources.",
+      "backstory": "You are an empathetic, disciplined CBSE student mentor and academic coach. You translate diagnostic findings and progres...",
+      "llm_model": "qwen2.5:3b",
+      "llm_base_url": "http://127.0.0.1:11434/v1",
+      "python_type": "crewai.agent.core.Agent",
+      "definition_verified": true,
+      "configuration_verified": true,
+      "task_execution_verified": true,
+      "live_llm_inference_verified": true
+    }
+  },
+  "workflows": {
+    "teacher_answer": {
+      "name": "Teacher Concept Tutoring",
+      "description": "Explains scientific and curriculum concepts clearly according to NCERT/CBSE guidelines.",
+      "agents": [
+        "Teacher Agent"
+      ],
+      "requires_auth": false,
+      "handler_name": "handle_teacher_answer",
+      "live_execution": {
+        "duration": 18.07,
+        "status_code": 200,
+        "success": true,
+        "sample_output": "Sure, here is a structured educational response explaining the Law of Conservation of Mass in chemical reactions, follow..."
+      }
+    },
+    "diagnostic_curriculum": {
+      "name": "Diagnostic & Curriculum Planning",
+      "description": "Diagnoses learning gaps and creates structured sequential study plans.",
+      "agents": [
+        "Diagnostic Agent",
+        "Curriculum Agent"
+      ],
+      "requires_auth": false,
+      "handler_name": "handle_diagnostic_curriculum",
+      "live_execution": {
+        "duration": 25.4,
+        "status_code": 200,
+        "success": true,
+        "diagnostic_id": "diag_cf05b62893e2",
+        "plan_id": "plan_ed14a715a0f0"
+      }
+    },
+    "personalized_learning_plan": {
+      "name": "Personalized Learning Plan",
+      "description": "Alias for diagnostic curriculum planning workflow.",
+      "agents": [
+        "Diagnostic Agent",
+        "Curriculum Agent"
+      ],
+      "requires_auth": false,
+      "handler_name": "handle_diagnostic_curriculum",
+      "live_execution": {
+        "duration": 31.93,
+        "status_code": 200,
+        "success": true,
+        "workflow_id": "wf_cd5ec0a45069"
+      }
+    },
+    "resource_search": {
+      "name": "Educational Resource Retrieval",
+      "description": "Curates verified NCERT curriculum resources, summaries, and references.",
+      "agents": [
+        "Resource Agent"
+      ],
+      "requires_auth": false,
+      "handler_name": "handle_resource_search",
+      "live_execution": {
+        "duration": 27.35,
+        "status_code": 200,
+        "success": true,
+        "sources_count": 3,
+        "is_verified": true
+      }
+    },
+    "quiz_generation": {
+      "name": "Diagnostic Practice Quiz Generation",
+      "description": "Generates tailored practice questions and tests with verified curriculum alignment.",
+      "agents": [
+        "Resource Agent",
+        "Assessment Agent"
+      ],
+      "requires_auth": false,
+      "handler_name": "handle_quiz_generation",
+      "live_execution": {
+        "duration": 41.29,
+        "status_code": 200,
+        "success": true,
+        "quiz_id": "quiz_90da4fd17b51",
+        "questions_count": 2
+      }
+    },
+    "assessment_evaluation": {
+      "name": "Assessment Answer Evaluation",
+      "description": "Grades student answers against rubric and provides targeted feedback.",
+      "agents": [
+        "Assessment Agent"
+      ],
+      "requires_auth": false,
+      "handler_name": "handle_assessment_evaluation",
+      "live_execution": {
+        "duration": 7.89,
+        "status_code": 200,
+        "success": true,
+        "attempt_id": "att_ee9dd63980db",
+        "total_score": 1.0,
+        "max_marks": 3.0
+      }
+    },
+    "progress_analysis": {
+      "name": "Student Learning Progress Analysis",
+      "description": "Analyzes factual assessment metrics, trends, and mastery from database history.",
+      "agents": [
+        "Progress Agent"
+      ],
+      "requires_auth": true,
+      "handler_name": "handle_progress_analysis",
+      "live_execution": {
+        "duration": 11.98,
+        "status_code": 200,
+        "success": true,
+        "total_assessments": 1
+      }
+    },
+    "personalized_mentoring": {
+      "name": "Personalized Student Mentoring",
+      "description": "Provides actionable study coaching, habit advice, and milestones.",
+      "agents": [
+        "Progress Agent",
+        "Mentor Agent"
+      ],
+      "requires_auth": true,
+      "handler_name": "handle_personalized_mentoring",
+      "live_execution": {
+        "duration": 17.66,
+        "status_code": 200,
+        "success": true
+      }
+    },
+    "progress_and_mentoring": {
+      "name": "Comprehensive Progress & Mentoring",
+      "description": "Executes sequential Progress and Mentor multi-agent workflow.",
+      "agents": [
+        "Progress Agent",
+        "Mentor Agent"
+      ],
+      "requires_auth": true,
+      "handler_name": "handle_personalized_mentoring",
+      "live_execution": {
+        "duration": 18.22,
+        "status_code": 200,
+        "success": true
+      }
+    }
+  },
+  "orchestrator_tests": {
+    "Test A - Tutoring": {
+      "request": "Explain chemical displacement reactions with examples.",
+      "status_code": 200,
+      "detected_intent": "The student is seeking an explanation of chemical displacement reactions with examples.",
+      "selected_workflow": "teacher_answer",
+      "participating_agents": null,
+      "clarification_required": false,
+      "clarification_question": null,
+      "workflow_id": "wf_d17e7ad06493",
+      "duration": 21.81,
+      "passed": true
+    },
+    "Test B - Diagnostic & Learning Plan": {
+      "request": "Assess my understanding of Class 10 Science and prepare a personalized learning plan.",
+      "status_code": 200,
+      "detected_intent": "The student wants to assess their understanding of Class 10 Science and prepare a personalized learning plan.",
+      "selected_workflow": "diagnostic_curriculum",
+      "participating_agents": null,
+      "clarification_required": false,
+      "clarification_question": null,
+      "workflow_id": "wf_4c76b93ed01d",
+      "duration": 45.53,
+      "passed": true
+    },
+    "Test C - Resources": {
+      "request": "Find useful learning resources for chemical reactions.",
+      "status_code": 200,
+      "detected_intent": "The student is looking for useful learning resources for chemical reactions in Class 10 Science.",
+      "selected_workflow": "resource_search",
+      "participating_agents": null,
+      "clarification_required": false,
+      "clarification_question": null,
+      "workflow_id": "wf_cfbc52fcef21",
+      "duration": 30.88,
+      "passed": true
+    },
+    "Test D - Quiz Generation": {
+      "request": "Generate a practice quiz on chemical reactions.",
+      "status_code": 200,
+      "detected_intent": "The student wants to generate a practice quiz on chemical reactions for Class 10 Science.",
+      "selected_workflow": "quiz_generation",
+      "participating_agents": null,
+      "clarification_required": false,
+      "clarification_question": null,
+      "workflow_id": "wf_05e7caa360de",
+      "duration": 55.31,
+      "passed": true
+    },
+    "Test E - Assessment": {
+      "request": "Evaluate my answers and explain my mistakes.",
+      "status_code": 200,
+      "detected_intent": "The student wants their answers evaluated and explained their mistakes.",
+      "selected_workflow": "assessment_evaluation",
+      "participating_agents": null,
+      "clarification_required": false,
+      "clarification_question": null,
+      "workflow_id": "wf_ddf213167ebe",
+      "duration": 17.75,
+      "passed": true
+    },
+    "Test F - Progress": {
+      "request": "Analyze my learning progress.",
+      "status_code": 200,
+      "detected_intent": "The student wants to analyze their learning progress in Science at the Class 10 level.",
+      "selected_workflow": "progress_analysis",
+      "participating_agents": null,
+      "clarification_required": false,
+      "clarification_question": null,
+      "workflow_id": "wf_01cec0964574",
+      "duration": 14.3,
+      "passed": true
+    },
+    "Test G - Mentoring": {
+      "request": "Review my progress and recommend what I should study next.",
+      "status_code": 200,
+      "detected_intent": "The student wants to review their progress and receive recommendations for what to study next in Class 10 Science.",
+      "selected_workflow": "progress_and_mentoring",
+      "participating_agents": null,
+      "clarification_required": false,
+      "clarification_question": null,
+      "workflow_id": "wf_ca1814ae04dd",
+      "duration": 23.18,
+      "passed": true
+    },
+    "Test H - Ambiguous Request": {
+      "request": "Help me.",
+      "status_code": 200,
+      "detected_intent": "The student is seeking help with a specific Science topic at the Class 10 level.",
+      "selected_workflow": "diagnostic_curriculum",
+      "participating_agents": null,
+      "clarification_required": true,
+      "clarification_question": "Could you please specify which Class 10 topic or concept you would like help with?",
+      "workflow_id": "wf_2177c1cfcd9a",
+      "duration": 3.95,
+      "passed": true
+    },
+    "Test I - Invalid Input": {
+      "request": "   ",
+      "status_code": 422,
+      "duration": 0.02,
+      "passed": true,
+      "actual_response": {
+        "detail": [
+          {
+            "type": "value_error",
+            "loc": [
+              "body",
+              "request"
+            ],
+            "msg": "Value error, Request must contain at least 3 non-whitespace characters.",
+            "input": "   ",
+            "ctx": {
+              "error": {}
+            }
+          }
+        ]
+      }
+    },
+    "Test J - Unsupported Intent": {
+      "request": "Can you book a flight ticket to Paris for me?",
+      "status_code": 200,
+      "detected_intent": "The student is requesting assistance with a non-educational task (booking a flight ticket).",
+      "selected_workflow": "teacher_answer",
+      "participating_agents": null,
+      "clarification_required": true,
+      "clarification_question": "What specific Class 10 Science or educational topic do you need assistance with?",
+      "workflow_id": "wf_c7183563b4c5",
+      "duration": 3.83,
+      "passed": true
+    }
+  },
+  "auth_tests": {
+    "1_registration": {
+      "status_code": 201,
+      "success": true,
+      "duration": 0.086,
+      "student_id": "stu_b5cd295cb21d"
+    },
+    "2_login": {
+      "status_code": 200,
+      "success": true,
+      "duration": 0.092
+    },
+    "3_bearer_validation": {
+      "status_code": 200,
+      "success": true
+    },
+    "4_dashboard_access": {
+      "status_code": 200,
+      "success": true,
+      "student_id_in_dash": null
+    },
+    "5_invalid_token_rejection": {
+      "status_code": 401,
+      "success": true
+    },
+    "6_expired_token_rejection": {
+      "status_code": 401,
+      "success": true
+    },
+    "7_logout_and_revocation": {
+      "logout_status": 200,
+      "post_logout_status": 401,
+      "success": true
+    },
+    "8_session_restoration": {
+      "status_code": 200,
+      "success": true
+    },
+    "9_student_isolation": {
+      "status_code": 403,
+      "success": true,
+      "message": "Access denied: You cannot view another student's assessment history."
+    },
+    "10_protected_workflow_rejection": {
+      "status_code": 401,
+      "success": true,
+      "detail": "Authentication required to access workflow 'progress_analysis'. Please log in."
+    }
+  },
+  "frontend_routes": {
+    "/": {
+      "status_code": 200,
+      "contains_keyword": true,
+      "html_bytes": 48116,
+      "duration": 0.074,
+      "passed": true
+    },
+    "/teacher": {
+      "status_code": 200,
+      "contains_keyword": true,
+      "html_bytes": 35120,
+      "duration": 0.094,
+      "passed": true
+    },
+    "/learning-plans": {
+      "status_code": 200,
+      "contains_keyword": true,
+      "html_bytes": 31614,
+      "duration": 0.094,
+      "passed": true
+    },
+    "/diagnostic": {
+      "status_code": 200,
+      "contains_keyword": true,
+      "html_bytes": 37278,
+      "duration": 0.094,
+      "passed": true
+    },
+    "/resources": {
+      "status_code": 200,
+      "contains_keyword": true,
+      "html_bytes": 38153,
+      "duration": 0.12,
+      "passed": true
+    },
+    "/practice": {
+      "status_code": 200,
+      "contains_keyword": true,
+      "html_bytes": 34571,
+      "duration": 0.112,
+      "passed": true
+    },
+    "/progress": {
+      "status_code": 200,
+      "contains_keyword": true,
+      "html_bytes": 29573,
+      "duration": 0.061,
+      "passed": true
+    },
+    "/mentor": {
+      "status_code": 200,
+      "contains_keyword": true,
+      "html_bytes": 29761,
+      "duration": 0.077,
+      "passed": true
+    },
+    "/agent-arena": {
+      "status_code": 200,
+      "contains_keyword": true,
+      "html_bytes": 49417,
+      "duration": 0.085,
+      "passed": true
+    }
+  },
+  "performance_timings": {
+    "teacher_answer": 18.07,
+    "diagnostic_curriculum": 25.4,
+    "personalized_learning_plan": 31.93,
+    "resource_search": 27.35,
+    "quiz_generation": 41.29,
+    "assessment_evaluation": 7.89,
+    "progress_analysis": 11.98,
+    "personalized_mentoring": 17.66,
+    "progress_and_mentoring": 18.22,
+    "orchestrator_Test A - Tutoring": 21.81,
+    "orchestrator_Test B - Diagnostic & Learning Plan": 45.53,
+    "orchestrator_Test C - Resources": 30.88,
+    "orchestrator_Test D - Quiz Generation": 55.31,
+    "orchestrator_Test E - Assessment": 17.75,
+    "orchestrator_Test F - Progress": 14.3,
+    "orchestrator_Test G - Mentoring": 23.18,
+    "orchestrator_Test H - Ambiguous Request": 3.95,
+    "orchestrator_Test J - Unsupported Intent": 3.83
+  },
+  "database_integrity": {
+    "row_count_differences": {
+      "students": 4,
+      "diagnostic_records": 3,
+      "curriculum_plans": 3,
+      "quizzes": 2,
+      "assessment_attempts": 2,
+      "student_sessions": 5,
+      "learning_sessions": 9,
+      "student_topic_mastery": 1
+    },
+    "no_tables_dropped": true,
+    "zero_data_loss": true
+  },
+  "errors": [],
+  "workflow_registry_count": 9,
+  "final_db_counts": {
+    "students": 370,
+    "diagnostic_records": 71,
+    "curriculum_plans": 69,
+    "quizzes": 102,
+    "assessment_attempts": 101,
+    "student_sessions": 374,
+    "learning_sessions": 169,
+    "student_topic_mastery": 89
+  }
+}

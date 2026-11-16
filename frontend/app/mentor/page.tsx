@@ -163,7 +163,7 @@ export default function MentorPage() {
     try {
       const data = await apiClient.getMentorRecommendations(token, {
         signal: abortControllerRef.current.signal,
-        timeoutMs: 75000,
+        timeoutMs: 120000,
       });
 
       setMentorData(data);
@@ -179,7 +179,7 @@ export default function MentorPage() {
           err.message.includes("timed out"));
 
       const msg = isAbort
-        ? "Mentor analysis was stopped or timed out after 75s. Local Ollama may be busy processing another task."
+        ? "Mentor analysis was stopped or timed out after 120s. Local Ollama may be busy processing another task."
         : err instanceof Error
         ? err.message
         : "Failed to load mentor recommendations.";
@@ -316,8 +316,8 @@ export default function MentorPage() {
         </Card>
       )}
 
-      {/* STATE 3: ERROR */}
-      {errorMessage && !isLoading && (
+      {/* STATE 3: ERROR (when no recommendations exist) */}
+      {errorMessage && !isLoading && !mentorData && (
         <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
           <div className="flex items-start gap-2.5">
             <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
@@ -334,6 +334,25 @@ export default function MentorPage() {
             className="shrink-0 border-red-300 text-red-700 hover:bg-red-100"
           >
             Retry Analysis
+          </Button>
+        </div>
+      )}
+
+      {/* STATE 3B: REFRESH NOTICE (when cached recommendations already exist) */}
+      {errorMessage && !isLoading && mentorData && (
+        <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+            <span>Showing previous cached recommendations. Live refresh notice: {errorMessage}</span>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => fetchMentorRecommendations(true)}
+            leftIcon={<RotateCcw className="w-3.5 h-3.5" />}
+            className="shrink-0 text-amber-800 hover:bg-amber-100"
+          >
+            Retry
           </Button>
         </div>
       )}

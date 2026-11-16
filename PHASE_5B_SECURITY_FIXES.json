@@ -1,0 +1,318 @@
+{
+  "project": "Gyaan AI",
+  "phase": "Phase 5B - Security Implementation",
+  "audit_reference": "PHASE_5A_SECURITY_AUDIT.json",
+  "status": "COMPLETED",
+  "implementation_timestamp": "2026-11-13T15:30:00+00:00",
+  "environment": {
+    "active_workspace": "D:/Gyaan AI",
+    "protected_legacy_project": "D:/GYAN Ai",
+    "protected_legacy_project_status": "UNTOUCHED (Last Modified: 10/28/2026 09:28:28 AM)",
+    "active_database": "D:/Gyaan AI/data/gyaan_ai.db",
+    "active_database_status": "PRESERVED_IMMUTABLE (integrity ok, 793 students, 797 sessions)",
+    "backup_database": "D:/Gyaan AI/data/gyaan_ai.db.bak_phase4",
+    "backup_database_status": "PRESERVED (4,169,728 bytes, 781 students, 782 sessions)"
+  },
+  "summary": {
+    "total_findings": 14,
+    "remediated_findings": 13,
+    "mitigated_limitations": 1,
+    "remaining_unresolved_vulnerabilities": 0,
+    "total_tests_collected": 152,
+    "total_tests_passed": 152,
+    "total_tests_failed": 0,
+    "total_tests_skipped": 0,
+    "pass_rate_percent": 100.0,
+    "frontend_build_status": "SUCCESS (16/16 pages compiled)"
+  },
+  "fixes": [
+    {
+      "finding_id": "SEC-FIND-01",
+      "title": "Unauthenticated Access and IDOR on Student Assessment History & Learning Journeys",
+      "severity": "HIGH",
+      "remediation_status": "REMEDIATED",
+      "affected_endpoints": [
+        "GET /api/v1/assessments/history/{student_id}",
+        "GET /api/v1/learning-journey/student/{student_id}",
+        "GET /api/v1/learning-journey/{journey_id}",
+        "POST /api/v1/learning-journey/{journey_id}/interact"
+      ],
+      "files_modified": [
+        "backend/app/main.py",
+        "tests/test_api_unit.py"
+      ],
+      "implementation_details": "Replaced get_optional_current_student with mandatory Depends(get_current_student) and enforced strict caller ownership: current_student['id'] == student_id or admin/teacher role. Unauthenticated requests return HTTP 401; cross-student IDOR attempts return HTTP 403.",
+      "test_verification": [
+        "tests/test_phase5b_security_verification.py::test_sec_find_01_assessment_history_unauthenticated_blocked",
+        "tests/test_phase5b_security_verification.py::test_sec_find_01_assessment_history_idor_blocked",
+        "tests/test_phase5b_security_verification.py::test_sec_find_01_assessment_history_authorized_owner_success",
+        "tests/test_phase5b_security_verification.py::test_sec_find_01_learning_journey_unauthenticated_blocked",
+        "tests/test_phase5b_security_verification.py::test_sec_find_01_learning_journey_idor_blocked",
+        "tests/test_api_unit.py::test_assessment_history_endpoint"
+      ]
+    },
+    {
+      "finding_id": "SEC-FIND-02",
+      "title": "Unauthenticated HTTP Execution of MCP Tools and Educational Research",
+      "severity": "HIGH",
+      "remediation_status": "REMEDIATED",
+      "affected_endpoints": [
+        "POST /api/v1/mcp/execute",
+        "POST /api/v1/mcp/research"
+      ],
+      "files_modified": [
+        "backend/mcp_integration/service.py"
+      ],
+      "implementation_details": "Added verify_mcp_caller_auth() validating either active student session (Bearer token / HttpOnly cookie) or internal service secret (X-Internal-Token / X-A2A-Internal-Token). Python in-process calls are authorized when request is None.",
+      "test_verification": [
+        "tests/test_phase5b_security_verification.py::test_sec_find_02_mcp_unauthenticated_blocked",
+        "tests/test_phase5b_security_verification.py::test_sec_find_02_mcp_internal_token_success",
+        "tests/test_phase5b_security_verification.py::test_sec_find_02_mcp_authenticated_student_success",
+        "tests/test_mcp_integration.py::test_17_orchestrator_routing"
+      ]
+    },
+    {
+      "finding_id": "SEC-FIND-03",
+      "title": "Unauthenticated Execution of Google ADK Learning Intelligence Analysis",
+      "severity": "HIGH",
+      "remediation_status": "REMEDIATED",
+      "affected_endpoints": [
+        "POST /api/v1/adk/learning-analysis"
+      ],
+      "files_modified": [
+        "backend/adk/api.py"
+      ],
+      "implementation_details": "Implemented verify_adk_caller_auth() enforcing that caller session matches request.student_id or possesses internal service credentials. Verification executes within endpoint body following Pydantic model validation, preserving HTTP 422 contracts for malformed bodies while enforcing 401/403.",
+      "test_verification": [
+        "tests/test_phase5b_security_verification.py::test_sec_find_03_adk_unauthenticated_blocked",
+        "tests/test_phase5b_security_verification.py::test_sec_find_03_adk_idor_blocked",
+        "tests/test_phase5b_security_verification.py::test_sec_find_03_adk_validation_error_precedes_auth",
+        "tests/test_adk_foundation.py::test_08_fastapi_adk_validation_error"
+      ]
+    },
+    {
+      "finding_id": "SEC-FIND-04",
+      "title": "Unauthenticated Exposure of System Observability, Execution Traces, and Error Stacks",
+      "severity": "HIGH",
+      "remediation_status": "REMEDIATED",
+      "affected_endpoints": [
+        "GET /api/v1/observability/status",
+        "GET /api/v1/observability/metrics",
+        "GET /api/v1/observability/traces",
+        "GET /api/v1/observability/traces/{trace_id}",
+        "GET /api/v1/observability/agents",
+        "GET /api/v1/observability/errors"
+      ],
+      "files_modified": [
+        "backend/observability/service.py",
+        "tests/test_observability.py"
+      ],
+      "implementation_details": "Added verify_observability_access() gating telemetry behind valid authentication or internal service secrets. Kept /api/v1/observability/health public for infrastructure probes.",
+      "test_verification": [
+        "tests/test_phase5b_security_verification.py::test_sec_find_04_observability_unauthenticated_blocked",
+        "tests/test_phase5b_security_verification.py::test_sec_find_04_observability_health_public",
+        "tests/test_phase5b_security_verification.py::test_sec_find_04_observability_internal_token_success",
+        "tests/test_observability.py::test_19_api_health_and_status_endpoints"
+      ]
+    },
+    {
+      "finding_id": "SEC-FIND-05",
+      "title": "Complete Absence of Toxicity, Profanity, and Abusive Content Moderation",
+      "severity": "HIGH",
+      "remediation_status": "REMEDIATED",
+      "affected_endpoints": [
+        "POST /api/v1/ask",
+        "POST /api/v1/teacher/chat",
+        "POST /api/v1/orchestrate",
+        "POST /api/v1/assessments/submit",
+        "POST /api/v1/mcp/research"
+      ],
+      "files_modified": [
+        "backend/services/content_moderator.py",
+        "backend/app/main.py",
+        "backend/mcp_integration/service.py"
+      ],
+      "implementation_details": "Created backend/services/content_moderator.py with categorical pattern recognition (abuse, threats, hate speech, explicit content) combined with a CBSE Class 10 Science whitelist ('toxic metabolic waste', 'corrosive acid', 'sexual reproduction in flowering plants', 'killing of microorganisms'). Attached pre-execution hooks to all student input vectors.",
+      "test_verification": [
+        "tests/test_phase5b_security_verification.py::test_sec_find_05_content_moderation_toxic_language_blocked",
+        "tests/test_phase5b_security_verification.py::test_sec_find_05_content_moderation_cbse_whitelist_allowed",
+        "tests/test_phase5b_security_verification.py::test_sec_find_05_ask_endpoint_pedagogical_refusal"
+      ]
+    },
+    {
+      "finding_id": "SEC-FIND-06",
+      "title": "Hardcoded A2A Protocol Fallback Secret and Non-Constant-Time Token Comparison",
+      "severity": "MEDIUM",
+      "remediation_status": "REMEDIATED",
+      "affected_endpoints": [
+        "POST /api/v1/a2a",
+        "POST /api/v1/a2a/tasks/learning-analysis"
+      ],
+      "files_modified": [
+        "backend/a2a_protocol/security.py",
+        "backend/a2a_protocol/client.py"
+      ],
+      "implementation_details": "Removed DEFAULT_INTERNAL_SECRET hardcoded fallback. Made get_internal_a2a_token() fail closed if A2A_INTERNAL_SECRET is missing. Replaced equality comparisons with hmac.compare_digest() for constant-time cryptographic verification.",
+      "test_verification": [
+        "tests/test_phase5b_security_verification.py::test_sec_find_06_a2a_fail_closed_and_constant_time",
+        "tests/test_a2a_interoperability.py::test_09_authentication_enforcement"
+      ]
+    },
+    {
+      "finding_id": "SEC-FIND-07",
+      "title": "A2A Student Session Isolation Format Bypass",
+      "severity": "MEDIUM",
+      "remediation_status": "REMEDIATED",
+      "affected_endpoints": [
+        "POST /api/v1/a2a/tasks/learning-analysis",
+        "POST /api/v1/a2a"
+      ],
+      "files_modified": [
+        "backend/a2a_protocol/security.py"
+      ],
+      "implementation_details": "Enhanced validate_student_isolation() to query the SQLite student_sessions table for non-colon session identifiers, preventing cross-student session hijacking regardless of string format.",
+      "test_verification": [
+        "tests/test_phase5b_security_verification.py::test_sec_find_07_a2a_session_isolation_without_colon",
+        "tests/test_a2a_interoperability.py::test_10_student_session_isolation"
+      ]
+    },
+    {
+      "finding_id": "SEC-FIND-08",
+      "title": "Missing Prompt Injection Guardrails on Student-Facing Endpoints & Brittle Regexes",
+      "severity": "MEDIUM",
+      "remediation_status": "REMEDIATED",
+      "affected_endpoints": [
+        "POST /api/v1/ask",
+        "POST /api/v1/teacher/chat",
+        "POST /api/v1/orchestrate",
+        "POST /api/v1/mcp/research"
+      ],
+      "files_modified": [
+        "backend/services/prompt_guard.py",
+        "backend/app/main.py",
+        "backend/agents/teacher.py",
+        "backend/agents/mentor.py",
+        "backend/agents/orchestrator.py"
+      ],
+      "implementation_details": "Implemented backend/services/prompt_guard.py detecting instruction overrides, role-assumption jailbreaks, system prompt extraction, and delimiter attacks. Reinforced system prompts across canonical agents with explicit anti-jailbreak directives.",
+      "test_verification": [
+        "tests/test_phase5b_security_verification.py::test_sec_find_08_prompt_injection_patterns_detected",
+        "tests/test_phase5b_security_verification.py::test_sec_find_08_ask_endpoint_blocks_prompt_injection"
+      ]
+    },
+    {
+      "finding_id": "SEC-FIND-09",
+      "title": "Missing Security Headers Middleware and Publicly Exposed API Documentation",
+      "severity": "MEDIUM",
+      "remediation_status": "REMEDIATED",
+      "affected_endpoints": [
+        "All HTTP responses",
+        "/docs",
+        "/redoc",
+        "/openapi.json"
+      ],
+      "files_modified": [
+        "backend/app/main.py"
+      ],
+      "implementation_details": "Added SecurityHeadersMiddleware injecting X-Content-Type-Options: nosniff, X-Frame-Options: DENY, X-XSS-Protection: 1; mode=block, Referrer-Policy, HSTS, and Content-Security-Policy. Interactive API docs are disabled when ENVIRONMENT == 'production'.",
+      "test_verification": [
+        "tests/test_phase5b_security_verification.py::test_sec_find_09_security_headers_present"
+      ]
+    },
+    {
+      "finding_id": "SEC-FIND-10",
+      "title": "Missing Rate Limiting on Authentication and LLM Inference Endpoints",
+      "severity": "MEDIUM",
+      "remediation_status": "REMEDIATED",
+      "affected_endpoints": [
+        "POST /api/v1/auth/login",
+        "POST /api/v1/auth/register",
+        "POST /api/v1/ask",
+        "POST /api/v1/orchestrate"
+      ],
+      "files_modified": [
+        "backend/app/main.py"
+      ],
+      "implementation_details": "Built thread-safe InMemoryRateLimiter sliding-window limiter. Applied enforce_rate_limit(5/min) on auth routes and enforce_rate_limit(30/min) on LLM routes, returning HTTP 429 with Retry-After headers.",
+      "test_verification": [
+        "tests/test_phase5b_security_verification.py::test_sec_find_10_rate_limiting_enforcement"
+      ]
+    },
+    {
+      "finding_id": "SEC-FIND-11",
+      "title": "Frontend Storage of Authentication Tokens in Browser localStorage",
+      "severity": "MEDIUM",
+      "remediation_status": "REMEDIATED",
+      "affected_endpoints": [
+        "POST /api/v1/auth/login",
+        "POST /api/v1/auth/register",
+        "POST /api/v1/auth/logout",
+        "Frontend Client API"
+      ],
+      "files_modified": [
+        "backend/app/main.py",
+        "frontend/lib/api.ts",
+        "frontend/components/auth/AuthContext.tsx"
+      ],
+      "implementation_details": "Enhanced get_current_student() to accept HttpOnly gyaan_auth_token cookie in addition to Bearer tokens. Login/register issue HttpOnly cookies, logout clears them. Next.js apiFetch configured with credentials: 'include'.",
+      "test_verification": [
+        "tests/test_phase5b_security_verification.py::test_sec_find_11_httponly_cookie_issued_on_login",
+        "frontend/ next build (16/16 routes compiled)"
+      ]
+    },
+    {
+      "finding_id": "SEC-FIND-12",
+      "title": "Google ADK In-Memory Session Storage Lifecycle and Scale Limitations",
+      "severity": "LOW",
+      "remediation_status": "MITIGATED",
+      "affected_endpoints": [
+        "POST /api/v1/adk/learning-analysis"
+      ],
+      "files_modified": [],
+      "implementation_details": "Documented as an accepted architectural limitation for single-process local deployment in PHASE_5B_REMAINING_RISKS.md, with clear Redis/SQLite migration roadmap for clustered production.",
+      "test_verification": [
+        "tests/test_adk_foundation.py::test_05_adk_session_isolation"
+      ]
+    },
+    {
+      "finding_id": "SEC-FIND-13",
+      "title": "Residual Legacy JWT Configuration in .env.example",
+      "severity": "LOW",
+      "remediation_status": "REMEDIATED",
+      "affected_endpoints": [
+        ".env.example"
+      ],
+      "files_modified": [
+        ".env.example"
+      ],
+      "implementation_details": "Purged legacy JWT_SECRET_KEY, JWT_ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES from .env.example; documented opaque session tokens, A2A_INTERNAL_SECRET, and TELEMETRY_HMAC_SECRET.",
+      "test_verification": [
+        "tests/test_phase5b_security_verification.py::test_sec_find_13_env_example_clean_of_legacy_jwt"
+      ]
+    },
+    {
+      "finding_id": "SEC-FIND-14",
+      "title": "Test Suite Writes Directly to Development SQLite Database Without Fixture Isolation",
+      "severity": "LOW",
+      "remediation_status": "REMEDIATED",
+      "affected_endpoints": [
+        "Testing Infrastructure"
+      ],
+      "files_modified": [
+        "backend/db/database.py",
+        "tests/conftest.py",
+        "tests/test_database_isolation.py",
+        "tests/test_mcp_integration.py",
+        "tests/test_a2a_interoperability.py",
+        "tests/test_observability.py"
+      ],
+      "implementation_details": "Implemented Priority Zero test isolation: dynamic database path selection, fail-safe guard preventing test access to data/gyaan_ai.db, and automatic temporary database fixture in tests/conftest.py.",
+      "test_verification": [
+        "tests/test_database_isolation.py::test_db_isolation_path_is_temporary",
+        "tests/test_database_isolation.py::test_db_isolation_write_does_not_modify_active_db",
+        "tests/test_database_isolation.py::test_fail_safe_guard_triggers_if_directed_at_active_db",
+        "tests/test_phase5b_security_verification.py::test_sec_find_14_test_database_isolated"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,758 @@
+[
+  {
+    "test_file": "tests/test_auth_and_persistence.py",
+    "exact_command": ".venv\\Scripts\\python -m pytest tests/test_auth_and_persistence.py -v",
+    "category": "Authentication & Database Access",
+    "classification": "Unit / Mocked Integration",
+    "is_mocked": true,
+    "exit_code": 0,
+    "runtime_seconds": 12.933,
+    "total_tests": 11,
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0,
+    "tests": [
+      {
+        "test_id": "tests/test_auth_and_persistence.py::test_student_registration_success",
+        "test_name": "test_student_registration_success",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_auth_and_persistence.py::test_registration_rejects_duplicate_email",
+        "test_name": "test_registration_rejects_duplicate_email",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_auth_and_persistence.py::test_registration_rejects_invalid_inputs",
+        "test_name": "test_registration_rejects_invalid_inputs",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_auth_and_persistence.py::test_login_with_valid_credentials",
+        "test_name": "test_login_with_valid_credentials",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_auth_and_persistence.py::test_login_with_invalid_credentials",
+        "test_name": "test_login_with_invalid_credentials",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_auth_and_persistence.py::test_logout_and_revocation",
+        "test_name": "test_logout_and_revocation",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_auth_and_persistence.py::test_expired_token_rejected",
+        "test_name": "test_expired_token_rejected",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_auth_and_persistence.py::test_full_persistence_lifecycle_across_restart",
+        "test_name": "test_full_persistence_lifecycle_across_restart",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_auth_and_persistence.py::test_multi_student_data_isolation",
+        "test_name": "test_multi_student_data_isolation",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_auth_and_persistence.py::test_profile_update_endpoint",
+        "test_name": "test_profile_update_endpoint",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_auth_and_persistence.py::test_empty_learning_history_returns_valid_empty_dashboard",
+        "test_name": "test_empty_learning_history_returns_valid_empty_dashboard",
+        "status": "PASSED"
+      }
+    ],
+    "summary_line": [
+      "============================= 11 passed in 4.81s =============================="
+    ]
+  },
+  {
+    "test_file": "tests/test_database.py",
+    "exact_command": ".venv\\Scripts\\python -m pytest tests/test_database.py -v",
+    "category": "Database Security & Schema Access",
+    "classification": "Database access tests",
+    "is_mocked": true,
+    "exit_code": 0,
+    "runtime_seconds": 5.959,
+    "total_tests": 5,
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "tests": [
+      {
+        "test_id": "tests/test_database.py::test_init_db_creates_tables",
+        "test_name": "test_init_db_creates_tables",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_database.py::test_student_crud",
+        "test_name": "test_student_crud",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_database.py::test_diagnostic_record_persistence",
+        "test_name": "test_diagnostic_record_persistence",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_database.py::test_curriculum_plan_foreign_key_relationship",
+        "test_name": "test_curriculum_plan_foreign_key_relationship",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_database.py::test_quiz_and_assessment_attempt_persistence",
+        "test_name": "test_quiz_and_assessment_attempt_persistence",
+        "status": "PASSED"
+      }
+    ],
+    "summary_line": [
+      "============================== 5 passed in 0.60s =============================="
+    ]
+  },
+  {
+    "test_file": "tests/test_api_unit.py",
+    "exact_command": ".venv\\Scripts\\python -m pytest tests/test_api_unit.py -v",
+    "category": "API Unit & Request Validation",
+    "classification": "API unit tests",
+    "is_mocked": true,
+    "exit_code": 0,
+    "runtime_seconds": 16.94,
+    "total_tests": 26,
+    "passed": 26,
+    "failed": 0,
+    "skipped": 0,
+    "tests": [
+      {
+        "test_id": "tests/test_api_unit.py::test_health_endpoint_returns_structured_schema",
+        "test_name": "test_health_endpoint_returns_structured_schema",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_health_endpoint_reports_degraded_when_ollama_unreachable",
+        "test_name": "test_health_endpoint_reports_degraded_when_ollama_unreachable",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_ask_rejects_empty_question",
+        "test_name": "test_ask_rejects_empty_question",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_ask_rejects_too_short_question",
+        "test_name": "test_ask_rejects_too_short_question",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_ask_returns_documented_schema_with_mocked_crew",
+        "test_name": "test_ask_returns_documented_schema_with_mocked_crew",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_ask_handles_crewai_failure_safely",
+        "test_name": "test_ask_handles_crewai_failure_safely",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_learning_plan_rejects_empty_assessment_items",
+        "test_name": "test_learning_plan_rejects_empty_assessment_items",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_learning_plan_rejects_blank_question_or_answer",
+        "test_name": "test_learning_plan_rejects_blank_question_or_answer",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_learning_plan_returns_documented_schema_with_mock",
+        "test_name": "test_learning_plan_returns_documented_schema_with_mock",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_learning_plan_handles_workflow_failure",
+        "test_name": "test_learning_plan_handles_workflow_failure",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_resources_endpoint_validation",
+        "test_name": "test_resources_endpoint_validation",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_resources_endpoint_success_with_mock",
+        "test_name": "test_resources_endpoint_success_with_mock",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_resources_endpoint_handles_failure",
+        "test_name": "test_resources_endpoint_handles_failure",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_quizzes_endpoint_validation",
+        "test_name": "test_quizzes_endpoint_validation",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_quizzes_endpoint_strips_answer_keys_from_student_response",
+        "test_name": "test_quizzes_endpoint_strips_answer_keys_from_student_response",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_quizzes_endpoint_handles_generation_failure",
+        "test_name": "test_quizzes_endpoint_handles_generation_failure",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_assessments_submit_rejects_missing_quiz",
+        "test_name": "test_assessments_submit_rejects_missing_quiz",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_assessments_submit_evaluates_and_persists_attempt",
+        "test_name": "test_assessments_submit_evaluates_and_persists_attempt",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_assessments_submit_handles_evaluation_error",
+        "test_name": "test_assessments_submit_handles_evaluation_error",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_assessment_history_endpoint",
+        "test_name": "test_assessment_history_endpoint",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_orchestrate_endpoint_validation",
+        "test_name": "test_orchestrate_endpoint_validation",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_orchestrate_endpoint_success_with_mock",
+        "test_name": "test_orchestrate_endpoint_success_with_mock",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_orchestrate_endpoint_clarification_response",
+        "test_name": "test_orchestrate_endpoint_clarification_response",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_orchestrate_endpoint_handles_pipeline_failure",
+        "test_name": "test_orchestrate_endpoint_handles_pipeline_failure",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_cors_preflight_allowed_origins",
+        "test_name": "test_cors_preflight_allowed_origins",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_api_unit.py::test_cors_preflight_disallowed_origin",
+        "test_name": "test_cors_preflight_disallowed_origin",
+        "status": "PASSED"
+      }
+    ],
+    "summary_line": [
+      "============================= 26 passed in 10.80s ============================="
+    ]
+  },
+  {
+    "test_file": "tests/test_mcp_integration.py",
+    "exact_command": ".venv\\Scripts\\python -m pytest tests/test_mcp_integration.py -v",
+    "category": "MCP Security & Tool Access",
+    "classification": "MCP security tests",
+    "is_mocked": true,
+    "exit_code": 1,
+    "runtime_seconds": 83.169,
+    "total_tests": 24,
+    "passed": 22,
+    "failed": 1,
+    "skipped": 0,
+    "tests": [
+      {
+        "test_id": "tests/test_mcp_integration.py::test_01_mcp_sdk_installation_and_version",
+        "test_name": "test_01_mcp_sdk_installation_and_version",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_mcp_integration.py::test_02_mcp_server_initialization",
+        "test_name": "test_02_mcp_server_initialization",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_mcp_integration.py::test_03_mcp_client_connection",
+        "test_name": "test_03_mcp_client_connection",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_mcp_integration.py::test_04_tool_discovery",
+        "test_name": "test_04_tool_discovery",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_mcp_integration.py::test_05_web_search_tool_invocation",
+        "test_name": "test_05_web_search_tool_invocation",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_mcp_integration.py::test_06_filesystem_tool_invocation",
+        "test_name": "test_06_filesystem_tool_invocation",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_mcp_integration.py::test_07_tool_input_validation",
+        "test_name": "test_07_tool_input_validation",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_mcp_integration.py::test_08_tool_output_validation_and_contracts",
+        "test_name": "test_08_tool_output_validation_and_contracts",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_mcp_integration.py::test_09_filesystem_permission_restrictions",
+        "test_name": "test_09_filesystem_permission_restrictions",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_mcp_integration.py::test_10_directory_traversal_prevention",
+        "test_name": "test_10_directory_traversal_prevention",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_mcp_integration.py::test_11_prompt_injection_handling",
+        "test_name": "test_11_prompt_injection_handling",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_mcp_integration.py::test_12_authentication_and_credential_protection",
+        "test_name": "test_12_authentication_and_credential_protection",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_mcp_integration.py::test_13_timeout_handling",
+        "test_name": "test_13_timeout_handling",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_mcp_integration.py::test_14_tool_failure_handling",
+        "test_name": "test_14_tool_failure_handling",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_mcp_integration.py::test_15_resource_agent_integration",
+        "test_name": "test_15_resource_agent_integration",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_mcp_integration.py::test_16_teacher_agent_integration",
+        "test_name": "test_16_teacher_agent_integration",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_mcp_integration.py::test_17_orchestrator_routing",
+        "test_name": "test_17_orchestrator_routing",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_mcp_integration.py::test_18_existing_eight_agents_regression",
+        "test_name": "test_18_existing_eight_agents_regression",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_mcp_integration.py::test_19_existing_adk_regression",
+        "test_name": "test_19_existing_adk_regression",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_mcp_integration.py::test_20_existing_a2a_regression",
+        "test_name": "test_20_existing_a2a_regression",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_mcp_integration.py::test_21_existing_chapter_journey_regression",
+        "test_name": "test_21_existing_chapter_journey_regression",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_mcp_integration.py::test_22_database_preservation",
+        "test_name": "test_22_database_preservation",
+        "status": "FAILED"
+      },
+      {
+        "test_id": "tests/test_mcp_integration.py::test_23_frontend_production_build",
+        "test_name": "test_23_frontend_production_build",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "FAILED",
+        "test_name": "FAILED",
+        "status": "UNKNOWN"
+      }
+    ],
+    "summary_line": [
+      "=================== 1 failed, 22 passed in 77.21s (0:01:17) ==================="
+    ]
+  },
+  {
+    "test_file": "tests/test_a2a_interoperability.py",
+    "exact_command": ".venv\\Scripts\\python -m pytest tests/test_a2a_interoperability.py -v",
+    "category": "A2A Security & Protocol Interoperability",
+    "classification": "A2A security tests",
+    "is_mocked": true,
+    "exit_code": 1,
+    "runtime_seconds": 65.539,
+    "total_tests": 18,
+    "passed": 16,
+    "failed": 1,
+    "skipped": 0,
+    "tests": [
+      {
+        "test_id": "tests/test_a2a_interoperability.py::test_01_a2a_sdk_imports_and_version",
+        "test_name": "test_01_a2a_sdk_imports_and_version",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_a2a_interoperability.py::test_02_agent_card_validity_and_schema",
+        "test_name": "test_02_agent_card_validity_and_schema",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_a2a_interoperability.py::test_03_agent_discovery_over_http",
+        "test_name": "test_03_agent_discovery_over_http",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_a2a_interoperability.py::test_04_task_creation_and_lifecycle",
+        "test_name": "test_04_task_creation_and_lifecycle",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_a2a_interoperability.py::test_05_task_status_retrieval_via_jsonrpc",
+        "test_name": "test_05_task_status_retrieval_via_jsonrpc",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_a2a_interoperability.py::test_06_adk_runner_invocation",
+        "test_name": "test_06_adk_runner_invocation",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_a2a_interoperability.py::test_07_artifact_exchange_and_structure",
+        "test_name": "test_07_artifact_exchange_and_structure",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_a2a_interoperability.py::test_08_pydantic_validation",
+        "test_name": "test_08_pydantic_validation",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_a2a_interoperability.py::test_09_authentication_enforcement",
+        "test_name": "test_09_authentication_enforcement",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_a2a_interoperability.py::test_10_student_session_isolation",
+        "test_name": "test_10_student_session_isolation",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_a2a_interoperability.py::test_11_invalid_messages_and_injection_rejection",
+        "test_name": "test_11_invalid_messages_and_injection_rejection",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_a2a_interoperability.py::test_12_timeout_and_failure_handling",
+        "test_name": "test_12_timeout_and_failure_handling",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_a2a_interoperability.py::test_13_crewai_orchestrator_integration",
+        "test_name": "test_13_crewai_orchestrator_integration",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_a2a_interoperability.py::test_14_existing_eight_agents_regression",
+        "test_name": "test_14_existing_eight_agents_regression",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_a2a_interoperability.py::test_15_educational_chapter_journey_regression",
+        "test_name": "test_15_educational_chapter_journey_regression",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_a2a_interoperability.py::test_16_database_preservation",
+        "test_name": "test_16_database_preservation",
+        "status": "FAILED"
+      },
+      {
+        "test_id": "tests/test_a2a_interoperability.py::test_17_frontend_build_regression",
+        "test_name": "test_17_frontend_build_regression",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "FAILED",
+        "test_name": "FAILED",
+        "status": "UNKNOWN"
+      }
+    ],
+    "summary_line": [
+      "======================== 1 failed, 16 passed in 58.97s ========================"
+    ]
+  },
+  {
+    "test_file": "tests/test_adk_foundation.py",
+    "exact_command": ".venv\\Scripts\\python -m pytest tests/test_adk_foundation.py -v",
+    "category": "Google ADK Foundation & Runner Security",
+    "classification": "ADK security tests",
+    "is_mocked": true,
+    "exit_code": 0,
+    "runtime_seconds": 30.692,
+    "total_tests": 9,
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0,
+    "tests": [
+      {
+        "test_id": "tests/test_adk_foundation.py::test_01_adk_installation",
+        "test_name": "test_01_adk_installation",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_adk_foundation.py::test_02_adk_agent_construction",
+        "test_name": "test_02_adk_agent_construction",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_adk_foundation.py::test_03_adk_schemas_validation",
+        "test_name": "test_03_adk_schemas_validation",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_adk_foundation.py::test_04_adk_invalid_input_rejection",
+        "test_name": "test_04_adk_invalid_input_rejection",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_adk_foundation.py::test_05_adk_session_isolation",
+        "test_name": "test_05_adk_session_isolation",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_adk_foundation.py::test_06_adk_model_failure_handling",
+        "test_name": "test_06_adk_model_failure_handling",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_adk_foundation.py::test_07_fastapi_adk_health_endpoint",
+        "test_name": "test_07_fastapi_adk_health_endpoint",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_adk_foundation.py::test_08_fastapi_adk_validation_error",
+        "test_name": "test_08_fastapi_adk_validation_error",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_adk_foundation.py::test_09_crewai_regression",
+        "test_name": "test_09_crewai_regression",
+        "status": "PASSED"
+      }
+    ],
+    "summary_line": [
+      "======================== 9 passed, 1 warning in 23.91s ========================"
+    ]
+  },
+  {
+    "test_file": "tests/test_observability.py",
+    "exact_command": ".venv\\Scripts\\python -m pytest tests/test_observability.py -v",
+    "category": "Observability, Telemetry & Privacy Redaction",
+    "classification": "Unit / Mocked Integration",
+    "is_mocked": true,
+    "exit_code": 1,
+    "runtime_seconds": 34.927,
+    "total_tests": 33,
+    "passed": 30,
+    "failed": 1,
+    "skipped": 1,
+    "tests": [
+      {
+        "test_id": "tests/test_observability.py::test_01_observability_schemas",
+        "test_name": "test_01_observability_schemas",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_02_redaction_credentials",
+        "test_name": "test_02_redaction_credentials",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_03_redaction_pii",
+        "test_name": "test_03_redaction_pii",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_04_redaction_recursive_dict_and_truncation",
+        "test_name": "test_04_redaction_recursive_dict_and_truncation",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_05_store_trace_lifecycle",
+        "test_name": "test_05_store_trace_lifecycle",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_06_store_capacity_and_eviction",
+        "test_name": "test_06_store_capacity_and_eviction",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_07_store_agent_status_calculation",
+        "test_name": "test_07_store_agent_status_calculation",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_08_structured_json_logging",
+        "test_name": "test_08_structured_json_logging",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_09_trace_scope_success_lifecycle",
+        "test_name": "test_09_trace_scope_success_lifecycle",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_10_trace_scope_exception_capture",
+        "test_name": "test_10_trace_scope_exception_capture",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_11_trace_context_propagation",
+        "test_name": "test_11_trace_context_propagation",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_12_crewai_task_callback",
+        "test_name": "test_12_crewai_task_callback",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_13_crewai_step_callback",
+        "test_name": "test_13_crewai_step_callback",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_14_crewai_kickoff_callbacks",
+        "test_name": "test_14_crewai_kickoff_callbacks",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_15_langfuse_disabled_by_default",
+        "test_name": "test_15_langfuse_disabled_by_default",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_16_langfuse_custom_configuration",
+        "test_name": "test_16_langfuse_custom_configuration",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_17_langfuse_telemetry_failure_shielding",
+        "test_name": "test_17_langfuse_telemetry_failure_shielding",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_18_langfuse_no_fabricated_tokens",
+        "test_name": "test_18_langfuse_no_fabricated_tokens",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_19_api_health_and_status_endpoints",
+        "test_name": "test_19_api_health_and_status_endpoints",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_20_api_metrics_endpoint",
+        "test_name": "test_20_api_metrics_endpoint",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_21_api_traces_and_single_trace",
+        "test_name": "test_21_api_traces_and_single_trace",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_22_api_agents_and_errors_endpoints",
+        "test_name": "test_22_api_agents_and_errors_endpoints",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_23_mcp_observability_instrumentation",
+        "test_name": "test_23_mcp_observability_instrumentation",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_24_adk_and_a2a_trace_propagation",
+        "test_name": "test_24_adk_and_a2a_trace_propagation",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_25_database_preservation_and_integrity",
+        "test_name": "test_25_database_preservation_and_integrity",
+        "status": "FAILED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_26_eight_agents_callback_wiring",
+        "test_name": "test_26_eight_agents_callback_wiring",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_27_async_contextvar_concurrency_isolation",
+        "test_name": "test_27_async_contextvar_concurrency_isolation",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_28_thread_context_propagation",
+        "test_name": "test_28_thread_context_propagation",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_29_a2a_w3c_traceparent_http_propagation",
+        "test_name": "test_29_a2a_w3c_traceparent_http_propagation",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_30_mcp_subprocess_correlation_propagation",
+        "test_name": "test_30_mcp_subprocess_correlation_propagation",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_31_privacy_student_pseudonymization_and_exclusion",
+        "test_name": "test_31_privacy_student_pseudonymization_and_exclusion",
+        "status": "PASSED"
+      },
+      {
+        "test_id": "tests/test_observability.py::test_32_live_ollama_qwen_inference_and_telemetry",
+        "test_name": "test_32_live_ollama_qwen_inference_and_telemetry",
+        "status": "SKIPPED"
+      },
+      {
+        "test_id": "FAILED",
+        "test_name": "FAILED",
+        "status": "UNKNOWN"
+      }
+    ],
+    "summary_line": [
+      "============= 1 failed, 30 passed, 1 skipped, 1 warning in 28.93s ============="
+    ]
+  }
+]

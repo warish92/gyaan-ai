@@ -31,10 +31,79 @@ logger = logging.getLogger("gyaan_ai.observability.callbacks")
 # Concurrency-safe ContextVar storage for distributed trace correlation
 _trace_id_var: contextvars.ContextVar[Optional[str]] = contextvars.ContextVar("gyaan_trace_id", default=None)
 _span_id_var: contextvars.ContextVar[Optional[str]] = contextvars.ContextVar("gyaan_span_id", default=None)
+_gyaan_workflow_active_var: contextvars.ContextVar[bool] = contextvars.ContextVar("gyaan_workflow_active", default=False)
 
 # W3C traceparent regex: 00-{32hex}-{16hex}-{2hex}
 TRACEPARENT_REGEX = re.compile(r"^00-([0-9a-f]{32})-([0-9a-f]{16})-([0-9a-f]{2})$", re.IGNORECASE)
 HEX_32_REGEX = re.compile(r"^[0-9a-f]{32}$", re.IGNORECASE)
+
+EPOCH_UTC = datetime(1970, 1, 1, tzinfo=timezone.utc)
+
+# ------------------------------------------------------------------------------
+# Canonical Agent Mappings & Static Task Allowlist
+# ------------------------------------------------------------------------------
+EXACT_CANONICAL_ROLES = {
+    "Educational AI Workflow Orchestrator",
+    "Evidence-Based Student Learning Diagnostic Specialist",
+    "Evidence-Grounded Curriculum Planning Specialist",
+    "Educational Resource Retrieval Specialist",
+    "Class 10 CBSE Science Teacher and Concept Specialist",
+    "Educational Assessment and Feedback Specialist",
+    "Student Learning Progress Analyst",
+    "Personalized Student Learning Mentor",
+}
+
+CANONICAL_ROLE_TO_LABEL = {
+    "Educational AI Workflow Orchestrator": "Orchestrator",
+    "Evidence-Based Student Learning Diagnostic Specialist": "Diagnostic Specialist",
+    "Evidence-Grounded Curriculum Planning Specialist": "Curriculum Specialist",
+    "Educational Resource Retrieval Specialist": "Resource Specialist",
+    "Class 10 CBSE Science Teacher and Concept Specialist": "Teacher Specialist",
+    "Educational Assessment and Feedback Specialist": "Assessment Specialist",
+    "Student Learning Progress Analyst": "Progress Specialist",
+    "Personalized Student Learning Mentor": "Mentor Specialist",
+}
+
+CANONICAL_SPECIALIST_STATIC_TASK_NAMES = {
+    "Educational AI Workflow Orchestrator": "workflow_routing_task",
+    "Evidence-Based Student Learning Diagnostic Specialist": "learning_diagnostic_task",
+    "Evidence-Grounded Curriculum Planning Specialist": "curriculum_sequencing_task",
+    "Educational Resource Retrieval Specialist": "resource_retrieval_task",
+    "Class 10 CBSE Science Teacher and Concept Specialist": "concept_instruction_task",
+    "Educational Assessment and Feedback Specialist": "assessment_evaluation_task",
+    "Student Learning Progress Analyst": "progress_analysis_task",
+    "Personalized Student Learning Mentor": "pedagogical_mentoring_task",
+}
+
+
+def datetime_to_nanoseconds_exact(dt: datetime) -> int:
+    """Converts naive local or timezone-aware datetimes to integer nanoseconds since Unix epoch.
+
+    Guarantees zero floating-point precision loss using integer timedelta decomposition.
+    """
+    if dt.tzinfo is None:
+        dt_utc = dt.astimezone(timezone.utc)
+    else:
+        dt_utc = dt.astimezone(timezone.utc)
+
+    delta = dt_utc - EPOCH_UTC
+    total_seconds = delta.days * 86400 + delta.seconds
+    return (total_seconds * 1_000_000_000) + (delta.microseconds * 1_000)
+
+
+def is_gyaan_workflow_active() -> bool:
+    """Returns True if execution is currently inside an authorized Gyaan AI workflow."""
+    return _gyaan_workflow_active_var.get()
+
+
+def set_gyaan_workflow_active(active: bool = True) -> contextvars.Token:
+    """Sets the Gyaan AI workflow active flag and returns the reset token."""
+    return _gyaan_workflow_active_var.set(active)
+
+
+def reset_gyaan_workflow_active(token: contextvars.Token) -> None:
+    """Resets the Gyaan AI workflow active contextvar back to its prior state."""
+    _gyaan_workflow_active_var.reset(token)
 
 
 def get_current_trace_id() -> Optional[str]:
@@ -359,6 +428,9 @@ def create_crewai_kickoff_callbacks(
             resolved_tid = trace_id or get_current_trace_id() or uuid.uuid4().hex
             normalized_tid = normalize_trace_id(resolved_tid)
 
+            # Ensure Gyaan AI workflow active flag is set for child tasks
+            _gyaan_workflow_active_var.set(True)
+
             # Record safe metadata only
             safe_inputs = {}
             if isinstance(inputs, dict):
@@ -400,6 +472,120 @@ def create_crewai_kickoff_callbacks(
     return [_before_kickoff], [_after_kickoff]
 
 
+def setup_class_level_task_instrumentation() -> None:
+    """Idempotently instruments CrewAI Task.execute_sync at the class level.
+
+    Enforces:
+    1. Exact canonical role matching for all eight agents.
+    2. Explicit Gyaan AI workflow ContextVar gating.
+    3. Immutable static task-name allowlist.
+    4. Correct Langfuse parent-child trace relationships.
+    5. Privacy-safe metadata only (zero PII, zero raw student prompts/responses/descriptions).
+    6. Omit token usage entirely from task observations.
+    7. Bare raise for exceptions, preserving traceback and educational execution.
+    8. Shielded non-blocking Langfuse telemetry.
+    """
+    import asyncio
+    from crewai.task import Task
+    from crewai.tasks.task_output import TaskOutput
+
+    if getattr(Task, "_gyaan_class_instrumented", False):
+        return
+
+    original_execute_sync = Task.execute_sync
+
+    def _instrumented_execute_sync(self: Task, *args: Any, **kwargs: Any) -> TaskOutput:
+        # Gate 1: Gyaan AI workflow context must be active
+        if not _gyaan_workflow_active_var.get():
+            return original_execute_sync(self, *args, **kwargs)
+
+        # Gate 2: Active Langfuse trace ID must be set
+        active_trace_id = _trace_id_var.get()
+        if not active_trace_id:
+            return original_execute_sync(self, *args, **kwargs)
+
+        # Gate 3: Agent role must strictly match canonical specialist set
+        raw_role = getattr(self.agent, "role", None) if getattr(self, "agent", None) else None
+        if raw_role not in EXACT_CANONICAL_ROLES:
+            return original_execute_sync(self, *args, **kwargs)
+
+        agent_label = CANONICAL_ROLE_TO_LABEL.get(raw_role, "Specialist Agent")
+        static_task_name = CANONICAL_SPECIALIST_STATIC_TASK_NAMES.get(raw_role, "specialist_task")
+        parent_obs_id = _span_id_var.get()
+
+        span_obj = None
+        if langfuse_manager.is_enabled():
+            span_obj = langfuse_manager.start_task_observation(
+                trace_id=active_trace_id,
+                parent_span_id=parent_obs_id,
+                name=f"agent:{agent_label}:{static_task_name}",
+                metadata={
+                    "agent_role": agent_label,
+                    "task_name": static_task_name,
+                    "model": "qwen2.5:3b",
+                    "framework": "crewai",
+                },
+            )
+
+        try:
+            task_output: TaskOutput = original_execute_sync(self, *args, **kwargs)
+
+            if span_obj:
+                end_ns = datetime_to_nanoseconds_exact(self.end_time) if getattr(self, "end_time", None) else None
+                langfuse_manager.end_task_observation(
+                    span_obj=span_obj,
+                    end_time_ns=end_ns,
+                    status_message="SUCCESS",
+                    level="DEFAULT",
+                    metadata={
+                        "crewai_task_execution_duration_seconds": getattr(self, "execution_duration", None),
+                        "output_format": getattr(task_output, "output_format", "RAW"),
+                        "output_character_count": len(task_output.raw) if hasattr(task_output, "raw") else 0,
+                    },
+                )
+
+            return task_output
+
+        except asyncio.CancelledError:
+            if span_obj:
+                langfuse_manager.end_task_observation(
+                    span_obj=span_obj,
+                    end_time_ns=None,
+                    status_message="CANCELLED: Task execution cancelled by runtime",
+                    level="ERROR",
+                    metadata={"cancelled": True, "task_incomplete": True},
+                )
+            raise
+
+        except (KeyboardInterrupt, SystemExit):
+            if span_obj:
+                try:
+                    span_obj.end()
+                except BaseException:
+                    pass
+            raise
+
+        except Exception as exc:
+            if span_obj:
+                end_ns = datetime_to_nanoseconds_exact(self.end_time) if getattr(self, "end_time", None) else None
+                langfuse_manager.end_task_observation(
+                    span_obj=span_obj,
+                    end_time_ns=end_ns,
+                    status_message=f"{type(exc).__name__}: Execution failure",
+                    level="ERROR",
+                    metadata={
+                        "error_type": type(exc).__name__,
+                        "failure": True,
+                        "task_incomplete": getattr(self, "end_time", None) is None,
+                        "crewai_task_execution_duration_seconds": getattr(self, "execution_duration", None),
+                    },
+                )
+            raise
+
+    Task.execute_sync = _instrumented_execute_sync
+    Task._gyaan_class_instrumented = True
+
+
 def attach_crewai_callbacks(
     crew_kwargs: Dict[str, Any],
     agent_name: str,
@@ -419,6 +605,9 @@ def attach_crewai_callbacks(
     - Non-blocking error shielding: Telemetry failures never interrupt educational workflows.
     """
     try:
+        # Activate class-level CrewAI task execution telemetry
+        setup_class_level_task_instrumentation()
+
         # Check idempotency
         if "task_callback" in crew_kwargs and crew_kwargs["task_callback"] is not None:
             return crew_kwargs

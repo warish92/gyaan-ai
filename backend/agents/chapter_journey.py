@@ -610,8 +610,8 @@ def build_chapter_learning_journey_crew(
     }
 
     # 3. Build sequential crew
-    crew = Crew(
-        agents=[
+    crew_kwargs = {
+        "agents": [
             orchestrator_agent,
             curriculum_agent,
             diagnostic_agent,
@@ -621,10 +621,16 @@ def build_chapter_learning_journey_crew(
             progress_agent,
             mentor_agent,
         ],
-        tasks=tasks,
-        process=Process.sequential,
-        verbose=True,
-    )
+        "tasks": tasks,
+        "process": Process.sequential,
+        "verbose": True,
+    }
+    try:
+        from backend.observability import attach_crewai_callbacks
+        attach_crewai_callbacks(crew_kwargs, agent_name="ChapterLearningJourneyCrew")
+    except Exception:
+        pass
+    crew = Crew(**crew_kwargs)
 
     return crew, tasks, agents_map
 
@@ -700,8 +706,23 @@ def run_chapter_learning_journey(
 
     logger.info("Executing Chapter Learning Journey Crew for %s: %s (Process.sequential)", subject, chapter)
     from backend.agents.registry import agent_registry
-    with agent_registry.track_workflow_execution("chapter_learning_journey"):
-        kickoff_res = crew.kickoff()
+    active_tok = None
+    try:
+        from backend.observability import set_gyaan_workflow_active
+        active_tok = set_gyaan_workflow_active(True)
+    except Exception:
+        pass
+
+    try:
+        with agent_registry.track_workflow_execution("chapter_learning_journey"):
+            kickoff_res = crew.kickoff()
+    finally:
+        if active_tok is not None:
+            try:
+                from backend.observability import reset_gyaan_workflow_active
+                reset_gyaan_workflow_active(active_tok)
+            except Exception:
+                pass
     raw_mentor_output = str(kickoff_res.raw if hasattr(kickoff_res, "raw") else kickoff_res).strip()
     duration_s = round(time.perf_counter() - start_time, 2)
 

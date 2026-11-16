@@ -1,0 +1,196 @@
+{
+  "curriculum_callbacks": {
+    "events_count": 5,
+    "events": [
+      {
+        "timestamp": "2026-11-12T07:56:22.344131+00:00",
+        "level": "INFO",
+        "logger": "gyaan_ai.observability",
+        "message": "Started agent: 'Curriculum Agent Live Execution'",
+        "component": "crewai",
+        "agent_name": "Curriculum Agent",
+        "task_name": "curriculum_planning",
+        "trace_id": "6cdd0eca80c341df9552bbd3caf803f3",
+        "span_id": "95f9e9e2ede7412d",
+        "event_type": "agent_start",
+        "status": "started",
+        "duration_ms": null,
+        "error_category": null,
+        "details": {
+          "student_id": "pseudo_2aa389bb55cb29be",
+          "subject": "Mathematics",
+          "chapter": "Real Numbers"
+        }
+      },
+      {
+        "timestamp": "2026-11-12T07:56:23.001288+00:00",
+        "level": "INFO",
+        "logger": "gyaan_ai.observability",
+        "message": "Crew execution starting: 'Curriculum Agent'",
+        "component": "crewai",
+        "agent_name": "Curriculum Agent",
+        "task_name": null,
+        "trace_id": "6cdd0eca80c341df9552bbd3caf803f3",
+        "span_id": null,
+        "event_type": "crew_kickoff",
+        "status": "started",
+        "duration_ms": null,
+        "error_category": null
+      },
+      {
+        "timestamp": "2026-11-12T07:56:58.535474+00:00",
+        "level": "INFO",
+        "logger": "gyaan_ai.observability",
+        "message": "CrewAI task completed: 'You are designing a structured CBSE curriculum roadmap for a Class 10 student in...' by 'Curriculum Agent'",
+        "component": "crewai",
+        "agent_name": "Curriculum Agent",
+        "task_name": "You are designing a structured CBSE curriculum roadmap for a Class 10 student in...",
+        "trace_id": "6cdd0eca80c341df9552bbd3caf803f3",
+        "span_id": "f5f9aadb1729485f",
+        "event_type": "task_complete",
+        "status": "completed",
+        "duration_ms": null,
+        "error_category": null,
+        "details": {
+          "task": "You are designing a structured CBSE curriculum roadmap for a Class 10 student in...",
+          "has_output": true,
+          "tokens": "[REDACTED_CREDENTIAL]"
+        }
+      },
+      {
+        "timestamp": "2026-11-12T07:56:58.554918+00:00",
+        "level": "INFO",
+        "logger": "gyaan_ai.observability",
+        "message": "Crew execution completed: 'Curriculum Agent'",
+        "component": "crewai",
+        "agent_name": "Curriculum Agent",
+        "task_name": null,
+        "trace_id": "6cdd0eca80c341df9552bbd3caf803f3",
+        "span_id": null,
+        "event_type": "crew_complete",
+        "status": "completed",
+        "duration_ms": null,
+        "error_category": null,
+        "details": {
+          "has_output": true
+        }
+      },
+      {
+        "timestamp": "2026-11-12T07:56:58.569642+00:00",
+        "level": "INFO",
+        "logger": "gyaan_ai.observability",
+        "message": "Completed agent: 'Curriculum Agent Live Execution' (36223.18ms)",
+        "component": "crewai",
+        "agent_name": "Curriculum Agent",
+        "task_name": "curriculum_planning",
+        "trace_id": "6cdd0eca80c341df9552bbd3caf803f3",
+        "span_id": "95f9e9e2ede7412d",
+        "event_type": "agent_complete",
+        "status": "completed",
+        "duration_ms": 36223.18,
+        "error_category": null
+      }
+    ],
+    "task_callback_fired": true,
+    "step_callback_fired": false,
+    "before_kickoff_fired": true,
+    "after_kickoff_fired": true
+  },
+  "mentor_callbacks": {
+    "events_count": 5,
+    "events": [
+      {
+        "timestamp": "2026-11-12T07:56:58.571293+00:00",
+        "level": "INFO",
+        "logger": "gyaan_ai.observability",
+        "message": "Started agent: 'Mentor Agent Live Execution'",
+        "component": "crewai",
+        "agent_name": "Mentor Agent",
+        "task_name": "personalized_mentoring",
+        "trace_id": "d84f6a68c7634317b91a77e688060f21",
+        "span_id": "08b09d3bf39147ae",
+        "event_type": "agent_start",
+        "status": "started",
+        "duration_ms": null,
+        "error_category": null,
+        "details": {
+          "student_id": "pseudo_491bbb24555540b1",
+          "subject": "Science",
+          "chapter": "Chemical Reactions and Equations"
+        }
+      },
+      {
+        "timestamp": "2026-11-12T07:56:59.094487+00:00",
+        "level": "INFO",
+        "logger": "gyaan_ai.observability",
+        "message": "Crew execution starting: 'Mentor Agent'",
+        "component": "crewai",
+        "agent_name": "Mentor Agent",
+        "task_name": null,
+        "trace_id": "d84f6a68c7634317b91a77e688060f21",
+        "span_id": null,
+        "event_type": "crew_kickoff",
+        "status": "started",
+        "duration_ms": null,
+        "error_category": null
+      },
+      {
+        "timestamp": "2026-11-12T07:57:18.168138+00:00",
+        "level": "INFO",
+        "logger": "gyaan_ai.observability",
+        "message": "CrewAI task completed: 'You are formulating personalized mentoring recommendations for student 'Syntheti...' by 'Mentor Agent'",
+        "component": "crewai",
+        "agent_name": "Mentor Agent",
+        "task_name": "You are formulating personalized mentoring recommendations for student 'Syntheti...",
+        "trace_id": "d84f6a68c7634317b91a77e688060f21",
+        "span_id": "42236991253d4814",
+        "event_type": "task_complete",
+        "status": "completed",
+        "duration_ms": null,
+        "error_category": null,
+        "details": {
+          "task": "You are formulating personalized mentoring recommendations for student 'Syntheti...",
+          "has_output": true,
+          "tokens": "[REDACTED_CREDENTIAL]"
+        }
+      },
+      {
+        "timestamp": "2026-11-12T07:57:18.187079+00:00",
+        "level": "INFO",
+        "logger": "gyaan_ai.observability",
+        "message": "Crew execution completed: 'Mentor Agent'",
+        "component": "crewai",
+        "agent_name": "Mentor Agent",
+        "task_name": null,
+        "trace_id": "d84f6a68c7634317b91a77e688060f21",
+        "span_id": null,
+        "event_type": "crew_complete",
+        "status": "completed",
+        "duration_ms": null,
+        "error_category": null,
+        "details": {
+          "has_output": true
+        }
+      },
+      {
+        "timestamp": "2026-11-12T07:57:18.193700+00:00",
+        "level": "INFO",
+        "logger": "gyaan_ai.observability",
+        "message": "Completed agent: 'Mentor Agent Live Execution' (19617.77ms)",
+        "component": "crewai",
+        "agent_name": "Mentor Agent",
+        "task_name": "personalized_mentoring",
+        "trace_id": "d84f6a68c7634317b91a77e688060f21",
+        "span_id": "08b09d3bf39147ae",
+        "event_type": "agent_complete",
+        "status": "completed",
+        "duration_ms": 19617.77,
+        "error_category": null
+      }
+    ],
+    "task_callback_fired": true,
+    "step_callback_fired": false,
+    "before_kickoff_fired": true,
+    "after_kickoff_fired": true
+  }
+}

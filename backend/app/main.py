@@ -134,6 +134,7 @@ from backend.app.schemas import (
     SystemHealthResponse,
 )
 from backend.db.database import (
+    DEFAULT_DB_PATH,
     complete_learning_session,
     create_learning_session,
     create_session,
@@ -206,15 +207,70 @@ security_scheme = HTTPBearer(auto_error=False)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan context manager for startup and shutdown initialization."""
+    # 0. High-performance persistent HTTP client for local health probes
+    app.state.http_client = httpx.AsyncClient(
+        trust_env=False,
+        timeout=httpx.Timeout(1.0, connect=0.25),
+        limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+    )
+
     try:
-        init_db()
-        logger.info("SQLite database tables and migrations verified on application startup.")
-        from backend.services.curriculum_bank_seeder import seed_canonical_banks_if_missing
-        seed_canonical_banks_if_missing()
+        target_db = get_db_path()
+        if target_db != DEFAULT_DB_PATH:
+            init_db()
+            logger.info("SQLite database tables and migrations verified on application startup.")
+            from backend.services.curriculum_bank_seeder import seed_canonical_banks_if_missing
+            seed_canonical_banks_if_missing()
+        else:
+            conn = get_db_connection()
+            conn.execute("SELECT 1;").fetchone()
+            conn.close()
+            logger.info("Canonical SQLite database verified intact at %s.", target_db)
     except HTTPException:
         raise
     except Exception as exc:
-        logger.error("Failed to initialize database on startup: %s", exc)
+        logger.error("Failed to verify database on startup: %s", exc)
+
+    # 1. Ollama Service Verification & Self-Healing Lifecycle (Phase 5D.7 / Health fix)
+    try:
+        ollama_running = False
+        try:
+            r = await app.state.http_client.get(f"{OLLAMA_BASE_URL}/api/tags")
+            if r.status_code == 200:
+                ollama_running = True
+                logger.info("Ollama inference engine is verified and reachable at %s.", OLLAMA_BASE_URL)
+        except Exception:
+            ollama_running = False
+
+        if not ollama_running:
+            import shutil
+            import subprocess
+            ollama_bin = shutil.which("ollama")
+            if not ollama_bin:
+                default_local_path = os.path.expandvars(r"%LOCALAPPDATA%\Programs\Ollama\ollama.exe")
+                if os.path.isfile(default_local_path):
+                    ollama_bin = default_local_path
+
+            if ollama_bin:
+                logger.info("Local Ollama daemon offline. Auto-starting Ollama daemon via '%s' serve...", ollama_bin)
+                creation_flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+                subprocess.Popen([ollama_bin, "serve"], creationflags=creation_flags)
+                for _ in range(8):
+                    await asyncio.sleep(0.25)
+                    try:
+                        r = await app.state.http_client.get(f"{OLLAMA_BASE_URL}/api/tags")
+                        if r.status_code == 200:
+                            ollama_running = True
+                            logger.info("Ollama service successfully started on %s.", OLLAMA_BASE_URL)
+                            break
+                    except Exception:
+                        pass
+                if not ollama_running:
+                    logger.warning("Ollama daemon spawned but did not respond within 2s.")
+            else:
+                logger.warning("Ollama executable not found on system. AI agent inference will be offline.")
+    except Exception as exc:
+        logger.warning("Ollama startup verification notice: %s", exc)
 
     try:
         logger.info("Initializing and discovering canonical CrewAI multi-agent roster...")
@@ -239,6 +295,8 @@ async def lifespan(app: FastAPI):
     # Document Management & Indexing Startup Reconciliation (Phase 5D.3)
     doc_service = None
     try:
+        from backend.db.database import init_document_db
+        init_document_db()
         from backend.services.document_service import DocumentService
         doc_service = DocumentService()
         reconciled_count = doc_service.reconcile_on_startup()
@@ -248,6 +306,12 @@ async def lifespan(app: FastAPI):
         logger.warning("Document indexing startup reconciliation notice: %s", exc)
 
     yield
+
+    if hasattr(app.state, "http_client") and app.state.http_client:
+        try:
+            await app.state.http_client.aclose()
+        except Exception:
+            pass
 
     if doc_service is not None:
         try:
@@ -462,34 +526,58 @@ async def get_optional_current_student(
 
 @app.get("/health", response_model=HealthResponse, tags=["System"])
 async def health_check() -> HealthResponse:
-    """Check service health and local Ollama model availability without triggering generation."""
+    """Check service health, SQLite database, and local Ollama model availability without triggering generation."""
     ollama_connected = False
     model_available = False
-    details = None
+    details_list = []
     target_model_name = LOCAL_MODEL.replace("ollama/", "")
 
+    # 1. Fast SQLite database probe
+    db_connected = False
     try:
-        async with httpx.AsyncClient(timeout=2.0) as client:
-            response = await client.get(f"{OLLAMA_BASE_URL}/api/tags")
-            if response.status_code == 200:
-                ollama_connected = True
-                data = response.json()
-                models = [m.get("name") for m in data.get("models", [])]
-                model_available = any(target_model_name in m for m in models)
-                if not model_available:
-                    details = f"Model '{target_model_name}' not in Ollama library: {models}"
-            else:
-                details = f"Ollama returned HTTP {response.status_code}"
+        conn = get_db_connection()
+        conn.execute("SELECT 1;").fetchone()
+        conn.close()
+        db_connected = True
+    except Exception as db_exc:
+        db_connected = False
+        details_list.append(f"Database error: {db_exc}")
+
+    # 2. Fast Ollama probe using pooled client with loopback connect timeout
+    client = getattr(app.state, "http_client", None)
+    should_close = False
+    if client is None or getattr(client, "is_closed", False):
+        client = httpx.AsyncClient(
+            trust_env=False,
+            timeout=httpx.Timeout(1.0, connect=0.25),
+        )
+        should_close = True
+
+    try:
+        response = await client.get(f"{OLLAMA_BASE_URL}/api/tags")
+        if response.status_code == 200:
+            ollama_connected = True
+            data = response.json()
+            models = [m.get("name") for m in data.get("models", [])]
+            model_available = any(target_model_name in m for m in models)
+            if not model_available:
+                details_list.append(f"Model '{target_model_name}' not in Ollama library: {models}")
+        else:
+            details_list.append(f"Ollama returned HTTP {response.status_code}")
     except HTTPException:
         raise
     except Exception as exc:
-        details = f"Cannot reach Ollama at {OLLAMA_BASE_URL}: {exc}"
+        details_list.append(f"Cannot reach Ollama at {OLLAMA_BASE_URL}: {exc}")
+    finally:
+        if should_close:
+            await client.aclose()
 
-    overall_status = "healthy" if (ollama_connected and model_available) else "degraded"
+    overall_status = "healthy" if (ollama_connected and model_available and db_connected) else "degraded"
+    details = "; ".join(details_list) if details_list else None
 
     return HealthResponse(
         status=overall_status,
-        app="ok",
+        app="ok" if db_connected else "degraded",
         ollama_connected=ollama_connected,
         model_available=model_available,
         model_name=target_model_name,
@@ -525,19 +613,30 @@ async def system_health_audit() -> SystemHealthResponse:
     target_model_name = LOCAL_MODEL.replace("ollama/", "")
     models: List[str] = []
 
+    client = getattr(app.state, "http_client", None)
+    should_close = False
+    if client is None or getattr(client, "is_closed", False):
+        client = httpx.AsyncClient(
+            trust_env=False,
+            timeout=httpx.Timeout(1.0, connect=0.25),
+        )
+        should_close = True
+
     try:
-        async with httpx.AsyncClient(timeout=2.0) as client:
-            resp = await client.get(f"{OLLAMA_BASE_URL}/api/tags")
-            ollama_status_code = resp.status_code
-            if resp.status_code == 200:
-                ollama_connected = True
-                data = resp.json()
-                models = [m.get("name", "") for m in data.get("models", [])]
-                model_available = any(target_model_name in m for m in models)
+        resp = await client.get(f"{OLLAMA_BASE_URL}/api/tags")
+        ollama_status_code = resp.status_code
+        if resp.status_code == 200:
+            ollama_connected = True
+            data = resp.json()
+            models = [m.get("name", "") for m in data.get("models", [])]
+            model_available = any(target_model_name in m for m in models)
     except HTTPException:
         raise
     except Exception as exc:
         ollama_status_code = None
+    finally:
+        if should_close:
+            await client.aclose()
 
     # 2. SQLite Database & Data counts
     db_connected = False
@@ -1418,8 +1517,30 @@ async def save_practice_session_endpoint(
     current_student: Optional[Dict[str, Any]] = Depends(get_optional_current_student),
 ) -> SavePracticeSessionResponse:
     """Save an in-progress student practice session."""
-    from backend.services.practice_service import save_practice_session_sync
-    target_student_id = current_student["id"] if current_student else request.student_id
+    from backend.services.practice_service import (
+        resume_practice_session_sync,
+        save_practice_session_sync,
+    )
+    # Derive student identity strictly from authenticated server-side context
+    # Never trust unauthenticated frontend input as proof of student identity
+    target_student_id = current_student["id"] if current_student else None
+
+    # Multi-Student Isolation: Prevent modifying or hijacking another student's session
+    session_id = request.session_id.strip()
+    existing_session = await asyncio.to_thread(resume_practice_session_sync, session_id)
+    if existing_session and existing_session.student_id:
+        if not current_student:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Authentication required to modify this practice session.",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        if current_student["id"] != existing_session.student_id and current_student.get("role") not in ("admin", "teacher"):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Access denied: You cannot modify another student's practice session.",
+            )
+
     req = request.model_copy(update={"student_id": target_student_id})
     try:
         return await asyncio.to_thread(save_practice_session_sync, req)
@@ -1442,13 +1563,29 @@ async def resume_practice_session_endpoint(
 ) -> SavePracticeSessionRequest:
     """Resume an in-progress student practice session."""
     from backend.services.practice_service import resume_practice_session_sync
+    clean_session_id = session_id.strip()
     try:
-        res = await asyncio.to_thread(resume_practice_session_sync, session_id)
+        res = await asyncio.to_thread(resume_practice_session_sync, clean_session_id)
         if not res:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Practice session '{session_id}' not found.",
+                detail=f"Practice session '{clean_session_id}' not found.",
             )
+
+        # Multi-Student Isolation: Strictly prevent unauthorized access to protected sessions
+        if res.student_id:
+            if not current_student:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Authentication required to access this practice session.",
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+            if current_student["id"] != res.student_id and current_student.get("role") not in ("admin", "teacher"):
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Access denied: You cannot access another student's practice session.",
+                )
+
         return res
     except HTTPException:
         raise

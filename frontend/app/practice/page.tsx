@@ -548,7 +548,7 @@ function PracticeContent() {
                     Assessment Agent Retrieving Chapter Question Bank...
                   </h4>
                   <p className="text-xs text-slate-600 mt-0.5">
-                    Querying verified NCERT practice items with rubrics for <strong>{selectedChapter}</strong>. Fast cached retrieval loads in milliseconds.
+                    Querying verified NCERT practice items with rubrics for <strong>{selectedChapter}</strong>. Pre-cached chapters load instantly; new chapter sets are synthesized across 3 difficulty tiers and cached automatically.
                   </p>
                 </div>
               </div>

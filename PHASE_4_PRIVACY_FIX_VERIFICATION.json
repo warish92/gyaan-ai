@@ -1,0 +1,184 @@
+{
+  "metadata": {
+    "project": "Gyaan AI",
+    "project_root": "D:\\Gyaan AI",
+    "protected_legacy_project": "D:\\GYAN Ai",
+    "phase": "Phase 4 - Observability & Telemetry Remediation",
+    "task": "Phase 4 Final Privacy Defect Fix",
+    "timestamp": "2026-11-12T01:30:00+05:30",
+    "python_version": "3.11.9",
+    "test_runner": "pytest 9.1.1",
+    "status": "COMPLETED_AND_VERIFIED"
+  },
+  "protected_boundaries": {
+    "legacy_project_path": "D:\\GYAN Ai",
+    "legacy_project_untouched": true,
+    "legacy_project_last_modified": "2026-10-28 09:28:28 AM",
+    "database_path": "D:\\Gyaan AI\\data\\gyaan_ai.db",
+    "database_backup_path": "D:\\Gyaan AI\\data\\gyaan_ai.db.bak_phase4",
+    "database_integrity_check": "ok",
+    "database_table_count": 23,
+    "database_student_count": 781,
+    "database_student_sessions_count": 782,
+    "schema_modified": false,
+    "records_deleted": false
+  },
+  "defect_analysis": {
+    "target_file": "backend/observability/redaction.py",
+    "vulnerable_function": "pseudonymize_student_id(student_id)",
+    "vulnerable_line": 87,
+    "vulnerable_code": "secret_key = os.environ.get(\"TELEMETRY_HMAC_SECRET\", \"gyaan_ai_telemetry_pseudonym_salt_2026\").encode(\"utf-8\")",
+    "security_risk": "Hardcoded predictable salt allowed deterministic correlation of student identifiers across disparate environments if the environment variable was unset or leaked.",
+    "resolution": "Removed hardcoded fallback salt completely. Enforced that HMAC secret is strictly loaded from TELEMETRY_HMAC_SECRET. If missing, empty, or whitespace, the function returns None, causing all student identifiers to be completely omitted from telemetry dictionaries and lists."
+  },
+  "hmac_implementation_specifications": {
+    "secret_source": "os.environ.get(\"TELEMETRY_HMAC_SECRET\")",
+    "fallback_secret_present": false,
+    "unkeyed_hash_fallback_present": false,
+    "secret_exposed_in_logs": false,
+    "secret_exposed_in_exceptions": false,
+    "hash_algorithm": "HMAC-SHA256",
+    "pseudonym_prefix": "pseudo_",
+    "digest_length": 16,
+    "total_pseudonym_length": 23,
+    "behavior_with_valid_secret": {
+      "input": "student_aarav_01",
+      "secret": "secure_production_telemetry_key_xyz987",
+      "output": "pseudo_e307eaa765da538c",
+      "raw_id_leaked": false,
+      "reproducible_under_same_secret": true
+    },
+    "behavior_with_missing_secret": {
+      "input": "student_aarav_01",
+      "secret": null,
+      "output": null,
+      "dictionary_handling": "Key 'student_id' omitted completely from telemetry payload",
+      "list_handling": "Student ID item dropped completely from telemetry lists",
+      "trace_record_handling": "trace.student_id set to None"
+    },
+    "behavior_with_whitespace_secret": {
+      "input": "student_aarav_01",
+      "secret": "    ",
+      "output": null,
+      "dictionary_handling": "Key 'student_id' omitted completely from telemetry payload"
+    },
+    "behavior_with_empty_secret": {
+      "input": "student_aarav_01",
+      "secret": "",
+      "output": null,
+      "dictionary_handling": "Key 'student_id' omitted completely from telemetry payload"
+    }
+  },
+  "synthetic_test_payload_verification": {
+    "raw_synthetic_input": {
+      "student_id": "student_aarav_01",
+      "student_name": "Aarav Kumar",
+      "email": "aarav.kumar@student.edu",
+      "phone": "+91 9876543210",
+      "aadhaar": "1234-5678-9012",
+      "password": "super_secret_password",
+      "thought": "Internal LLM thought: this student struggles with balancing redox reactions.",
+      "user_message": "Can you explain exothermic reactions to me in simple terms?"
+    },
+    "sanitized_output_with_secret": {
+      "student_id": "pseudo_e307eaa765da538c",
+      "student_name": "[REDACTED_STUDENT_NAME]",
+      "email": "[REDACTED_EMAIL]",
+      "phone": "[REDACTED_PHONE]",
+      "aadhaar": "[REDACTED_ID]",
+      "password": "[REDACTED_CREDENTIAL]",
+      "thought": "[REDACTED_INTERNAL_REASONING]",
+      "user_message": "[REDACTED_STUDENT_CONVERSATION]"
+    },
+    "sanitized_output_without_secret": {
+      "student_name": "[REDACTED_STUDENT_NAME]",
+      "email": "[REDACTED_EMAIL]",
+      "phone": "[REDACTED_PHONE]",
+      "aadhaar": "[REDACTED_ID]",
+      "password": "[REDACTED_CREDENTIAL]",
+      "thought": "[REDACTED_INTERNAL_REASONING]",
+      "user_message": "[REDACTED_STUDENT_CONVERSATION]"
+    },
+    "synthetic_list_with_secret": {
+      "input": ["student_aarav_01", "grade10_science"],
+      "output": ["pseudo_e307eaa765da538c", "grade10_science"]
+    },
+    "synthetic_list_without_secret": {
+      "input": ["student_aarav_01", "grade10_science"],
+      "output": ["grade10_science"]
+    }
+  },
+  "test_suite_execution_results": {
+    "observability_tests": {
+      "test_file": "tests/test_observability.py",
+      "total_tests": 32,
+      "passed": 32,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 41.79,
+      "test_31_status": "PASSED",
+      "test_31_description": "test_31_privacy_student_pseudonymization_and_exclusion"
+    },
+    "regression_tests": {
+      "mcp_integration": {
+        "test_file": "tests/test_mcp_integration.py",
+        "total_tests": 23,
+        "passed": 23,
+        "failed": 0
+      },
+      "a2a_interoperability": {
+        "test_file": "tests/test_a2a_interoperability.py",
+        "total_tests": 17,
+        "passed": 17,
+        "failed": 0
+      },
+      "adk_foundation": {
+        "test_file": "tests/test_adk_foundation.py",
+        "total_tests": 9,
+        "passed": 9,
+        "failed": 0
+      },
+      "total_regression_tests": 49,
+      "total_regression_passed": 49,
+      "total_regression_failed": 0
+    },
+    "combined_summary": {
+      "total_suite_tests": 81,
+      "total_suite_passed": 81,
+      "total_suite_failed": 0,
+      "pass_rate_percent": 100.0
+    }
+  },
+  "telemetry_destinations_verification": {
+    "in_memory_store": {
+      "verified": true,
+      "with_secret_trace_student_id": "pseudo_e307eaa765da538c",
+      "without_secret_trace_student_id": null
+    },
+    "jsonl_logger": {
+      "verified": true,
+      "log_path": "D:\\Gyaan AI\\data\\observability.jsonl",
+      "with_secret_log_event": "test_privacy_with_sec",
+      "with_secret_contains_raw_id": false,
+      "with_secret_contains_pseudonym": true,
+      "without_secret_log_event": "test_privacy_no_sec",
+      "without_secret_contains_raw_id": false,
+      "without_secret_field_omitted": true
+    },
+    "rest_api_endpoints": {
+      "verified": true,
+      "health_endpoint": "/api/v1/observability/health",
+      "traces_endpoint": "/api/v1/observability/traces",
+      "trace_id_endpoint": "/api/v1/observability/traces/{trace_id}",
+      "metrics_endpoint": "/api/v1/observability/metrics",
+      "raw_id_exposure": false
+    },
+    "mock_langfuse_client": {
+      "verified": true,
+      "raw_id_transmitted": false,
+      "credentials_transmitted": false,
+      "student_conversations_transmitted": false,
+      "internal_reasoning_transmitted": false
+    }
+  }
+}

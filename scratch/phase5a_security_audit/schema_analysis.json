@@ -1,0 +1,308 @@
+{
+  "total_models": 80,
+  "max_length_count": 39,
+  "extra_forbid_count": 0,
+  "extra_ignore_count": 0,
+  "key_models": {
+    "AskRequest": {
+      "extra": "allow/default",
+      "fields": {
+        "question": {
+          "required": true,
+          "annotation": "<class 'str'>",
+          "metadata": "[MinLen(min_length=3), MaxLen(max_length=2000)]"
+        },
+        "grade": {
+          "required": false,
+          "annotation": "<class 'str'>",
+          "metadata": "[MaxLen(max_length=50)]"
+        },
+        "subject": {
+          "required": false,
+          "annotation": "typing.Optional[str]",
+          "metadata": "[MaxLen(max_length=100)]"
+        },
+        "chapter": {
+          "required": false,
+          "annotation": "typing.Optional[str]",
+          "metadata": "[MaxLen(max_length=150)]"
+        },
+        "topic": {
+          "required": false,
+          "annotation": "typing.Optional[str]",
+          "metadata": "[MaxLen(max_length=150)]"
+        },
+        "subtopic": {
+          "required": false,
+          "annotation": "typing.Optional[str]",
+          "metadata": "[MaxLen(max_length=200)]"
+        },
+        "learning_objectives": {
+          "required": false,
+          "annotation": "typing.Optional[typing.List[str]]",
+          "metadata": "[]"
+        },
+        "lesson_mode": {
+          "required": false,
+          "annotation": "typing.Optional[str]",
+          "metadata": "[MaxLen(max_length=50)]"
+        },
+        "language": {
+          "required": false,
+          "annotation": "<class 'str'>",
+          "metadata": "[MaxLen(max_length=50)]"
+        }
+      }
+    },
+    "LearningPlanRequest": {
+      "extra": "allow/default",
+      "fields": {
+        "student_id": {
+          "required": false,
+          "annotation": "typing.Optional[str]",
+          "metadata": "[]"
+        },
+        "display_name": {
+          "required": false,
+          "annotation": "<class 'str'>",
+          "metadata": "[MaxLen(max_length=100)]"
+        },
+        "grade": {
+          "required": false,
+          "annotation": "<class 'str'>",
+          "metadata": "[MaxLen(max_length=50)]"
+        },
+        "subject": {
+          "required": true,
+          "annotation": "<class 'str'>",
+          "metadata": "[MinLen(min_length=2), MaxLen(max_length=100)]"
+        },
+        "topic": {
+          "required": true,
+          "annotation": "<class 'str'>",
+          "metadata": "[MinLen(min_length=2), MaxLen(max_length=150)]"
+        },
+        "assessment_items": {
+          "required": true,
+          "annotation": "typing.List[backend.app.schemas.AssessmentItem]",
+          "metadata": "[MinLen(min_length=1), MaxLen(max_length=10)]"
+        }
+      }
+    },
+    "QuizGenerationRequest": {
+      "extra": "allow/default",
+      "fields": {
+        "student_id": {
+          "required": false,
+          "annotation": "typing.Optional[str]",
+          "metadata": "[]"
+        },
+        "grade": {
+          "required": false,
+          "annotation": "<class 'str'>",
+          "metadata": "[MaxLen(max_length=50)]"
+        },
+        "subject": {
+          "required": true,
+          "annotation": "<class 'str'>",
+          "metadata": "[MinLen(min_length=2), MaxLen(max_length=100)]"
+        },
+        "topic": {
+          "required": true,
+          "annotation": "<class 'str'>",
+          "metadata": "[MinLen(min_length=2), MaxLen(max_length=150)]"
+        },
+        "num_questions": {
+          "required": false,
+          "annotation": "<class 'int'>",
+          "metadata": "[Ge(ge=1), Le(le=10)]"
+        },
+        "question_types": {
+          "required": false,
+          "annotation": "typing.List[str]",
+          "metadata": "[]"
+        },
+        "learning_objectives": {
+          "required": false,
+          "annotation": "typing.Optional[str]",
+          "metadata": "[MaxLen(max_length=300)]"
+        }
+      }
+    },
+    "AssessmentSubmissionRequest": {
+      "extra": "allow/default",
+      "fields": {
+        "quiz_id": {
+          "required": true,
+          "annotation": "<class 'str'>",
+          "metadata": "[MinLen(min_length=3)]"
+        },
+        "student_id": {
+          "required": false,
+          "annotation": "typing.Optional[str]",
+          "metadata": "[]"
+        },
+        "answers": {
+          "required": true,
+          "annotation": "typing.Dict[str, str]",
+          "metadata": "[MinLen(min_length=1)]"
+        }
+      }
+    },
+    "StudentRegisterRequest": {
+      "extra": "allow/default",
+      "fields": {
+        "display_name": {
+          "required": true,
+          "annotation": "<class 'str'>",
+          "metadata": "[MinLen(min_length=2), MaxLen(max_length=100)]"
+        },
+        "email": {
+          "required": true,
+          "annotation": "<class 'pydantic.networks.EmailStr'>",
+          "metadata": "[]"
+        },
+        "password": {
+          "required": true,
+          "annotation": "<class 'str'>",
+          "metadata": "[MinLen(min_length=6), MaxLen(max_length=128)]"
+        },
+        "grade": {
+          "required": false,
+          "annotation": "<class 'str'>",
+          "metadata": "[MinLen(min_length=2), MaxLen(max_length=50)]"
+        },
+        "preferred_language": {
+          "required": false,
+          "annotation": "<class 'str'>",
+          "metadata": "[MinLen(min_length=2), MaxLen(max_length=50)]"
+        }
+      }
+    },
+    "StudentLoginRequest": {
+      "extra": "allow/default",
+      "fields": {
+        "email": {
+          "required": true,
+          "annotation": "<class 'pydantic.networks.EmailStr'>",
+          "metadata": "[]"
+        },
+        "password": {
+          "required": true,
+          "annotation": "<class 'str'>",
+          "metadata": "[MinLen(min_length=1), MaxLen(max_length=128)]"
+        }
+      }
+    },
+    "LearningJourneyStartRequest": {
+      "extra": "allow/default",
+      "fields": {
+        "subject": {
+          "required": true,
+          "annotation": "<class 'str'>",
+          "metadata": "[MinLen(min_length=2)]"
+        },
+        "chapter": {
+          "required": true,
+          "annotation": "<class 'str'>",
+          "metadata": "[MinLen(min_length=2)]"
+        },
+        "learning_goal": {
+          "required": false,
+          "annotation": "typing.Optional[str]",
+          "metadata": "[]"
+        },
+        "grade": {
+          "required": false,
+          "annotation": "<class 'str'>",
+          "metadata": "[MinLen(min_length=2)]"
+        },
+        "language": {
+          "required": false,
+          "annotation": "<class 'str'>",
+          "metadata": "[]"
+        },
+        "student_id": {
+          "required": false,
+          "annotation": "typing.Optional[str]",
+          "metadata": "[]"
+        },
+        "student_input_evidence": {
+          "required": false,
+          "annotation": "typing.Optional[str]",
+          "metadata": "[]"
+        },
+        "student_answers": {
+          "required": false,
+          "annotation": "typing.Optional[typing.Dict[str, str]]",
+          "metadata": "[]"
+        },
+        "is_remediation": {
+          "required": false,
+          "annotation": "<class 'bool'>",
+          "metadata": "[]"
+        },
+        "max_retries": {
+          "required": false,
+          "annotation": "<class 'int'>",
+          "metadata": "[Ge(ge=1), Le(le=5)]"
+        },
+        "run_in_background": {
+          "required": false,
+          "annotation": "<class 'bool'>",
+          "metadata": "[]"
+        }
+      }
+    },
+    "LearningJourneyInteractRequest": {
+      "extra": "allow/default",
+      "fields": {
+        "action": {
+          "required": true,
+          "annotation": "<class 'str'>",
+          "metadata": "[]"
+        },
+        "student_answers": {
+          "required": false,
+          "annotation": "typing.Optional[typing.Dict[str, str]]",
+          "metadata": "[]"
+        },
+        "feedback": {
+          "required": false,
+          "annotation": "typing.Optional[str]",
+          "metadata": "[]"
+        }
+      }
+    },
+    "DiagnosticEvaluateRequest": {
+      "extra": "allow/default",
+      "fields": {
+        "assessment_id": {
+          "required": true,
+          "annotation": "<class 'str'>",
+          "metadata": "[]"
+        },
+        "student_id": {
+          "required": false,
+          "annotation": "typing.Optional[str]",
+          "metadata": "[]"
+        },
+        "subject": {
+          "required": true,
+          "annotation": "<class 'str'>",
+          "metadata": "[]"
+        },
+        "chapter": {
+          "required": true,
+          "annotation": "<class 'str'>",
+          "metadata": "[]"
+        },
+        "answers": {
+          "required": true,
+          "annotation": "typing.Dict[str, str]",
+          "metadata": "[]"
+        }
+      }
+    }
+  }
+}

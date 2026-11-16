@@ -343,8 +343,14 @@ def get_chapter_practice_set_sync(
 _SESSION_CACHE: Dict[str, Dict[str, Any]] = {}
 
 
+def clear_practice_session_cache() -> None:
+    """Clear the in-memory practice session cache (used in testing and session reset)."""
+    _SESSION_CACHE.clear()
+
+
 def save_practice_session_sync(
     request: SavePracticeSessionRequest,
+    custom_path: Optional[Path | str] = None,
 ) -> SavePracticeSessionResponse:
     """Save the current state of an unfinished practice session."""
     session_id = request.session_id.strip()
@@ -374,9 +380,11 @@ def save_practice_session_sync(
                 details={
                     "practice_set_id": request.practice_set_id,
                     "answers_count": len(request.answers),
+                    "answers": request.answers,
                     "current_index": request.current_index,
                     "time_spent_seconds": request.time_spent_seconds,
                 },
+                custom_path=custom_path,
             )
         except Exception as exc:
             logger.warning("Could not persist practice session to DB: %s", exc)
@@ -388,13 +396,16 @@ def save_practice_session_sync(
     )
 
 
-def resume_practice_session_sync(session_id: str) -> Optional[SavePracticeSessionRequest]:
+def resume_practice_session_sync(
+    session_id: str,
+    custom_path: Optional[Path | str] = None,
+) -> Optional[SavePracticeSessionRequest]:
     """Retrieve the saved state of an in-progress practice session."""
     data = _SESSION_CACHE.get(session_id)
     if not data:
         # Check database learning_sessions
         try:
-            conn = get_db_connection()
+            conn = get_db_connection(custom_path)
             cursor = conn.cursor()
             cursor.execute(
                 "SELECT student_id, topic, details FROM learning_sessions WHERE id = ? LIMIT 1",
@@ -409,7 +420,7 @@ def resume_practice_session_sync(session_id: str) -> Optional[SavePracticeSessio
                     student_id=st_id,
                     practice_set_id=det.get("practice_set_id", ""),
                     chapter=topic,
-                    answers={},
+                    answers=det.get("answers", {}),
                     current_index=det.get("current_index", 0),
                     time_spent_seconds=det.get("time_spent_seconds", 0),
                 )

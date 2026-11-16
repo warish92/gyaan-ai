@@ -1,0 +1,48 @@
+{
+  "curriculum_trace": {
+    "trace_id": "6cdd0eca80c341df9552bbd3caf803f3",
+    "agent_span_id": "95f9e9e2ede7412d",
+    "task_span_id": "f5f9aadb1729485f",
+    "duration_ms": 36225.51,
+    "status": "completed",
+    "spans": [
+      {
+        "span_id": "f5f9aadb1729485f",
+        "name": "task:You are designing a structured CBSE curriculum roadmap for a Class 10 student in...",
+        "parent_span_id": "95f9e9e2ede7412d",
+        "duration_ms": 0.0,
+        "status": "completed"
+      },
+      {
+        "span_id": "95f9e9e2ede7412d",
+        "name": "Curriculum Agent Live Execution",
+        "parent_span_id": null,
+        "duration_ms": 36223.18,
+        "status": "completed"
+      }
+    ]
+  },
+  "mentor_trace": {
+    "trace_id": "d84f6a68c7634317b91a77e688060f21",
+    "agent_span_id": "08b09d3bf39147ae",
+    "task_span_id": "42236991253d4814",
+    "duration_ms": 19622.41,
+    "status": "completed",
+    "spans": [
+      {
+        "span_id": "42236991253d4814",
+        "name": "task:You are formulating personalized mentoring recommendations for student 'Syntheti...",
+        "parent_span_id": "08b09d3bf39147ae",
+        "duration_ms": 0.0,
+        "status": "completed"
+      },
+      {
+        "span_id": "08b09d3bf39147ae",
+        "name": "Mentor Agent Live Execution",
+        "parent_span_id": null,
+        "duration_ms": 19617.77,
+        "status": "completed"
+      }
+    ]
+  }
+}

@@ -11,17 +11,25 @@ Phase 4 Observability Architecture:
 """
 
 from backend.observability.callbacks import (
+    CANONICAL_ROLE_TO_LABEL,
+    CANONICAL_SPECIALIST_STATIC_TASK_NAMES,
+    EXACT_CANONICAL_ROLES,
     attach_crewai_callbacks,
     create_crewai_kickoff_callbacks,
     create_crewai_step_callback,
     create_crewai_task_callback,
+    datetime_to_nanoseconds_exact,
     extract_http_trace_context,
     get_current_span_id,
     get_current_trace_id,
+    is_gyaan_workflow_active,
+    reset_gyaan_workflow_active,
     reset_span_id,
     reset_trace_id,
     set_current_span_id,
     set_current_trace_id,
+    set_gyaan_workflow_active,
+    setup_class_level_task_instrumentation,
     trace_scope,
 )
 from backend.observability.langfuse_client import LangfuseManager, langfuse_manager, normalize_trace_id

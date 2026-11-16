@@ -1,0 +1,126 @@
+{
+  "started_at": "2026-11-01T13:51:31.471018",
+  "steps": [
+    {
+      "step": "1. Student Registration for Journey Testing",
+      "status": "PASS",
+      "timestamp": "2026-11-01T13:51:31.559856",
+      "details": {
+        "status_code": 201,
+        "student_id": "stu_181854166074",
+        "summary": "Registered test student stu_181854166074"
+      }
+    },
+    {
+      "step": "2. Complete 8-Agent Sequential Chapter Learning Journey",
+      "status": "PASS",
+      "timestamp": "2026-11-01T13:52:13.741981",
+      "details": {
+        "status_code": 200,
+        "journey_id": "jrn_5ec8af79216d",
+        "duration_s": 42.18,
+        "mastery_score": 75.0,
+        "mastery_achieved": true,
+        "adaptive_action": "advance_to_next_topic",
+        "steps_verified": [
+          "orchestrator",
+          "diagnostic",
+          "curriculum",
+          "resource",
+          "teacher",
+          "assessment",
+          "progress",
+          "mentor"
+        ],
+        "summary": "All 8 agents executed sequentially in 42.18s with verified context passing"
+      }
+    },
+    {
+      "step": "3. Agent-to-Agent Context Passing Verification",
+      "status": "PASS",
+      "timestamp": "2026-11-01T13:52:13.741981",
+      "details": {
+        "diagnostic_length": 630,
+        "curriculum_length": 599,
+        "resource_length": 508,
+        "teacher_length": 1426,
+        "mentor_length": 670,
+        "summary": "Every downstream task received verified context from upstream tasks"
+      }
+    },
+    {
+      "step": "4. Database Persistence Verification across 5 Core Tables",
+      "status": "PASS",
+      "timestamp": "2026-11-01T13:52:13.746118",
+      "details": {
+        "journey_row": [
+          "jrn_5ec8af79216d",
+          "Science",
+          "Chemical Reactions and Equations",
+          "completed",
+          "completed",
+          75.0,
+          1
+        ],
+        "diagnostic_records_count": 1,
+        "curriculum_plans_count": 1,
+        "assessment_attempts_count": 1,
+        "topic_mastery": [
+          1.5,
+          "in_progress"
+        ],
+        "summary": "Verified persistent SQLite records in journeys, diagnostics, plans, assessments, mastery"
+      }
+    },
+    {
+      "step": "5a. Adaptive Loop: Pause Journey",
+      "status": "PASS",
+      "timestamp": "2026-11-01T13:52:13.787409",
+      "details": {
+        "status_code": 200,
+        "status": "paused",
+        "summary": "Journey successfully paused"
+      }
+    },
+    {
+      "step": "5b. Adaptive Loop: Resume Journey",
+      "status": "PASS",
+      "timestamp": "2026-11-01T13:52:13.832640",
+      "details": {
+        "status_code": 200,
+        "status": "active",
+        "summary": "Journey successfully resumed"
+      }
+    },
+    {
+      "step": "6. Multi-Student Tenant Isolation (Cross-Student Journey Access)",
+      "status": "PASS",
+      "timestamp": "2026-11-01T13:52:13.982635",
+      "details": {
+        "view_journey_status": 403,
+        "list_journeys_status": 403,
+        "summary": "Cross-student access strictly blocked with HTTP 403 Forbidden"
+      }
+    },
+    {
+      "step": "7. Central Orchestrator Workflow Dispatch Verification",
+      "status": "PASS",
+      "timestamp": "2026-11-01T13:52:37.634391",
+      "details": {
+        "status_code": 200,
+        "duration_s": 23.65,
+        "detected_intent": "Explain the difference between exothermic and endothermic reactions with equations",
+        "selected_workflow": "teacher_answer",
+        "selected_agents": [
+          "Teacher Agent"
+        ],
+        "summary": "Orchestrator routed intent to 'teacher_answer' in 23.65s"
+      }
+    }
+  ],
+  "summary": {
+    "total": 8,
+    "passed": 8,
+    "failed": 0
+  }
+}

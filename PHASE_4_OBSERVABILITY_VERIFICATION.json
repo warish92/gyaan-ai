@@ -1,0 +1,185 @@
+{
+  "phase": 4,
+  "phase_name": "Callbacks, Monitoring, Observability & Langfuse",
+  "timestamp": "2026-11-11T16:40:50Z",
+  "ollama_status": {
+    "online": false,
+    "details": "<urlopen error timed out>",
+    "live_inference_performed": false,
+    "note": "Local Ollama service was offline at audit time; models were not downloaded and LLM configuration was not altered per instructions."
+  },
+  "workflow_verification": {
+    "subject": "Science",
+    "class": "Class 10",
+    "chapter": "Chemical Reactions and Equations",
+    "student_id": "student_aarav_01",
+    "root_trace_id": "727785898dbb4af3b9084ea3c32c0d42",
+    "orchestrator_executed": true,
+    "pipeline_success": false,
+    "pipeline_error": "ConnectionError: Failed to connect to OpenAI API: Connection error.",
+    "duration_ms": 59509.43219999954,
+    "trace_recorded": true,
+    "spans_recorded": 1,
+    "events_captured": 3
+  },
+  "langfuse_integration": {
+    "enabled": false,
+    "status": "disabled",
+    "zero_impact_on_failure": true,
+    "redaction_verified": true,
+    "no_synthetic_tokens": true
+  },
+  "telemetry_store": {
+    "type": "In-Memory Bounded Ring Buffer",
+    "capacity_traces": 1000,
+    "capacity_events": 5000,
+    "database_isolation": "Separate from SQLite (zero schema changes)",
+    "metrics": {
+      "total_traces": 1,
+      "total_spans": 1,
+      "total_events": 3,
+      "total_errors": 2,
+      "error_rate": 1.0,
+      "avg_trace_duration_ms": 59509.36,
+      "traces_by_status": {
+        "failed": 1
+      },
+      "spans_by_type": {
+        "workflow": 1
+      },
+      "agent_activity": {
+        "Orchestrator Agent": {
+          "invocations": 1
+        },
+        "Diagnostic Agent": {
+          "invocations": 0
+        },
+        "Curriculum Agent": {
+          "invocations": 0
+        },
+        "Resource Agent": {
+          "invocations": 0
+        },
+        "Teacher Agent": {
+          "invocations": 0
+        },
+        "Assessment Agent": {
+          "invocations": 0
+        },
+        "Progress Agent": {
+          "invocations": 0
+        },
+        "Mentor Agent": {
+          "invocations": 0
+        },
+        "Learning Intelligence Agent (ADK)": {
+          "invocations": 0
+        }
+      }
+    }
+  },
+  "test_results": {
+    "test_file": "tests/test_observability.py",
+    "total_tests": 25,
+    "passed": 25,
+    "failed": 0,
+    "skipped": 0
+  },
+  "canonical_agents_monitored": [
+    {
+      "agent_name": "Orchestrator Agent",
+      "canonical_role": "Intent classification, routing, and lifecycle coordination",
+      "total_invocations": 1,
+      "total_errors": 1,
+      "last_active": "2026-11-11T16:40:50.731973+00:00",
+      "avg_duration_ms": 33733.19,
+      "status": "error"
+    },
+    {
+      "agent_name": "Diagnostic Agent",
+      "canonical_role": "Prerequisite gap detection and diagnostic evaluations",
+      "total_invocations": 0,
+      "total_errors": 0,
+      "last_active": null,
+      "avg_duration_ms": 0.0,
+      "status": "idle"
+    },
+    {
+      "agent_name": "Curriculum Agent",
+      "canonical_role": "NCERT Class 10 curriculum alignment and sequential roadmap",
+      "total_invocations": 0,
+      "total_errors": 0,
+      "last_active": null,
+      "avg_duration_ms": 0.0,
+      "status": "idle"
+    },
+    {
+      "agent_name": "Resource Agent",
+      "canonical_role": "Verified textbook corpora and MCP research tool execution",
+      "total_invocations": 0,
+      "total_errors": 0,
+      "last_active": null,
+      "avg_duration_ms": 0.0,
+      "status": "idle"
+    },
+    {
+      "agent_name": "Teacher Agent",
+      "canonical_role": "Pedagogical concept explanation and step-by-step tutoring",
+      "total_invocations": 0,
+      "total_errors": 0,
+      "last_active": null,
+      "avg_duration_ms": 0.0,
+      "status": "idle"
+    },
+    {
+      "agent_name": "Assessment Agent",
+      "canonical_role": "Bloom's taxonomy quiz generation and scoring",
+      "total_invocations": 0,
+      "total_errors": 0,
+      "last_active": null,
+      "avg_duration_ms": 0.0,
+      "status": "idle"
+    },
+    {
+      "agent_name": "Progress Agent",
+      "canonical_role": "Mastery updates, learning velocity, and milestone tracking",
+      "total_invocations": 0,
+      "total_errors": 0,
+      "last_active": null,
+      "avg_duration_ms": 0.0,
+      "status": "idle"
+    },
+    {
+      "agent_name": "Mentor Agent",
+      "canonical_role": "Metacognitive motivation, study habit guidance, and feedback",
+      "total_invocations": 0,
+      "total_errors": 0,
+      "last_active": null,
+      "avg_duration_ms": 0.0,
+      "status": "idle"
+    },
+    {
+      "agent_name": "Learning Intelligence Agent (ADK)",
+      "canonical_role": "Deep learning trajectory and session intelligence",
+      "total_invocations": 0,
+      "total_errors": 0,
+      "last_active": null,
+      "avg_duration_ms": 0.0,
+      "status": "idle"
+    }
+  ],
+  "database_protection": {
+    "db_path": "D:\\Gyaan AI\\data\\gyaan_ai.db",
+    "tables_count": 23,
+    "total_rows": 8192,
+    "students_count": 781,
+    "student_sessions_count": 782,
+    "integrity_check": "ok",
+    "status": "intact_unchanged"
+  },
+  "legacy_project_protection": {
+    "path": "D:\\GYAN Ai",
+    "status": "untouched",
+    "last_modified": "2026-10-28 09:28:28"
+  }
+}

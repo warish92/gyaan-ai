@@ -179,6 +179,73 @@ class LangfuseManager:
         except Exception as exc:
             logger.debug("Failed to complete Langfuse span (non-critical): %s", exc)
 
+    def start_task_observation(
+        self,
+        trace_id: str,
+        parent_span_id: Optional[str],
+        name: str,
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> Optional[Any]:
+        """Starts an agent-level task observation directly returning the observation object.
+
+        Privacy guarantee: input=None, output=None, usage_details=None.
+        Zero-failure guarantee: Telemetry exceptions are caught and never raise into learning workflows.
+        """
+        if not self.is_enabled():
+            return None
+
+        clean_trace_id = normalize_trace_id(trace_id)
+        sanitized_meta = redact_sensitive_data(metadata or {})
+
+        try:
+            trace_context: Dict[str, str] = {"trace_id": clean_trace_id}
+            if parent_span_id:
+                clean_parent = parent_span_id[-16:] if len(parent_span_id) >= 16 else parent_span_id.zfill(16)
+                trace_context["parent_span_id"] = clean_parent
+
+            span_obj = self._client.start_observation(
+                name=name,
+                as_type="agent",
+                trace_context=trace_context,
+                metadata=sanitized_meta,
+            )
+            return span_obj
+        except Exception as exc:
+            logger.debug("Failed to start Langfuse task observation (non-critical): %s", exc)
+            return None
+
+    def end_task_observation(
+        self,
+        span_obj: Any,
+        end_time_ns: Optional[int] = None,
+        status_message: str = "SUCCESS",
+        level: str = "DEFAULT",
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> None:
+        """Ends an active agent-level task observation.
+
+        Privacy guarantee: output=None, usage_details=None.
+        Zero-failure guarantee: Telemetry exceptions are shielded and non-blocking.
+        """
+        if not span_obj or not self.is_enabled():
+            return
+
+        sanitized_meta = redact_sensitive_data(metadata or {})
+        try:
+            span_obj.update(
+                level=level,
+                status_message=status_message,
+                output=None,
+                metadata=sanitized_meta,
+                usage_details=None,
+            )
+            if end_time_ns is not None:
+                span_obj.end(end_time=end_time_ns)
+            else:
+                span_obj.end()
+        except Exception as exc:
+            logger.debug("Failed to end Langfuse task observation (non-critical): %s", exc)
+
     def flush(self) -> None:
         """Flushes telemetry buffer in a non-blocking try-catch."""
         if not self.is_enabled():

@@ -71,12 +71,18 @@ def build_progress_mentor_crew(
         verified_resources=verified_resources,
     )
 
-    crew = Crew(
-        agents=[progress_agent, mentor_agent],
-        tasks=[progress_task, mentor_task],
-        process=Process.sequential,
-        verbose=True,
-    )
+    crew_kwargs = {
+        "agents": [progress_agent, mentor_agent],
+        "tasks": [progress_task, mentor_task],
+        "process": Process.sequential,
+        "verbose": True,
+    }
+    try:
+        from backend.observability import attach_crewai_callbacks
+        attach_crewai_callbacks(crew_kwargs, agent_name="ProgressMentorWorkflow")
+    except Exception:
+        pass
+    crew = Crew(**crew_kwargs)
 
     return crew, progress_task, mentor_task
 
@@ -117,15 +123,36 @@ def run_progress_analysis_workflow(
         recent_history=recent_history,
     )
 
-    crew = Crew(
-        agents=[progress_agent],
-        tasks=[progress_task],
-        process=Process.sequential,
-        verbose=True,
-    )
+    crew_kwargs = {
+        "agents": [progress_agent],
+        "tasks": [progress_task],
+        "process": Process.sequential,
+        "verbose": True,
+    }
+    try:
+        from backend.observability import attach_crewai_callbacks
+        attach_crewai_callbacks(crew_kwargs, agent_name="Progress Agent")
+    except Exception:
+        pass
+    crew = Crew(**crew_kwargs)
 
-    logger.info("Executing Progress Agent workflow for student %s", student_id)
-    result = crew.kickoff()
+    active_tok = None
+    try:
+        from backend.observability import set_gyaan_workflow_active
+        active_tok = set_gyaan_workflow_active(True)
+    except Exception:
+        pass
+
+    try:
+        logger.info("Executing Progress Agent workflow for student %s", student_id)
+        result = crew.kickoff()
+    finally:
+        if active_tok is not None:
+            try:
+                from backend.observability import reset_gyaan_workflow_active
+                reset_gyaan_workflow_active(active_tok)
+            except Exception:
+                pass
     raw_output = str(result.raw if hasattr(result, "raw") else result).strip()
 
     parsed_analysis = clean_json_payload(raw_output)
@@ -213,7 +240,22 @@ def run_progress_and_mentor_workflow(
 
     logger.info("Kickoff sequential Progress -> Mentor workflow for student %s", student_id)
     start_time = time.perf_counter()
-    result = crew.kickoff()
+    active_tok = None
+    try:
+        from backend.observability import set_gyaan_workflow_active
+        active_tok = set_gyaan_workflow_active(True)
+    except Exception:
+        pass
+
+    try:
+        result = crew.kickoff()
+    finally:
+        if active_tok is not None:
+            try:
+                from backend.observability import reset_gyaan_workflow_active
+                reset_gyaan_workflow_active(active_tok)
+            except Exception:
+                pass
     elapsed = round(time.perf_counter() - start_time, 2)
 
     progress_raw = (

@@ -2605,6 +2605,69 @@ def get_student_bookmarks(
 # ==============================================================================
 
 
+# Phase 5D Student Document Database Paths
+DEFAULT_DOCUMENTS_DB_PATH = Path("data/documents.db").resolve()
+
+
+def get_document_db_path(custom_path: Optional[Path | str] = None) -> Path:
+    """Resolve database path for student document management.
+
+    When custom_path is specified, or when GYAAN_DB_PATH is configured (e.g. test isolation),
+    uses the explicit test database path.
+    In production without an explicit override, uses a dedicated documents database
+    (data/documents.db) to strictly preserve canonical curriculum database invariants.
+    """
+    if custom_path:
+        return Path(custom_path).resolve()
+    if "GYAAN_DB_PATH" in os.environ and os.environ["GYAAN_DB_PATH"]:
+        return Path(os.environ["GYAAN_DB_PATH"]).resolve()
+    DEFAULT_DOCUMENTS_DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    return DEFAULT_DOCUMENTS_DB_PATH
+
+
+def get_document_db_connection(custom_path: Optional[Path | str] = None) -> sqlite3.Connection:
+    """Open an SQLite connection for student documents with WAL mode."""
+    path = get_document_db_path(custom_path)
+    conn = sqlite3.connect(str(path))
+    conn.row_factory = sqlite3.Row
+    try:
+        conn.execute("PRAGMA journal_mode = WAL;")
+    except Exception:
+        pass
+    return conn
+
+
+def init_document_db(custom_path: Optional[Path | str] = None) -> None:
+    """Initialize student_documents table and indexes in the designated document database."""
+    conn = get_document_db_connection(custom_path)
+    try:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS student_documents (
+                id TEXT PRIMARY KEY,
+                student_id TEXT NOT NULL,
+                filename TEXT NOT NULL,
+                storage_path TEXT NOT NULL,
+                file_size INTEGER NOT NULL,
+                content_type TEXT NOT NULL DEFAULT 'application/pdf',
+                file_hash TEXT NOT NULL,
+                page_count INTEGER NOT NULL DEFAULT 0,
+                chunk_count INTEGER NOT NULL DEFAULT 0,
+                indexing_status TEXT NOT NULL DEFAULT 'PENDING' CHECK (indexing_status IN ('PENDING', 'PROCESSING', 'INDEXED', 'FAILED', 'DELETING')),
+                error_message TEXT,
+                lease_token TEXT,
+                lease_expires_at TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            );
+        """)
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_student_documents_student_id ON student_documents(student_id);")
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_student_documents_status ON student_documents(indexing_status);")
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_student_documents_hash ON student_documents(student_id, file_hash);")
+        conn.commit()
+    finally:
+        conn.close()
+
+
 def create_document_record(
     document_id: str,
     student_id: str,
@@ -2619,7 +2682,7 @@ def create_document_record(
     custom_path: Optional[Path | str] = None,
 ) -> Dict[str, Any]:
     """Create a new student document record in SQLite."""
-    conn = get_db_connection(custom_path)
+    conn = get_document_db_connection(custom_path)
     now = datetime.now(timezone.utc).isoformat()
     try:
         with conn:
@@ -2660,7 +2723,7 @@ def get_document_record(
     custom_path: Optional[Path | str] = None,
 ) -> Optional[Dict[str, Any]]:
     """Retrieve a document record by ID, optionally verifying student ownership."""
-    conn = get_db_connection(custom_path)
+    conn = get_document_db_connection(custom_path)
     try:
         if student_id is not None:
             cursor = conn.execute(
@@ -2686,7 +2749,7 @@ def list_student_documents(
     custom_path: Optional[Path | str] = None,
 ) -> List[Dict[str, Any]]:
     """List documents belonging to a student with optional status filtering and pagination."""
-    conn = get_db_connection(custom_path)
+    conn = get_document_db_connection(custom_path)
     try:
         query = "SELECT * FROM student_documents WHERE student_id = ?"
         params: List[Any] = [student_id]
@@ -2708,7 +2771,7 @@ def count_student_documents(
     custom_path: Optional[Path | str] = None,
 ) -> int:
     """Count documents belonging to a student with optional status filter."""
-    conn = get_db_connection(custom_path)
+    conn = get_document_db_connection(custom_path)
     try:
         query = "SELECT COUNT(*) FROM student_documents WHERE student_id = ?"
         params: List[Any] = [student_id]
@@ -2734,7 +2797,7 @@ def update_document_status(
     custom_path: Optional[Path | str] = None,
 ) -> bool:
     """Update document indexing status and metadata."""
-    conn = get_db_connection(custom_path)
+    conn = get_document_db_connection(custom_path)
     now = datetime.now(timezone.utc).isoformat()
     try:
         updates = ["indexing_status = ?", "updated_at = ?"]
@@ -2777,7 +2840,7 @@ def delete_document_record(
     custom_path: Optional[Path | str] = None,
 ) -> bool:
     """Delete a document record if owned by the specified student."""
-    conn = get_db_connection(custom_path)
+    conn = get_document_db_connection(custom_path)
     try:
         with conn:
             cursor = conn.execute(
@@ -2796,7 +2859,7 @@ def find_document_by_hash(
     custom_path: Optional[Path | str] = None,
 ) -> Optional[Dict[str, Any]]:
     """Check for duplicate document by content hash for a specific student."""
-    conn = get_db_connection(custom_path)
+    conn = get_document_db_connection(custom_path)
     try:
         if include_failed:
             cursor = conn.execute(
@@ -2831,7 +2894,7 @@ def reconcile_stale_documents(
     Returns the list of stale documents that were reconciled to FAILED.
     """
     from datetime import timedelta
-    conn = get_db_connection(custom_path)
+    conn = get_document_db_connection(custom_path)
     now_dt = datetime.now(timezone.utc)
     now_iso = now_dt.isoformat()
     stale_cutoff = (now_dt - timedelta(seconds=stale_threshold_seconds)).isoformat()

@@ -1,0 +1,95 @@
+{
+  "verification_timestamp": "2026-11-10T21:00:57.870210+00:00",
+  "agents": {
+    "orchestrator": {
+      "agent_name": "Orchestrator Agent",
+      "role": "Educational AI Workflow Orchestrator",
+      "execution_path": "backend.agents.orchestrator.run_orchestrator_routing",
+      "tested_input": "Explain the difference between displacement and double displacement reactions",
+      "output_workflow": "teacher_answer",
+      "selected_agents": [
+        "Teacher Agent"
+      ],
+      "routing_reason": "The student is requesting a concept explanation, which falls under the 'teacher_answer' workflow.",
+      "duration_ms": 5301.38,
+      "execution_type": "Live CrewAI Orchestrator Agent Execution (Ollama GPU)",
+      "status": "PASS"
+    },
+    "diagnostic": {
+      "agent_name": "Diagnostic Agent",
+      "role": "Evidence-Based Student Learning Diagnostic Specialist",
+      "goal": "Conduct meticulous, evidence-grounded diagnostic evaluation of student answers against assessment questions. Credit ONLY demonstrated understanding. Never invent or attribute misconceptions unsupported by student words. Treat omitted concepts as knowledge gaps or insufficient evidence, not as misconceptions. Accurately classify answers into Correct, Partially Correct, Incorrect, or Insufficient Evidence.",
+      "execution_path": "backend.agents.diagnostic.create_diagnostic_agent / diagnostic_service",
+      "model": "qwen2.5:3b",
+      "duration_ms": 536.12,
+      "execution_type": "CrewAI Specialist Agent",
+      "status": "PASS"
+    },
+    "curriculum": {
+      "agent_name": "Curriculum Agent",
+      "role": "Evidence-Grounded Curriculum Planning Specialist",
+      "execution_path": "backend.agents.curriculum.create_curriculum_agent / curriculum_bank_seeder",
+      "model": "qwen2.5:3b",
+      "curriculum_topics_count": 209,
+      "duration_ms": 508.43,
+      "execution_type": "CrewAI Specialist Agent",
+      "status": "PASS"
+    },
+    "resource": {
+      "agent_name": "Resource Agent",
+      "role": "Educational Resource Retrieval Specialist",
+      "execution_path": "backend.agents.resource.create_resource_agent / retrieve_local_resources",
+      "model": "qwen2.5:3b",
+      "duration_ms": 595.45,
+      "execution_type": "CrewAI Specialist Agent",
+      "status": "PASS"
+    },
+    "teacher": {
+      "agent_name": "Teacher Agent",
+      "role": "Class 10 CBSE Science Teacher and Concept Specialist",
+      "execution_path": "backend.agents.teacher.create_teacher_agent / build_teacher_crew",
+      "model": "qwen2.5:3b",
+      "duration_ms": 564.55,
+      "execution_type": "CrewAI Specialist Agent",
+      "status": "PASS"
+    },
+    "assessment": {
+      "agent_name": "Assessment Agent",
+      "role": "Educational Assessment and Feedback Specialist",
+      "execution_path": "backend.agents.assessment.create_assessment_agent / practice_service",
+      "model": "qwen2.5:3b",
+      "duration_ms": 571.33,
+      "execution_type": "CrewAI Specialist Agent",
+      "status": "PASS"
+    },
+    "progress": {
+      "agent_name": "Progress Agent",
+      "role": "Student Learning Progress Analyst",
+      "execution_path": "backend.agents.progress_workflow.run_progress_analysis_workflow",
+      "model": "qwen2.5:3b",
+      "workflow_output_status": null,
+      "topics_evaluated": 0,
+      "duration_ms": 7282.29,
+      "execution_type": "Deterministic Database Mastery Calculation + Agent Analysis",
+      "status": "PASS"
+    },
+    "mentor": {
+      "agent_name": "Mentor Agent",
+      "role": "Personalized Student Learning Mentor",
+      "execution_path": "backend.agents.mentor.create_mentor_agent / run_personalized_mentoring",
+      "model": "qwen2.5:3b",
+      "duration_ms": 540.83,
+      "execution_type": "CrewAI Specialist Agent",
+      "status": "PASS"
+    }
+  },
+  "chapter_journey_crew": {
+    "crew_type": "<class 'crewai.crew.Crew'>",
+    "process": "Process.sequential",
+    "total_agents": 8,
+    "total_tasks": 9,
+    "context_chaining_verified": true,
+    "duration_ms": 4342.62,
+    "status": "PASS"
+  }
+}

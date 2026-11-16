@@ -1,0 +1,34 @@
+{
+  "journey_id": "jrn_ee21a939b2d2",
+  "workflow_id": "chapter_learning_journey",
+  "subject": "Mathematics",
+  "chapter": "Real Numbers - Fundamental Theorem of Arithmetic",
+  "grade": "Class 10",
+  "language": "English",
+  "mastery_criteria_met": true,
+  "mastery_score": 75.0,
+  "adaptive_action": "advance_to_next_topic",
+  "duration_seconds": 43.63,
+  "agents_executed": [
+    "Orchestrator",
+    "Diagnostic",
+    "Curriculum",
+    "Resource",
+    "Teacher",
+    "Assessment",
+    "Progress",
+    "Mentor"
+  ],
+  "step_outputs": {
+    "orchestrator": "- **Journey Header**: Mathematics, Real Numbers - Fundamental Theorem of Arithmetic, Class 10, English, Understand how to express composite numbers as products of prime factors and find LCM/HCF.\n- **Curricular Scope**: Core competencies include understanding prime numbers, composite numbers, prime factorization, and the Fundamental Theorem of Arithmetic. Prerequisite domains include basic arithmetic operations and understanding of factors and multiples.\n- **Orchestration Directive**: Handoff parameters for Diagnostic Assessment: Student context includes understanding of basic arithmetic operations, factors and multiples, and foundational knowledge of prime numbers.",
+    "diagnostic": "- **Student Evidence**: Confused about unique prime factorization and LCM/HCF computation using powers.\n- **Weak Concepts**: Unique prime factorization, LCM/HCF computation.\n- **Missing Prerequisites**: Understanding of basic arithmetic operations, factors and multiples, and foundational knowledge of prime numbers.",
+    "curriculum": "- **Stage 1: Prerequisite Recovery** (1 week)\n  - Understand basic arithmetic operations, factors and multiples, prime numbers.\n  - Practice simple LCM/HCF computation without powers.\n- **Stage 2: Core Concept Mastery** (2 weeks)\n  - Master unique prime factorization, LCM/HCF computation with powers.\n  - Apply concepts to solve problems.\n- **Stage 3: Applied Problem Solving & Verification** (1 week)\n  - Solve advanced problems, verify solutions.\n  - Mastery criterion: 70% on formative assessments.",
+    "resource": "- **Prerequisite Recovery (1 week):**\n  - NCERT Textbook: Chapter 1 \"Real Numbers\" Sections 1.2 and 1.3 (Basic Arithmetic, Factors and Multiples, Prime Numbers).\n  - Practice: Exercise 1.2, 1.3 (simple LCM/HCF without powers).\n\n- **Core Concept Mastery (2 weeks):**\n  - NCERT Textbook: Chapter 1 \"Real Numbers\" Sections 1.4 (Unique Prime Factorization), 1.5 (LCM/HCF with powers).\n  - Practice: Exercise 1.4, 1.5 (apply concepts to problems, including LCM/HCF with powers).\n\n- **Applied Problem Solving & Verification (1 week):**\n  - NCERT Textbook: Chapter 1 \"Real Numbers\" Exercise 1.6 (advanced problems).\n  - Practice: Solve and verify solutions using unique prime factorization and LCM/HCF with powers.",
+    "teacher": "- **Stage 1: Prerequisite Recovery (1 week):**\n  - Understand basic arithmetic operations, factors and multiples, prime numbers.\n  - Practice simple LCM/HCF computation without powers.\n  - NCERT Textbook: Chapter 1 \"Real Numbers\" Sections 1.2 and 1.3 (Basic Arithmetic, Factors and Multiples, Prime Numbers).\n  - Practice: Exercise 1.2, 1.3 (simple LCM/HCF without powers).\n\n- **Core Concept Mastery (2 weeks):**\n  - Master unique prime factorization, LCM/HCF computation with powers.\n  - Apply concepts to solve problems.\n  - NCERT Textbook: Chapter 1 \"Real Numbers\" Sections 1.4 (Unique Prime Factorization), 1.5 (LCM/HCF with powers).\n  - Practice: Exercise 1.4, 1.5 (apply concepts to problems, including LCM/HCF with powers).\n\n- **Comprehension Checkpoint:**\n  - Solve the following problem: Find the LCM of \\(2^3 \\times 3^2\\) and \\(2^2 \\times 5^3\\). What is the HCF of these numbers?",
+    "assessment": "**Score: 2/2 (100%), Status: SATISFIED.**\n\n**Explanation:**\n- **Question 1 (Concept MCQ):** The student correctly identified that every composite number can be uniquely factored into primes, apart from the order of factors. For 12 and 18, the student correctly factored 12 as \\(2^2 \\times 3\\) and 18 as \\(2 \\times 3^2\\), and correctly determined the HCF as \\(2 \\times 3 = 6\\). This question is fully correct.\n- **Question 2 (Concept Explanation):** The student explained that every composite number can be uniquely factored into primes, with the order of factors not affecting the result. The student correctly provided examples for 12 and 18, demonstrating understanding of the Fundamental Theorem of Arithmetic. This question is fully correct.\n\n**Percentage Score Calculation:**\n- Total max marks: 2\n- Score: 2\n- Percentage: \\( \\frac{2}{2} \\times 100 = 100\\% \\)\n\n**Mastery Criteria Check:**\n- Mastery criterion: 70% on formative assessments.\n- Score: 100% (>= 70%)\n\n**Feedback:**\n- The student demonstrated a strong understanding of the Fundamental Theorem of Arithmetic, including unique prime factorization and the calculation of HCF and LCM. The student's explanations were clear and accurate.\n\n**Conclusion:**\nThe student's mastery of the Fundamental Theorem of Arithmetic is fully satisfied (Score >= 70%).",
+    "progress": "- **Strengths:** Demonstrated strong understanding of unique prime factorization, HCF, and LCM, with clear and accurate explanations.\n- **Remaining Learning Priorities:** None identified, as mastery criteria is fully satisfied.\n\n**Conclusion:** Arjun Sharma has fully mastered the Fundamental Theorem of Arithmetic. No further sessions are required.",
+    "mentor": "- **Next Study Milestone:** Review and practice advanced composite number factorizations with powers, aiming for 70% mastery on next formative assessment.\n- **Study Tip:** Focus on understanding and applying prime factorization with exponents.\n\n**Next Study Milestone:** Review and practice advanced composite number factorizations with powers, aiming for 70% mastery on next formative assessment."
+  },
+  "final_mentor_recommendation": "- **Next Study Milestone:** Review and practice advanced composite number factorizations with powers, aiming for 70% mastery on next formative assessment.\n- **Study Tip:** Focus on understanding and applying prime factorization with exponents.\n\n**Next Study Milestone:** Review and practice advanced composite number factorizations with powers, aiming for 70% mastery on next formative assessment.",
+  "persisted": true
+}

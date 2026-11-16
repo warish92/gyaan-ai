@@ -1,0 +1,14 @@
+{
+  "hmac_secret_configured": true,
+  "pseudonymized_curriculum_student_id": "pseudo_2aa389bb55cb29be",
+  "pseudonymized_mentor_student_id": "pseudo_491bbb24555540b1",
+  "missing_secret_returns_none": true,
+  "raw_curriculum_student_id_in_logs": false,
+  "raw_mentor_student_id_in_logs": false,
+  "raw_curriculum_student_id_in_api": false,
+  "raw_mentor_student_id_in_api": false,
+  "credentials_leaked": false,
+  "conversations_leaked": false,
+  "internal_reasoning_leaked": false,
+  "privacy_audit_status": "PASSED"
+}

@@ -1,0 +1,150 @@
+{
+  "phase": "Phase 3: Model Context Protocol (MCP) Integration",
+  "project_root": "D:\\Gyaan AI",
+  "protected_legacy_project": "D:\\GYAN Ai (Untouched: 10/28/2026 09:28:28 AM)",
+  "timestamp": "2026-11-11T10:11:00Z",
+  "status": "COMPLETED_AND_VERIFIED",
+  "sdk_metadata": {
+    "package_name": "mcp",
+    "version": "1.30.0",
+    "protocol_version": "2025-11-25",
+    "author": "Anthropic, PBC",
+    "transport": "stdio (cross-process subprocess standard I/O)"
+  },
+  "mcp_servers": [
+    {
+      "server_name": "gyaan_educational_web_search",
+      "script_path": "backend/mcp_integration/servers/web_search_server.py",
+      "transport": "stdio",
+      "tools_exposed": [
+        {
+          "name": "search_educational_web",
+          "description": "Search the web for educational resources, scientific explanations, or curriculum references relevant to CBSE Class 10 subjects.",
+          "input_schema": {
+            "type": "object",
+            "properties": {
+              "query": {"type": "string"},
+              "subject": {"type": "string", "default": "Science"},
+              "grade": {"type": "string", "default": "Class 10"},
+              "max_results": {"type": "integer", "default": 3}
+            },
+            "required": ["query"]
+          }
+        }
+      ]
+    },
+    {
+      "server_name": "gyaan_educational_filesystem",
+      "script_path": "backend/mcp_integration/servers/filesystem_server.py",
+      "transport": "stdio",
+      "tools_exposed": [
+        {
+          "name": "list_educational_resources",
+          "description": "List all approved educational materials, NCERT textbook corpora, and curriculum references stored in the sandboxed resources directory.",
+          "input_schema": {
+            "type": "object",
+            "properties": {
+              "sub_directory": {"type": "string", "default": ""}
+            }
+          }
+        },
+        {
+          "name": "read_educational_resource",
+          "description": "Read the contents of an approved educational document or NCERT textbook JSON corpus. Strictly sandboxed to the educational resources repository with directory traversal protection.",
+          "input_schema": {
+            "type": "object",
+            "properties": {
+              "file_name": {"type": "string"},
+              "max_entries": {"type": "integer", "default": 10}
+            },
+            "required": ["file_name"]
+          }
+        }
+      ]
+    }
+  ],
+  "crewai_integration": {
+    "tools": [
+      "MCPWebSearchTool (mcp_educational_web_search)",
+      "MCPFilesystemTool (mcp_educational_filesystem)"
+    ],
+    "integrated_agents": [
+      "Resource Agent (equipped with MCP tools for external research and textbook reading)",
+      "Teacher Agent (synthesizes concept explanations grounded in curated MCP evidence)",
+      "Orchestrator Agent (routes external educational research intents to mcp_educational_research workflow)"
+    ],
+    "workflows": [
+      "mcp_educational_research (Orchestrator -> Resource Agent -> MCP Tools -> Teacher Agent)"
+    ]
+  },
+  "security_controls": {
+    "sandboxed_directory": "D:\\Gyaan AI\\data\\resources",
+    "directory_traversal_prevention": "Enforced (relative_to check, '..' rejected)",
+    "file_extension_allowlist": [".json", ".txt", ".md", ".csv"],
+    "max_file_size_bytes": 1048576,
+    "tool_allowlist": [
+      "search_educational_web",
+      "list_educational_resources",
+      "read_educational_resource"
+    ],
+    "prompt_injection_scanning": "Enforced on inputs and outputs",
+    "untrusted_web_tagging": "Enforced via <external_untrusted_reference> wrapper"
+  },
+  "test_results": {
+    "total_tests": 23,
+    "passed": 23,
+    "failed": 0,
+    "duration_seconds": 72.25,
+    "classification_breakdown": {
+      "UNIT": 12,
+      "MCP_INTEGRATION": 5,
+      "LIVE_MCP_TOOL_EXECUTION": 2,
+      "LIVE_CREWAI_MCP_EXECUTION": 4
+    },
+    "tests": [
+      {"id": "test_01", "name": "mcp_sdk_installation_and_version", "status": "PASSED", "type": "UNIT"},
+      {"id": "test_02", "name": "mcp_server_initialization", "status": "PASSED", "type": "UNIT"},
+      {"id": "test_03", "name": "mcp_client_connection", "status": "PASSED", "type": "MCP_INTEGRATION"},
+      {"id": "test_04", "name": "tool_discovery", "status": "PASSED", "type": "MCP_INTEGRATION"},
+      {"id": "test_05", "name": "web_search_tool_invocation", "status": "PASSED", "type": "LIVE_MCP_TOOL_EXECUTION"},
+      {"id": "test_06", "name": "filesystem_tool_invocation", "status": "PASSED", "type": "LIVE_MCP_TOOL_EXECUTION"},
+      {"id": "test_07", "name": "tool_input_validation", "status": "PASSED", "type": "UNIT"},
+      {"id": "test_08", "name": "tool_output_validation_and_contracts", "status": "PASSED", "type": "UNIT"},
+      {"id": "test_09", "name": "filesystem_permission_restrictions", "status": "PASSED", "type": "UNIT"},
+      {"id": "test_10", "name": "directory_traversal_prevention", "status": "PASSED", "type": "UNIT"},
+      {"id": "test_11", "name": "prompt_injection_handling", "status": "PASSED", "type": "UNIT"},
+      {"id": "test_12", "name": "authentication_and_credential_protection", "status": "PASSED", "type": "UNIT"},
+      {"id": "test_13", "name": "timeout_handling", "status": "PASSED", "type": "MCP_INTEGRATION"},
+      {"id": "test_14", "name": "tool_failure_handling", "status": "PASSED", "type": "MCP_INTEGRATION"},
+      {"id": "test_15", "name": "resource_agent_integration", "status": "PASSED", "type": "LIVE_CREWAI_MCP_EXECUTION"},
+      {"id": "test_16", "name": "teacher_agent_integration", "status": "PASSED", "type": "LIVE_CREWAI_MCP_EXECUTION"},
+      {"id": "test_17", "name": "orchestrator_routing", "status": "PASSED", "type": "LIVE_CREWAI_MCP_EXECUTION"},
+      {"id": "test_18", "name": "existing_eight_agents_regression", "status": "PASSED", "type": "UNIT"},
+      {"id": "test_19", "name": "existing_adk_regression", "status": "PASSED", "type": "UNIT"},
+      {"id": "test_20", "name": "existing_a2a_regression", "status": "PASSED", "type": "UNIT"},
+      {"id": "test_21", "name": "existing_chapter_journey_regression", "status": "PASSED", "type": "UNIT"},
+      {"id": "test_22", "name": "database_preservation", "status": "PASSED", "type": "UNIT"},
+      {"id": "test_23", "name": "frontend_production_build", "status": "PASSED", "type": "LIVE_CREWAI_MCP_EXECUTION"}
+    ]
+  },
+  "database_integrity": {
+    "database_file": "D:\\Gyaan AI\\data\\gyaan_ai.db",
+    "safety_backup": "D:\\Gyaan AI\\data\\gyaan_ai.db.bak_phase3",
+    "total_tables": 23,
+    "total_students": 781,
+    "total_sessions": 782,
+    "modifications": 0,
+    "status": "100% INTACT"
+  },
+  "frontend_integrity": {
+    "status": "BUILD_SUCCESSFUL",
+    "pages_compiled": 16,
+    "framework": "Next.js 14.2.35 / React 18",
+    "exit_code": 0
+  },
+  "phase_2_a2a_regression": {
+    "status": "17_PASSED",
+    "duration_seconds": 52.54,
+    "regressions_detected": 0
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "canonical_agent": "Curriculum Agent",
+  "canonical_role": "Evidence-Grounded Curriculum Planning Specialist",
+  "implementation_file": "backend/agents/curriculum.py",
+  "entry_function": "run_curriculum_workflow",
+  "invocation_time": "2026-11-12T07:56:22.344131+00:00",
+  "completion_time": "2026-11-12T07:56:58.569642+00:00",
+  "duration_ms": 36225.51,
+  "duration_seconds": 36.23,
+  "root_trace_id": "6cdd0eca80c341df9552bbd3caf803f3",
+  "agent_span_id": "95f9e9e2ede7412d",
+  "task_span_id": "f5f9aadb1729485f",
+  "parent_span_id": null,
+  "model": "qwen2.5:3b (local Ollama)",
+  "endpoint": "http://127.0.0.1:11434",
+  "raw_student_id": "synthetic_student_curr_01",
+  "pseudonymized_student_id": "pseudo_2aa389bb55cb29be",
+  "spans_recorded": [
+    {
+      "span_id": "f5f9aadb1729485f",
+      "name": "task:You are designing a structured CBSE curriculum roadmap for a Class 10 student in...",
+      "parent_span_id": "95f9e9e2ede7412d",
+      "duration_ms": 0.0,
+      "status": "completed"
+    },
+    {
+      "span_id": "95f9e9e2ede7412d",
+      "name": "Curriculum Agent Live Execution",
+      "parent_span_id": null,
+      "duration_ms": 36223.18,
+      "status": "completed"
+    }
+  ],
+  "curriculum_data": {
+    "grade": "Class 10",
+    "subject": "Mathematics",
+    "topic": "Real Numbers",
+    "primary_mastery_goal": "Achieve mastery in Real Numbers aligned with CBSE standards.",
+    "mastery_criterion": "A minimum 70% threshold on formative assessment checkpoints is required before advancing.",
+    "prioritized_topics": [
+      "Rational Numbers",
+      "Euclid's Division Lemma and Fundamental Theorem of Arithmetic",
+      "HCF and LCM by prime factorization"
+    ],
+    "learning_stages": [
+      {
+        "stage_number": 1,
+        "stage_name": "Stage 1: Prerequisite Foundations",
+        "focus_topic": "Rational Numbers",
+        "prerequisite_concepts": [
+          "None (since Rational Numbers are a prerequisite for Real Numbers)"
+        ],
+        "measurable_objectives": [
+          "Student will be able to identify and work with rational numbers."
+        ],
+        "learning_activities": [
+          "General learning activity: Practice problems on identifying rational numbers and performing basic operations with them."
+        ],
+        "assessment_checkpoint": "[Formative checkpoint question: Identify and classify the following numbers as rational or irrational: 3/4, \u221a2, 0.123456789...]",
+        "evidence_justification": "To ensure a solid foundation for understanding the Euclid's division lemma and the Fundamental Theorem of Arithmetic."
+      },
+      {
+        "stage_number": 2,
+        "stage_name": "Stage 2: Core Concept Mastery",
+        "focus_topic": "Euclid's Division Lemma and Fundamental Theorem of Arithmetic",
+        "prerequisite_concepts": [
+          "Rational Numbers"
+        ],
+        "measurable_objectives": [
+          "Student will be able to apply Euclid's division lemma to find the HCF of two numbers."
+        ],
+        "learning_activities": [
+          "General learning activity: Practice problems on applying Euclid's division lemma to find HCF and LCM using prime factorization."
+        ],
+        "assessment_checkpoint": "[Formative checkpoint question: Use Euclid's division lemma to find the HCF of 18 and 24 and verify using the Fundamental Theorem of Arithmetic.]",
+        "evidence_justification": "To ensure a deep understanding of the core concepts of Real Numbers, including Euclid's division lemma and the Fundamental Theorem of Arithmetic."
+      },
+      {
+        "stage_number": 3,
+        "stage_name": "Stage 3: Applied Problem Solving & Verification",
+        "focus_topic": "HCF and LCM by prime factorization",
+        "prerequisite_concepts": [
+          "Euclid's Division Lemma and Fundamental Theorem of Arithmetic"
+        ],
+        "measurable_objectives": [
+          "Student will be able to solve real-world problems involving HCF and LCM."
+        ],
+        "learning_activities": [
+          "General learning activity: Solve NCERT-style problems involving HCF and LCM."
+        ],
+        "assessment_checkpoint": "[Formative checkpoint question: Solve the following problem and verify your solution using the Fundamental Theorem of Arithmetic: Find the LCM and HCF of 12 and 18, and verify using the Fundamental Theorem of Arithmetic.]",
+        "evidence_justification": "To ensure the student can apply their knowledge of HCF and LCM to solve complex problems and verify their solutions using the Fundamental Theorem of Arithmetic."
+      }
+    ],
+    "resource_alignment_status": "Verified Official NCERT Curriculum Corpus (NCERT Class 10 Mathematics Chapter 1; CBSE Curriculum 2026-27)",
+    "summary": "Sequenced study roadmap based on curriculum database evidence."
+  },
+  "raw_output_snippet": "# PERSONALIZED CURRICULUM PLAN\n**Target**: Class 10 | Mathematics | Real Numbers\n- **Primary Learning Goal**: Achieve mastery in Real Numbers aligned with CBSE standards.\n- **Mastery Criterion**: A minimum 70% threshold on formative assessment checkpoints is required before advancing.\n- **Resource Alignment**: Verified Official NCERT Curriculum Corpus (NCERT Class 10 Mathematics Chapter 1; CBSE Curriculum 2026-27)\n- **Priority Topics**: Real Numbers\n\n## Sequenced Learning Stages\n\n### Stage 1: Pr"
+}

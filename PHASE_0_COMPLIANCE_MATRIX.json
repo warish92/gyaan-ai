@@ -1,0 +1,295 @@
+{
+  "audit_metadata": {
+    "phase": "OFFICIAL PHASE 0 — COMPLETE ARCHITECTURE AUDIT",
+    "project_path": "D:\\Gyaan AI",
+    "protected_legacy_path": "D:\\GYAN Ai (Untouched, Timestamp: 10/28/2026 09:28:28 AM)",
+    "audit_timestamp": "2026-11-11T01:45:00+05:30",
+    "auditor": "Antigravity AI (Pair Programming with User)",
+    "execution_environment": {
+      "python_version": "3.11.9",
+      "os": "Windows (PowerShell)",
+      "target_model": "qwen2.5:3b (Local Ollama at http://127.0.0.1:11434)",
+      "test_suite_status": "147 passed in 269.37s (100%)",
+      "frontend_build_status": "Next.js 14.2.35 production build successful (16 routes statically optimized)"
+    }
+  },
+  "compliance_summary": {
+    "total_requirements_audited": 18,
+    "fully_implemented_and_verified": 4,
+    "implemented_but_not_live_verified": 0,
+    "partially_implemented": 5,
+    "not_implemented": 9,
+    "not_applicable": 0
+  },
+  "requirements": [
+    {
+      "id": "REQ-01",
+      "category": "Canonical Agents",
+      "requirement": "Canonical Eight-Agent Multi-Agent Roster (Orchestrator, Diagnostic, Curriculum, Resource, Teacher, Assessment, Progress, Mentor)",
+      "status": "FULLY IMPLEMENTED AND VERIFIED",
+      "evidence": "All 8 canonical agents are implemented as genuine CrewAI Agent instances with unique roles, goals, backstories, and system prompts. Registered in central registry and verified executing live via local Ollama (qwen2.5:3b).",
+      "source_files": [
+        "backend/agents/registry.py (CANONICAL_AGENT_SPECS, agent_registry.initialize)",
+        "backend/agents/orchestrator.py (create_orchestrator_agent)",
+        "backend/agents/diagnostic.py (create_diagnostic_agent)",
+        "backend/agents/curriculum.py (create_curriculum_agent)",
+        "backend/agents/resource.py (create_resource_agent)",
+        "backend/agents/teacher.py (create_teacher_agent)",
+        "backend/agents/assessment.py (create_assessment_agent)",
+        "backend/agents/progress.py (create_progress_agent)",
+        "backend/agents/mentor.py (create_mentor_agent)"
+      ],
+      "test_evidence": "tests/test_agent_arena_registry.py, tests/test_specialist_isolation_and_independence.py, PRE_PHASE_0_2_0_LIVE_VERIFICATION.json",
+      "remaining_gap": "None for local CrewAI implementation. Future ADK migration will require co-locating ADK agents.",
+      "recommended_next_action": "Preserve canonical agent configurations when introducing Google ADK and A2A interfaces.",
+      "priority": "MAINTAIN"
+    },
+    {
+      "id": "REQ-02",
+      "category": "Multi-Agent Framework",
+      "requirement": "CrewAI Architecture (Sequential workflows, explicit task context passing, agent independence)",
+      "status": "FULLY IMPLEMENTED AND VERIFIED",
+      "evidence": "Genuine CrewAI Crews constructed using Process.sequential with explicit context chaining (context=[t1, t2, ...]). Agents execute independently without Teacher-centric bottlenecks.",
+      "source_files": [
+        "backend/agents/chapter_journey.py (build_chapter_learning_journey_crew)",
+        "backend/agents/orchestrator.py (build_orchestrator_crew)",
+        "backend/agents/diagnostic.py (build_diagnostic_crew)",
+        "backend/agents/curriculum.py (build_curriculum_crew)",
+        "backend/agents/crew.py (build_teacher_crew)",
+        "backend/agents/assessment.py (build_assessment_evaluation_crew)"
+      ],
+      "test_evidence": "tests/test_teacher_crew.py, tests/test_dynamic_orchestration_flow.py, tests/test_chapter_journey_unit.py",
+      "remaining_gap": "Hierarchical Process (Process.hierarchical with manager agent) is not implemented; default retries rely on tenacity without explicit CrewAI custom retry handlers.",
+      "recommended_next_action": "Evaluate whether hierarchical delegation or sequential pipeline is preferred for Phase 1.",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": "REQ-03",
+      "category": "Google ADK",
+      "requirement": "Google Agent Development Kit (ADK) Integration",
+      "status": "NOT IMPLEMENTED",
+      "evidence": "Search across repository yields 0 references to ADK. The package is not present in requirements.txt or installed pip environment. No ADK agents, sessions, or runners exist.",
+      "source_files": [],
+      "test_evidence": "None (0 tests exist for ADK)",
+      "remaining_gap": "Complete absence of Google ADK SDK, configuration, agent definitions, and session handlers.",
+      "recommended_next_action": "In Phase 1, install google-adk (or respective Google GenAI Agent SDK), create ADK agent definitions, and establish runtime configuration.",
+      "priority": "HIGH"
+    },
+    {
+      "id": "REQ-04",
+      "category": "Framework Interoperability",
+      "requirement": "CrewAI and Google ADK Interoperability",
+      "status": "NOT IMPLEMENTED",
+      "evidence": "Cannot interoperate because Google ADK is not yet implemented. All active execution flows run purely within CrewAI.",
+      "source_files": [],
+      "test_evidence": "None",
+      "remaining_gap": "No bridge, adapter, or message exchange mechanism between CrewAI and Google ADK.",
+      "recommended_next_action": "Design architectural boundary determining which agents remain on CrewAI vs ADK, and implement structured inter-framework adapter.",
+      "priority": "HIGH"
+    },
+    {
+      "id": "REQ-05",
+      "category": "Agent Communication",
+      "requirement": "A2A (Agent-to-Agent) Protocol Implementation (Agent Cards, discovery, structured message exchange)",
+      "status": "NOT IMPLEMENTED",
+      "evidence": "Search yields 0 references to A2A protocol. No Agent Cards (metadata manifests for discovery), no A2A message envelopes, and no A2A task artifacts exist. Communication currently relies on standard CrewAI context chaining.",
+      "source_files": [],
+      "test_evidence": "None",
+      "remaining_gap": "Absence of formal A2A protocol interfaces, JSON-LD / schema manifests for agents, and inter-agent message envelope specifications.",
+      "recommended_next_action": "Define formal A2A Agent Card specifications for all 8 agents and implement an A2A message dispatcher in Phase 2.",
+      "priority": "HIGH"
+    },
+    {
+      "id": "REQ-06",
+      "category": "Data Schemas",
+      "requirement": "Pydantic Structured Data Validation & Schema-Enforced Communication",
+      "status": "PARTIALLY IMPLEMENTED",
+      "evidence": "60+ Pydantic models exist in backend/app/schemas.py validating FastAPI endpoints, diagnostic assessments, practice sets, and progress dashboards. However, inter-task CrewAI communication relies on raw text outputs parsed via json_repair rather than output_pydantic on Task definitions, and specific schemas AgentMessage and LearningJourneyResult are absent.",
+      "source_files": [
+        "backend/app/schemas.py (DiagnosticAssessmentGenerateResponse, FullDiagnosticReportResponse, ChapterPracticeSetResponse, etc.)",
+        "backend/agents/chapter_journey.py (clean_json_payload)"
+      ],
+      "test_evidence": "tests/test_api_unit.py, tests/test_curriculum_system.py",
+      "remaining_gap": "CrewAI Tasks do not enforce output_pydantic; AgentMessage and LearningJourneyResult schemas are missing.",
+      "recommended_next_action": "Define AgentMessage and LearningJourneyResult Pydantic models; enforce output_pydantic on all CrewAI Task definitions.",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": "REQ-07",
+      "category": "Tool Integration",
+      "requirement": "Model Context Protocol (MCP) Tool Integration (At least 2 external tools)",
+      "status": "NOT IMPLEMENTED",
+      "evidence": "mcp==1.30.0 package is installed in pip virtualenv, but 0 MCP clients, 0 MCP servers, and 0 MCP tool wrappers are implemented in backend code. Tools are currently native Python functions (e.g. resource_retriever.py).",
+      "source_files": [],
+      "test_evidence": "None",
+      "remaining_gap": "No MCP client/server infrastructure connecting agents to external capabilities (e.g., NCERT database lookup, calculator, or web search via MCP).",
+      "recommended_next_action": "Implement at least 2 MCP tools (e.g., NCERT Retrieval MCP Server and Math/Physics Calculator MCP Server) and attach them to Resource and Teacher agents in Phase 2.",
+      "priority": "HIGH"
+    },
+    {
+      "id": "REQ-08",
+      "category": "Agentic Design",
+      "requirement": "Advanced Agentic Design Patterns (Sequential, Reflection, Adaptive Loop, Human-in-the-Loop, Conditional Routing)",
+      "status": "PARTIALLY IMPLEMENTED",
+      "evidence": "Sequential workflow verified in chapter_journey.py; Reflection/Critique verified in Diagnostic & Assessment rubric evaluation; Adaptive Learning Loop verified in diagnostic remedial probes; Human-in-the-Loop verified across API endpoints. Hierarchical orchestration and parallel execution are not implemented.",
+      "source_files": [
+        "backend/agents/chapter_journey.py (Process.sequential, Adaptive Loop)",
+        "backend/services/diagnostic_service.py (evaluate_diagnostic_assessment_sync, generate_adaptive_remedial_probes_sync)",
+        "backend/agents/orchestrator.py (classify_educational_intent, run_orchestrator_routing)"
+      ],
+      "test_evidence": "tests/test_dynamic_orchestration_flow.py, scratch/test_pre0_2_services.py, PRE_PHASE_0_2_0_LIVE_VERIFICATION.json",
+      "remaining_gap": "Hierarchical orchestration (manager agent) and parallel asynchronous task execution are missing.",
+      "recommended_next_action": "Retain robust sequential adaptive loops; evaluate if hierarchical manager is required by professor rubric.",
+      "priority": "LOW"
+    },
+    {
+      "id": "REQ-09",
+      "category": "State Management",
+      "requirement": "Context Sharing, Multi-Student State Isolation & SQLite Persistence",
+      "status": "FULLY IMPLEMENTED AND VERIFIED",
+      "evidence": "Structured context passing via CrewAI context=[...]; persistent SQLite database with 10 tables (students, quizzes, diagnostic_records, assessment_attempts, learning_journeys, etc.); multi-student isolation enforced by auth tokens and owner checks.",
+      "source_files": [
+        "backend/db/database.py (init_db, save_quiz, get_quiz, save_assessment_attempt, etc.)",
+        "backend/agents/chapter_journey.py",
+        "backend/app/main.py (submit_assessment isolation checks)"
+      ],
+      "test_evidence": "tests/test_database.py, tests/test_auth_and_persistence.py",
+      "remaining_gap": "None for local SQLite. Cloud migration will require migrating to Cloud SQL (PostgreSQL/MySQL) or Firestore.",
+      "recommended_next_action": "Maintain current SQLite persistence until Cloud Migration phase.",
+      "priority": "MAINTAIN"
+    },
+    {
+      "id": "REQ-10",
+      "category": "Execution Visibility",
+      "requirement": "Agent, Task, and LLM Callbacks & Execution Monitoring",
+      "status": "PARTIALLY IMPLEMENTED",
+      "evidence": "Runtime execution duration tracking exists across all endpoints and services (duration_ms). Central agent registry tracks last_execution_time, last_duration_seconds, and total_executions. However, CrewAI native callbacks (step_callback, task_callback) are not attached to Crews.",
+      "source_files": [
+        "backend/agents/registry.py (AgentMetadata, track_execution contextmanager)",
+        "backend/services/diagnostic_service.py (duration_ms tracking)",
+        "backend/services/practice_service.py (duration_ms tracking)"
+      ],
+      "test_evidence": "tests/test_honest_system_health.py, PRE_PHASE_0_2_0_LIVE_VERIFICATION.json",
+      "remaining_gap": "No formal CrewAI step_callback or task_callback listeners streaming intermediate thought events.",
+      "recommended_next_action": "Attach custom callback handlers to CrewAI crews to stream execution events to observability sinks.",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": "REQ-11",
+      "category": "Security",
+      "requirement": "Security Guardrails, Input Validation & Prompt Injection Defense",
+      "status": "PARTIALLY IMPLEMENTED",
+      "evidence": "Strong authentication token hashing (SHA-256), bcrypt password hashing, student ownership checks, Pydantic field bounds, and instruction-string injection rejection (is_instruction_or_meta_string) are implemented. However, no automated prompt injection detection models or toxicity filters exist.",
+      "source_files": [
+        "backend/db/database.py (hash_session_token, verify_password)",
+        "backend/app/main.py (get_current_student, submit_assessment)",
+        "backend/agents/assessment.py (is_instruction_or_meta_string)"
+      ],
+      "test_evidence": "tests/test_auth_and_persistence.py, tests/test_api_unit.py",
+      "remaining_gap": "No specialized prompt injection scanners (e.g. Rebuff, NeMo Guardrails) or LLM toxicity / profanity moderation filters.",
+      "recommended_next_action": "Introduce input sanitization middleware and regex/heuristic prompt injection guardrails in Phase 3.",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": "REQ-12",
+      "category": "Observability",
+      "requirement": "Distributed Observability and Tracing (Langfuse / OpenTelemetry)",
+      "status": "NOT IMPLEMENTED",
+      "evidence": "langfuse==4.15.6 and opentelemetry packages are present in pip environment, but 0 lines of code initialize or instrument Langfuse in backend/. CrewAI logs explicitly output 'Info: Tracing is disabled.'",
+      "source_files": [],
+      "test_evidence": "None",
+      "remaining_gap": "No Langfuse SDK initialization, no span instrumentation, no token usage tracking, and no latency telemetry dashboards.",
+      "recommended_next_action": "Initialize Langfuse SDK in backend/app/main.py and instrument CrewAI LLM calls with Langfuse callback handler in Phase 3.",
+      "priority": "HIGH"
+    },
+    {
+      "id": "REQ-13",
+      "category": "Cloud Backend",
+      "requirement": "Google Cloud Run / GCP Backend Deployment",
+      "status": "NOT IMPLEMENTED",
+      "evidence": "No Dockerfile, no docker-compose.yml, no cloudbuild.yaml, and no Google Cloud Run configuration exist. Backend runs exclusively as a local uvicorn process against local Ollama.",
+      "source_files": [],
+      "test_evidence": "None",
+      "remaining_gap": "Backend containerization, Cloud Run service definition, Secret Manager integration, and production LLM configuration (Vertex AI / Gemini API) are completely absent.",
+      "recommended_next_action": "Author Dockerfile, cloudbuild.yaml, and configure Vertex AI / Gemini API endpoint fallbacks for production deployment in Phase 4.",
+      "priority": "HIGH"
+    },
+    {
+      "id": "REQ-14",
+      "category": "Cloud Frontend",
+      "requirement": "Firebase Hosting Frontend Deployment",
+      "status": "NOT IMPLEMENTED",
+      "evidence": "Frontend is a standalone Next.js 14 application in frontend/. No firebase.json, no .firebaserc, and no Firebase CLI configurations exist. Not deployed to Firebase.",
+      "source_files": [
+        "frontend/package.json"
+      ],
+      "test_evidence": "npm run build succeeds locally (16 routes statically optimized)",
+      "remaining_gap": "No Firebase Hosting setup, no CI/CD deployment workflow, and no production hosting URL.",
+      "recommended_next_action": "Configure Firebase Hosting for Next.js SSR / static export (firebase.json) in Phase 4.",
+      "priority": "HIGH"
+    },
+    {
+      "id": "REQ-15",
+      "category": "Verification",
+      "requirement": "Comprehensive End-to-End Test Suite with Live Execution Evidence",
+      "status": "FULLY IMPLEMENTED AND VERIFIED",
+      "evidence": "147 automated backend unit & integration tests pass with 100% success rate. Complete multi-agent lifecycle verified live against local Ollama (qwen2.5:3b) with zero mocks, recording timestamps, durations, and outputs in PRE_PHASE_0_2_0_LIVE_VERIFICATION.json.",
+      "source_files": [
+        "tests/ (147 test cases)",
+        "scratch/run_pre_phase_0_2_0_live_verification.py",
+        "PRE_PHASE_0_2_0_LIVE_VERIFICATION.json"
+      ],
+      "test_evidence": "pytest: 147 passed in 269.37s. PRE_PHASE_0_2_0_LIVE_VERIFICATION.json records 8/8 agents live verified.",
+      "remaining_gap": "Tests for future technologies (ADK, A2A, MCP, Cloud Run) will be required when implemented.",
+      "recommended_next_action": "Maintain automated test suite as new phases introduce ADK, MCP, and Cloud integrations.",
+      "priority": "MAINTAIN"
+    },
+    {
+      "id": "REQ-16",
+      "category": "Analytics",
+      "requirement": "Performance Metrics, Latency & Cost Tracking",
+      "status": "PARTIALLY IMPLEMENTED",
+      "evidence": "Latency (duration_ms) is measured and reported across all 8 agents and API endpoints. However, token consumption tracking (prompt/completion tokens), model inference costs, and cloud egress costs are not tracked.",
+      "source_files": [
+        "PRE_PHASE_0_2_0_LIVE_VERIFICATION.json (duration_ms per agent)",
+        "backend/services/progress_analyzer.py"
+      ],
+      "test_evidence": "PRE_PHASE_0_2_0_LIVE_VERIFICATION.json records: Orchestrator 5.3s, Diagnostic 13.9s, Curriculum 20.8s, Resource 20.2s, Teacher 20.7s, Assessment 10.9s, Progress 46ms, Mentor 11.7s.",
+      "remaining_gap": "No token counter or cost estimation model.",
+      "recommended_next_action": "Integrate token usage extraction and cost calculation into Langfuse tracing in Phase 3.",
+      "priority": "MEDIUM"
+    },
+    {
+      "id": "REQ-17",
+      "category": "Educational Intelligence",
+      "requirement": "Diagnostic Misconception Detection & 25-Question Chapter Assessment",
+      "status": "FULLY IMPLEMENTED AND VERIFIED",
+      "evidence": "Diagnostic Agent generates 25 questions across 5 subtopics with diverse formats. Distinguishes demonstrated misconceptions from knowledge gaps. Generates 3 targeted adaptive follow-up probes.",
+      "source_files": [
+        "backend/services/diagnostic_service.py",
+        "backend/app/schemas.py (DiagnosticAssessmentGenerateResponse, FullDiagnosticReportResponse, AdaptiveProbeRequest)",
+        "frontend/app/diagnostic/page.tsx"
+      ],
+      "test_evidence": "PRE_PHASE_0_2_0_LIVE_VERIFICATION.json (detected lead nitrate thermal decomposition misconception)",
+      "remaining_gap": "None.",
+      "recommended_next_action": "Maintain verified diagnostic banks and adaptive probe generator.",
+      "priority": "MAINTAIN"
+    },
+    {
+      "id": "REQ-18",
+      "category": "Practice & Assessment",
+      "requirement": "60-Question Chapter Practice Sets Across 3 Difficulty Tiers & Session Persistence",
+      "status": "FULLY IMPLEMENTED AND VERIFIED",
+      "evidence": "Generates and retrieves 60-question chapter practice sets (30 Basic, 20 Medium, 10 Hard) with cached retrieval in 6.88ms. Session save/resume fully operational in SQLite.",
+      "source_files": [
+        "backend/services/practice_service.py",
+        "backend/services/curriculum_bank_seeder.py",
+        "frontend/app/practice/page.tsx"
+      ],
+      "test_evidence": "PRE_PHASE_0_2_0_LIVE_VERIFICATION.json (verified 60 questions, basic 30, medium 20, hard 10, save & resume verified)",
+      "remaining_gap": "None.",
+      "recommended_next_action": "Expand pre-seeded banks to additional CBSE subjects (Math, Social Science) in future content phases.",
+      "priority": "MAINTAIN"
+    }
+  ]
+}

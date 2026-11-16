@@ -1,0 +1,52 @@
+{
+  "11434": {
+    "port": 11434,
+    "listening": true,
+    "pid": null,
+    "process_name": null,
+    "exe": null,
+    "cmdline": null,
+    "belongs_to_gyaan": false,
+    "http_status": 200
+  },
+  "8000": {
+    "port": 8000,
+    "listening": true,
+    "pid": null,
+    "process_name": null,
+    "exe": null,
+    "cmdline": null,
+    "belongs_to_gyaan": false,
+    "http_status": 200
+  },
+  "3000": {
+    "port": 3000,
+    "listening": true,
+    "pid": null,
+    "process_name": null,
+    "exe": null,
+    "cmdline": null,
+    "belongs_to_gyaan": false,
+    "http_status": 200
+  },
+  "3001": {
+    "port": 3001,
+    "listening": false,
+    "pid": null,
+    "process_name": null,
+    "exe": null,
+    "cmdline": null,
+    "belongs_to_gyaan": false,
+    "http_status": null
+  },
+  "3002": {
+    "port": 3002,
+    "listening": false,
+    "pid": null,
+    "process_name": null,
+    "exe": null,
+    "cmdline": null,
+    "belongs_to_gyaan": false,
+    "http_status": null
+  }
+}

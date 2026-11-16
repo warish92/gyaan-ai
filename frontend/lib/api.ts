@@ -611,7 +611,7 @@ export const apiClient = {
         method: "GET",
         token: activeToken,
         signal: options?.signal,
-        timeoutMs: options?.timeoutMs ?? 75000,
+        timeoutMs: options?.timeoutMs ?? 120000,
       }
     );
   },

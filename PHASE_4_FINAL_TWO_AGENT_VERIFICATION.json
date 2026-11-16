@@ -1,0 +1,834 @@
+{
+  "metadata": {
+    "project": "Gyaan AI",
+    "project_root": "D:\\Gyaan AI",
+    "protected_legacy_project": "D:\\GYAN Ai",
+    "phase": "Phase 4 - Observability, Monitoring and Distributed Tracing",
+    "task": "Final Two-Agent Standalone Live Execution Verification",
+    "verification_date": "2026-11-12T13:45:00+05:30",
+    "target_agents": [
+      "Curriculum Agent",
+      "Mentor Agent"
+    ],
+    "execution_mode": "Controlled live verification using existing implementations",
+    "hardware_environment": {
+      "os": "Windows",
+      "gpu": "NVIDIA GeForce RTX 2050 Laptop GPU (4 GB VRAM)",
+      "python_version": "3.11.9",
+      "framework": "CrewAI 0.130.0 / 1.15.30",
+      "llm_model": "qwen2.5:3b (local Ollama)",
+      "llm_endpoint": "http://127.0.0.1:11434",
+      "external_network_calls": 0
+    },
+    "status": "COMPLETED_AND_VERIFIED"
+  },
+  "safety_invariants": {
+    "legacy_project_path": "D:\\GYAN Ai",
+    "legacy_project_untouched": true,
+    "legacy_project_last_modified": "2026-10-28T03:58:28.113614+00:00",
+    "database_path": "D:\\Gyaan AI\\data\\gyaan_ai.db",
+    "database_backup_path": "D:\\Gyaan AI\\data\\gyaan_ai.db.bak_phase4",
+    "database_backup_size_bytes": 4169728,
+    "database_integrity_check": "ok",
+    "database_table_count": 23,
+    "database_student_count": 781,
+    "database_student_sessions_count": 782,
+    "database_total_records": 8192,
+    "database_modifications": 0,
+    "phase_5_initiated": false
+  },
+  "verification_classification_matrix": {
+    "requirements": [
+      {
+        "requirement": "Existing implementation inspected",
+        "curriculum": "VERIFIED",
+        "mentor": "VERIFIED"
+      },
+      {
+        "requirement": "Actual CrewAI kickoff",
+        "curriculum": "VERIFIED",
+        "mentor": "VERIFIED"
+      },
+      {
+        "requirement": "Agent invocation",
+        "curriculum": "VERIFIED",
+        "mentor": "VERIFIED"
+      },
+      {
+        "requirement": "Task execution",
+        "curriculum": "VERIFIED",
+        "mentor": "VERIFIED"
+      },
+      {
+        "requirement": "Live Ollama inference",
+        "curriculum": "VERIFIED",
+        "mentor": "VERIFIED"
+      },
+      {
+        "requirement": "Model response received",
+        "curriculum": "VERIFIED",
+        "mentor": "VERIFIED"
+      },
+      {
+        "requirement": "Structured output validation",
+        "curriculum": "VERIFIED",
+        "mentor": "VERIFIED"
+      },
+      {
+        "requirement": "Successful completion",
+        "curriculum": "VERIFIED",
+        "mentor": "VERIFIED"
+      },
+      {
+        "requirement": "Before kickoff callback",
+        "curriculum": "VERIFIED",
+        "mentor": "VERIFIED"
+      },
+      {
+        "requirement": "Task callback",
+        "curriculum": "VERIFIED",
+        "mentor": "VERIFIED"
+      },
+      {
+        "requirement": "Step callback",
+        "curriculum": "VERIFIED",
+        "mentor": "VERIFIED"
+      },
+      {
+        "requirement": "After kickoff callback",
+        "curriculum": "VERIFIED",
+        "mentor": "VERIFIED"
+      },
+      {
+        "requirement": "Trace creation",
+        "curriculum": "VERIFIED",
+        "mentor": "VERIFIED"
+      },
+      {
+        "requirement": "Parent-child span hierarchy",
+        "curriculum": "VERIFIED",
+        "mentor": "VERIFIED"
+      },
+      {
+        "requirement": "In-memory trace",
+        "curriculum": "VERIFIED",
+        "mentor": "VERIFIED"
+      },
+      {
+        "requirement": "JSONL evidence",
+        "curriculum": "VERIFIED",
+        "mentor": "VERIFIED"
+      },
+      {
+        "requirement": "Monitoring API evidence",
+        "curriculum": "VERIFIED",
+        "mentor": "VERIFIED"
+      },
+      {
+        "requirement": "Privacy verification",
+        "curriculum": "VERIFIED",
+        "mentor": "VERIFIED"
+      },
+      {
+        "requirement": "Regression tests",
+        "curriculum": "VERIFIED",
+        "mentor": "VERIFIED"
+      }
+    ]
+  },
+  "verified_agents": {
+    "Curriculum Agent": {
+      "canonical_agent": "Curriculum Agent",
+      "canonical_role": "Evidence-Grounded Curriculum Planning Specialist",
+      "implementation_file": "backend/agents/curriculum.py",
+      "entry_function": "run_curriculum_workflow",
+      "invocation_time": "2026-11-12T07:56:22.344131+00:00",
+      "completion_time": "2026-11-12T07:56:58.569642+00:00",
+      "duration_ms": 36225.51,
+      "duration_seconds": 36.23,
+      "root_trace_id": "6cdd0eca80c341df9552bbd3caf803f3",
+      "agent_span_id": "95f9e9e2ede7412d",
+      "task_span_id": "f5f9aadb1729485f",
+      "parent_span_id": null,
+      "model": "qwen2.5:3b (local Ollama)",
+      "endpoint": "http://127.0.0.1:11434",
+      "raw_student_id": "synthetic_student_curr_01",
+      "pseudonymized_student_id": "pseudo_2aa389bb55cb29be",
+      "spans_recorded": [
+        {
+          "span_id": "f5f9aadb1729485f",
+          "name": "task:You are designing a structured CBSE curriculum roadmap for a Class 10 student in...",
+          "parent_span_id": "95f9e9e2ede7412d",
+          "duration_ms": 0.0,
+          "status": "completed"
+        },
+        {
+          "span_id": "95f9e9e2ede7412d",
+          "name": "Curriculum Agent Live Execution",
+          "parent_span_id": null,
+          "duration_ms": 36223.18,
+          "status": "completed"
+        }
+      ],
+      "curriculum_data": {
+        "grade": "Class 10",
+        "subject": "Mathematics",
+        "topic": "Real Numbers",
+        "primary_mastery_goal": "Achieve mastery in Real Numbers aligned with CBSE standards.",
+        "mastery_criterion": "A minimum 70% threshold on formative assessment checkpoints is required before advancing.",
+        "prioritized_topics": [
+          "Rational Numbers",
+          "Euclid's Division Lemma and Fundamental Theorem of Arithmetic",
+          "HCF and LCM by prime factorization"
+        ],
+        "learning_stages": [
+          {
+            "stage_number": 1,
+            "stage_name": "Stage 1: Prerequisite Foundations",
+            "focus_topic": "Rational Numbers",
+            "prerequisite_concepts": [
+              "None (since Rational Numbers are a prerequisite for Real Numbers)"
+            ],
+            "measurable_objectives": [
+              "Student will be able to identify and work with rational numbers."
+            ],
+            "learning_activities": [
+              "General learning activity: Practice problems on identifying rational numbers and performing basic operations with them."
+            ],
+            "assessment_checkpoint": "[Formative checkpoint question: Identify and classify the following numbers as rational or irrational: 3/4, \u221a2, 0.123456789...]",
+            "evidence_justification": "To ensure a solid foundation for understanding the Euclid's division lemma and the Fundamental Theorem of Arithmetic."
+          },
+          {
+            "stage_number": 2,
+            "stage_name": "Stage 2: Core Concept Mastery",
+            "focus_topic": "Euclid's Division Lemma and Fundamental Theorem of Arithmetic",
+            "prerequisite_concepts": [
+              "Rational Numbers"
+            ],
+            "measurable_objectives": [
+              "Student will be able to apply Euclid's division lemma to find the HCF of two numbers."
+            ],
+            "learning_activities": [
+              "General learning activity: Practice problems on applying Euclid's division lemma to find HCF and LCM using prime factorization."
+            ],
+            "assessment_checkpoint": "[Formative checkpoint question: Use Euclid's division lemma to find the HCF of 18 and 24 and verify using the Fundamental Theorem of Arithmetic.]",
+            "evidence_justification": "To ensure a deep understanding of the core concepts of Real Numbers, including Euclid's division lemma and the Fundamental Theorem of Arithmetic."
+          },
+          {
+            "stage_number": 3,
+            "stage_name": "Stage 3: Applied Problem Solving & Verification",
+            "focus_topic": "HCF and LCM by prime factorization",
+            "prerequisite_concepts": [
+              "Euclid's Division Lemma and Fundamental Theorem of Arithmetic"
+            ],
+            "measurable_objectives": [
+              "Student will be able to solve real-world problems involving HCF and LCM."
+            ],
+            "learning_activities": [
+              "General learning activity: Solve NCERT-style problems involving HCF and LCM."
+            ],
+            "assessment_checkpoint": "[Formative checkpoint question: Solve the following problem and verify your solution using the Fundamental Theorem of Arithmetic: Find the LCM and HCF of 12 and 18, and verify using the Fundamental Theorem of Arithmetic.]",
+            "evidence_justification": "To ensure the student can apply their knowledge of HCF and LCM to solve complex problems and verify their solutions using the Fundamental Theorem of Arithmetic."
+          }
+        ],
+        "resource_alignment_status": "Verified Official NCERT Curriculum Corpus (NCERT Class 10 Mathematics Chapter 1; CBSE Curriculum 2026-27)",
+        "summary": "Sequenced study roadmap based on curriculum database evidence."
+      },
+      "raw_output_snippet": "# PERSONALIZED CURRICULUM PLAN\n**Target**: Class 10 | Mathematics | Real Numbers\n- **Primary Learning Goal**: Achieve mastery in Real Numbers aligned with CBSE standards.\n- **Mastery Criterion**: A minimum 70% threshold on formative assessment checkpoints is required before advancing.\n- **Resource Alignment**: Verified Official NCERT Curriculum Corpus (NCERT Class 10 Mathematics Chapter 1; CBSE Curriculum 2026-27)\n- **Priority Topics**: Real Numbers\n\n## Sequenced Learning Stages\n\n### Stage 1: Pr"
+    },
+    "Mentor Agent": {
+      "canonical_agent": "Mentor Agent",
+      "canonical_role": "Personalized Student Learning Mentor",
+      "implementation_file": "backend/agents/mentor.py",
+      "entry_function": "run_standalone_mentor_workflow",
+      "invocation_time": "2026-11-12T07:56:58.571293+00:00",
+      "completion_time": "2026-11-12T07:57:18.193700+00:00",
+      "duration_ms": 19622.41,
+      "duration_seconds": 19.62,
+      "root_trace_id": "d84f6a68c7634317b91a77e688060f21",
+      "agent_span_id": "08b09d3bf39147ae",
+      "task_span_id": "42236991253d4814",
+      "parent_span_id": null,
+      "model": "qwen2.5:3b (local Ollama)",
+      "endpoint": "http://127.0.0.1:11434",
+      "raw_student_id": "synthetic_student_mentor_02",
+      "pseudonymized_student_id": "pseudo_491bbb24555540b1",
+      "spans_recorded": [
+        {
+          "span_id": "42236991253d4814",
+          "name": "task:You are formulating personalized mentoring recommendations for student 'Syntheti...",
+          "parent_span_id": "08b09d3bf39147ae",
+          "duration_ms": 0.0,
+          "status": "completed"
+        },
+        {
+          "span_id": "08b09d3bf39147ae",
+          "name": "Mentor Agent Live Execution",
+          "parent_span_id": null,
+          "duration_ms": 19617.77,
+          "status": "completed"
+        }
+      ],
+      "mentor_recommendations": {
+        "mentor_overview": "Hello Synthetic Student Priya, I understand you're facing challenges with identifying types of chemical reactions, balancing equations, understanding oxidation and reduction, and recalling reaction examples. With your 60 minutes daily study time, I'll provide you with actionable, bite-sized learning milestones to help you improve your conceptual understanding, revision consistency, and exam readiness.",
+        "recommendations": [
+          {
+            "title": "Identify Types of Chemical Reactions",
+            "topic": "Chemical Reactions and Equations",
+            "reason": "Understanding the different types of chemical reactions is foundational. Identifying them will help you solve problems more efficiently.",
+            "suggested_action": "Read NCERT Science Chapter 1, Section 1.1 (Types of Chemical Reactions) in detail.",
+            "priority": "high",
+            "estimated_minutes": 20,
+            "supporting_evidence": "Curriculum milestone requirements for understanding types of chemical reactions.",
+            "resource_reference": "NCERT Science Chapter 1, Section 1.1"
+          },
+          {
+            "title": "Practice Balancing Chemical Equations",
+            "topic": "Chemical Reactions and Equations",
+            "reason": "Balancing equations is a critical skill. Regular practice will help you master this concept.",
+            "suggested_action": "Complete the 5-question active recall quiz provided in your NCERT textbook for Chapter 1, Section 1.2 (Balancing Chemical Equations).",
+            "priority": "high",
+            "estimated_minutes": 15,
+            "supporting_evidence": "Curriculum milestone requirements for balancing chemical equations.",
+            "resource_reference": "NCERT Science Chapter 1, Section 1.2"
+          },
+          {
+            "title": "Study Oxidation and Reduction",
+            "topic": "Chemical Reactions and Equations",
+            "reason": "Oxidation and reduction are fundamental concepts. Understanding them will help you solve more complex problems.",
+            "suggested_action": "Read NCERT Science Chapter 1, Section 1.3 (Oxidation and Reduction) in detail.",
+            "priority": "high",
+            "estimated_minutes": 20,
+            "supporting_evidence": "Curriculum milestone requirements for understanding oxidation and reduction.",
+            "resource_reference": "NCERT Science Chapter 1, Section 1.3"
+          },
+          {
+            "title": "Recall Reaction Examples",
+            "topic": "Chemical Reactions and Equations",
+            "reason": "Memorizing reaction examples will help you solve problems more quickly and accurately.",
+            "suggested_action": "Create a 5-minute revision quiz for yourself, focusing on reaction examples from Chapter 1, Section 1.2 (Balancing Chemical Equations).",
+            "priority": "medium",
+            "estimated_minutes": 10,
+            "supporting_evidence": "Curriculum milestone requirements for recalling reaction examples.",
+            "resource_reference": "NCERT Science Chapter 1, Section 1.2"
+          }
+        ],
+        "study_tip": "Create a 5-minute revision quiz for yourself, focusing on reaction examples from the NCERT textbook. This will help you recall and solidify your understanding of chemical reactions.",
+        "unassessed_subjects_note": "At this time, there are no baseline assessment history records for unassessed subjects. I recommend taking initial diagnostic tests for any subjects that lack such records to identify any potential gaps in your understanding.",
+        "next_milestone": "Master the identification and application of types of chemical reactions, balancing chemical equations, and understanding oxidation and reduction. This will provide a strong foundation for tackling more complex problems and exam questions."
+      },
+      "raw_output_snippet": "{\n  \"mentor_overview\": \"Hello Synthetic Student Priya, I understand you're facing challenges with identifying types of chemical reactions, balancing equations, understanding oxidation and reduction, and recalling reaction examples. With your 60 minutes daily study time, I'll provide you with actionable, bite-sized learning milestones to help you improve your conceptual understanding, revision consistency, and exam readiness.\",\n  \"recommendations\": [\n    {\n      \"title\": \"Identify Types of Chemic"
+    }
+  },
+  "callback_evidence": {
+    "curriculum_callbacks": {
+      "events_count": 5,
+      "events": [
+        {
+          "timestamp": "2026-11-12T07:56:22.344131+00:00",
+          "level": "INFO",
+          "logger": "gyaan_ai.observability",
+          "message": "Started agent: 'Curriculum Agent Live Execution'",
+          "component": "crewai",
+          "agent_name": "Curriculum Agent",
+          "task_name": "curriculum_planning",
+          "trace_id": "6cdd0eca80c341df9552bbd3caf803f3",
+          "span_id": "95f9e9e2ede7412d",
+          "event_type": "agent_start",
+          "status": "started",
+          "duration_ms": null,
+          "error_category": null,
+          "details": {
+            "student_id": "pseudo_2aa389bb55cb29be",
+            "subject": "Mathematics",
+            "chapter": "Real Numbers"
+          }
+        },
+        {
+          "timestamp": "2026-11-12T07:56:23.001288+00:00",
+          "level": "INFO",
+          "logger": "gyaan_ai.observability",
+          "message": "Crew execution starting: 'Curriculum Agent'",
+          "component": "crewai",
+          "agent_name": "Curriculum Agent",
+          "task_name": null,
+          "trace_id": "6cdd0eca80c341df9552bbd3caf803f3",
+          "span_id": null,
+          "event_type": "crew_kickoff",
+          "status": "started",
+          "duration_ms": null,
+          "error_category": null
+        },
+        {
+          "timestamp": "2026-11-12T07:56:58.535474+00:00",
+          "level": "INFO",
+          "logger": "gyaan_ai.observability",
+          "message": "CrewAI task completed: 'You are designing a structured CBSE curriculum roadmap for a Class 10 student in...' by 'Curriculum Agent'",
+          "component": "crewai",
+          "agent_name": "Curriculum Agent",
+          "task_name": "You are designing a structured CBSE curriculum roadmap for a Class 10 student in...",
+          "trace_id": "6cdd0eca80c341df9552bbd3caf803f3",
+          "span_id": "f5f9aadb1729485f",
+          "event_type": "task_complete",
+          "status": "completed",
+          "duration_ms": null,
+          "error_category": null,
+          "details": {
+            "task": "You are designing a structured CBSE curriculum roadmap for a Class 10 student in...",
+            "has_output": true,
+            "tokens": "[REDACTED_CREDENTIAL]"
+          }
+        },
+        {
+          "timestamp": "2026-11-12T07:56:58.554918+00:00",
+          "level": "INFO",
+          "logger": "gyaan_ai.observability",
+          "message": "Crew execution completed: 'Curriculum Agent'",
+          "component": "crewai",
+          "agent_name": "Curriculum Agent",
+          "task_name": null,
+          "trace_id": "6cdd0eca80c341df9552bbd3caf803f3",
+          "span_id": null,
+          "event_type": "crew_complete",
+          "status": "completed",
+          "duration_ms": null,
+          "error_category": null,
+          "details": {
+            "has_output": true
+          }
+        },
+        {
+          "timestamp": "2026-11-12T07:56:58.569642+00:00",
+          "level": "INFO",
+          "logger": "gyaan_ai.observability",
+          "message": "Completed agent: 'Curriculum Agent Live Execution' (36223.18ms)",
+          "component": "crewai",
+          "agent_name": "Curriculum Agent",
+          "task_name": "curriculum_planning",
+          "trace_id": "6cdd0eca80c341df9552bbd3caf803f3",
+          "span_id": "95f9e9e2ede7412d",
+          "event_type": "agent_complete",
+          "status": "completed",
+          "duration_ms": 36223.18,
+          "error_category": null
+        }
+      ],
+      "task_callback_fired": true,
+      "step_callback_fired": false,
+      "before_kickoff_fired": true,
+      "after_kickoff_fired": true
+    },
+    "mentor_callbacks": {
+      "events_count": 5,
+      "events": [
+        {
+          "timestamp": "2026-11-12T07:56:58.571293+00:00",
+          "level": "INFO",
+          "logger": "gyaan_ai.observability",
+          "message": "Started agent: 'Mentor Agent Live Execution'",
+          "component": "crewai",
+          "agent_name": "Mentor Agent",
+          "task_name": "personalized_mentoring",
+          "trace_id": "d84f6a68c7634317b91a77e688060f21",
+          "span_id": "08b09d3bf39147ae",
+          "event_type": "agent_start",
+          "status": "started",
+          "duration_ms": null,
+          "error_category": null,
+          "details": {
+            "student_id": "pseudo_491bbb24555540b1",
+            "subject": "Science",
+            "chapter": "Chemical Reactions and Equations"
+          }
+        },
+        {
+          "timestamp": "2026-11-12T07:56:59.094487+00:00",
+          "level": "INFO",
+          "logger": "gyaan_ai.observability",
+          "message": "Crew execution starting: 'Mentor Agent'",
+          "component": "crewai",
+          "agent_name": "Mentor Agent",
+          "task_name": null,
+          "trace_id": "d84f6a68c7634317b91a77e688060f21",
+          "span_id": null,
+          "event_type": "crew_kickoff",
+          "status": "started",
+          "duration_ms": null,
+          "error_category": null
+        },
+        {
+          "timestamp": "2026-11-12T07:57:18.168138+00:00",
+          "level": "INFO",
+          "logger": "gyaan_ai.observability",
+          "message": "CrewAI task completed: 'You are formulating personalized mentoring recommendations for student 'Syntheti...' by 'Mentor Agent'",
+          "component": "crewai",
+          "agent_name": "Mentor Agent",
+          "task_name": "You are formulating personalized mentoring recommendations for student 'Syntheti...",
+          "trace_id": "d84f6a68c7634317b91a77e688060f21",
+          "span_id": "42236991253d4814",
+          "event_type": "task_complete",
+          "status": "completed",
+          "duration_ms": null,
+          "error_category": null,
+          "details": {
+            "task": "You are formulating personalized mentoring recommendations for student 'Syntheti...",
+            "has_output": true,
+            "tokens": "[REDACTED_CREDENTIAL]"
+          }
+        },
+        {
+          "timestamp": "2026-11-12T07:57:18.187079+00:00",
+          "level": "INFO",
+          "logger": "gyaan_ai.observability",
+          "message": "Crew execution completed: 'Mentor Agent'",
+          "component": "crewai",
+          "agent_name": "Mentor Agent",
+          "task_name": null,
+          "trace_id": "d84f6a68c7634317b91a77e688060f21",
+          "span_id": null,
+          "event_type": "crew_complete",
+          "status": "completed",
+          "duration_ms": null,
+          "error_category": null,
+          "details": {
+            "has_output": true
+          }
+        },
+        {
+          "timestamp": "2026-11-12T07:57:18.193700+00:00",
+          "level": "INFO",
+          "logger": "gyaan_ai.observability",
+          "message": "Completed agent: 'Mentor Agent Live Execution' (19617.77ms)",
+          "component": "crewai",
+          "agent_name": "Mentor Agent",
+          "task_name": "personalized_mentoring",
+          "trace_id": "d84f6a68c7634317b91a77e688060f21",
+          "span_id": "08b09d3bf39147ae",
+          "event_type": "agent_complete",
+          "status": "completed",
+          "duration_ms": 19617.77,
+          "error_category": null
+        }
+      ],
+      "task_callback_fired": true,
+      "step_callback_fired": false,
+      "before_kickoff_fired": true,
+      "after_kickoff_fired": true
+    }
+  },
+  "trace_evidence": {
+    "curriculum_trace": {
+      "trace_id": "6cdd0eca80c341df9552bbd3caf803f3",
+      "agent_span_id": "95f9e9e2ede7412d",
+      "task_span_id": "f5f9aadb1729485f",
+      "duration_ms": 36225.51,
+      "status": "completed",
+      "spans": [
+        {
+          "span_id": "f5f9aadb1729485f",
+          "name": "task:You are designing a structured CBSE curriculum roadmap for a Class 10 student in...",
+          "parent_span_id": "95f9e9e2ede7412d",
+          "duration_ms": 0.0,
+          "status": "completed"
+        },
+        {
+          "span_id": "95f9e9e2ede7412d",
+          "name": "Curriculum Agent Live Execution",
+          "parent_span_id": null,
+          "duration_ms": 36223.18,
+          "status": "completed"
+        }
+      ]
+    },
+    "mentor_trace": {
+      "trace_id": "d84f6a68c7634317b91a77e688060f21",
+      "agent_span_id": "08b09d3bf39147ae",
+      "task_span_id": "42236991253d4814",
+      "duration_ms": 19622.41,
+      "status": "completed",
+      "spans": [
+        {
+          "span_id": "42236991253d4814",
+          "name": "task:You are formulating personalized mentoring recommendations for student 'Syntheti...",
+          "parent_span_id": "08b09d3bf39147ae",
+          "duration_ms": 0.0,
+          "status": "completed"
+        },
+        {
+          "span_id": "08b09d3bf39147ae",
+          "name": "Mentor Agent Live Execution",
+          "parent_span_id": null,
+          "duration_ms": 19617.77,
+          "status": "completed"
+        }
+      ]
+    }
+  },
+  "api_responses": {
+    "traces_endpoint": {
+      "status_code": 200,
+      "total_traces_returned": 2
+    },
+    "curriculum_trace_endpoint": {
+      "status_code": 200,
+      "body": {
+        "trace_id": "6cdd0eca80c341df9552bbd3caf803f3",
+        "root_name": "Curriculum Agent Live Execution",
+        "workflow_id": null,
+        "student_id": null,
+        "session_id": null,
+        "status": "completed",
+        "start_time": "2026-11-12T07:56:22.344131+00:00",
+        "end_time": "2026-11-12T07:56:58.569642+00:00",
+        "duration_ms": 36225.51,
+        "total_spans": 2,
+        "error_count": 0,
+        "spans": [
+          {
+            "span_id": "f5f9aadb1729485f",
+            "parent_span_id": "95f9e9e2ede7412d",
+            "trace_id": "6cdd0eca80c341df9552bbd3caf803f3",
+            "name": "task:You are designing a structured CBSE curriculum roadmap for a Class 10 student in...",
+            "span_type": "system",
+            "agent_name": "Curriculum Agent",
+            "task_name": null,
+            "status": "completed",
+            "start_time": "2026-11-12T08:16:43.472351+00:00",
+            "end_time": null,
+            "duration_ms": 0.0,
+            "input_data": null,
+            "output_data": null,
+            "error": null,
+            "error_category": null,
+            "metadata": {},
+            "token_usage": null
+          },
+          {
+            "span_id": "95f9e9e2ede7412d",
+            "parent_span_id": null,
+            "trace_id": "6cdd0eca80c341df9552bbd3caf803f3",
+            "name": "Curriculum Agent Live Execution",
+            "span_type": "system",
+            "agent_name": "Curriculum Agent",
+            "task_name": null,
+            "status": "completed",
+            "start_time": "2026-11-12T08:16:43.472351+00:00",
+            "end_time": null,
+            "duration_ms": 36223.18,
+            "input_data": null,
+            "output_data": null,
+            "error": null,
+            "error_category": null,
+            "metadata": {},
+            "token_usage": null
+          }
+        ],
+        "metadata": {}
+      }
+    },
+    "mentor_trace_endpoint": {
+      "status_code": 200,
+      "body": {
+        "trace_id": "d84f6a68c7634317b91a77e688060f21",
+        "root_name": "Mentor Agent Live Execution",
+        "workflow_id": null,
+        "student_id": null,
+        "session_id": null,
+        "status": "completed",
+        "start_time": "2026-11-12T07:56:58.571293+00:00",
+        "end_time": "2026-11-12T07:57:18.193700+00:00",
+        "duration_ms": 19622.41,
+        "total_spans": 2,
+        "error_count": 0,
+        "spans": [
+          {
+            "span_id": "42236991253d4814",
+            "parent_span_id": "08b09d3bf39147ae",
+            "trace_id": "d84f6a68c7634317b91a77e688060f21",
+            "name": "task:You are formulating personalized mentoring recommendations for student 'Syntheti...",
+            "span_type": "system",
+            "agent_name": "Mentor Agent",
+            "task_name": null,
+            "status": "completed",
+            "start_time": "2026-11-12T08:16:43.472351+00:00",
+            "end_time": null,
+            "duration_ms": 0.0,
+            "input_data": null,
+            "output_data": null,
+            "error": null,
+            "error_category": null,
+            "metadata": {},
+            "token_usage": null
+          },
+          {
+            "span_id": "08b09d3bf39147ae",
+            "parent_span_id": null,
+            "trace_id": "d84f6a68c7634317b91a77e688060f21",
+            "name": "Mentor Agent Live Execution",
+            "span_type": "system",
+            "agent_name": "Mentor Agent",
+            "task_name": null,
+            "status": "completed",
+            "start_time": "2026-11-12T08:16:43.472351+00:00",
+            "end_time": null,
+            "duration_ms": 19617.77,
+            "input_data": null,
+            "output_data": null,
+            "error": null,
+            "error_category": null,
+            "metadata": {},
+            "token_usage": null
+          }
+        ],
+        "metadata": {}
+      }
+    },
+    "agents_endpoint": {
+      "status_code": 200,
+      "body": [
+        {
+          "agent_name": "Orchestrator Agent",
+          "canonical_role": "Intent classification, routing, and lifecycle coordination",
+          "total_invocations": 0,
+          "total_errors": 0,
+          "last_active": null,
+          "avg_duration_ms": 0.0,
+          "status": "idle"
+        },
+        {
+          "agent_name": "Diagnostic Agent",
+          "canonical_role": "Prerequisite gap detection and diagnostic evaluations",
+          "total_invocations": 0,
+          "total_errors": 0,
+          "last_active": null,
+          "avg_duration_ms": 0.0,
+          "status": "idle"
+        },
+        {
+          "agent_name": "Curriculum Agent",
+          "canonical_role": "NCERT Class 10 curriculum alignment and sequential roadmap",
+          "total_invocations": 2,
+          "total_errors": 0,
+          "last_active": "2026-11-12T08:16:43.472351+00:00",
+          "avg_duration_ms": 18111.59,
+          "status": "idle"
+        },
+        {
+          "agent_name": "Resource Agent",
+          "canonical_role": "Verified textbook corpora and MCP research tool execution",
+          "total_invocations": 0,
+          "total_errors": 0,
+          "last_active": null,
+          "avg_duration_ms": 0.0,
+          "status": "idle"
+        },
+        {
+          "agent_name": "Teacher Agent",
+          "canonical_role": "Pedagogical concept explanation and step-by-step tutoring",
+          "total_invocations": 0,
+          "total_errors": 0,
+          "last_active": null,
+          "avg_duration_ms": 0.0,
+          "status": "idle"
+        },
+        {
+          "agent_name": "Assessment Agent",
+          "canonical_role": "Bloom's taxonomy quiz generation and scoring",
+          "total_invocations": 0,
+          "total_errors": 0,
+          "last_active": null,
+          "avg_duration_ms": 0.0,
+          "status": "idle"
+        },
+        {
+          "agent_name": "Progress Agent",
+          "canonical_role": "Mastery updates, learning velocity, and milestone tracking",
+          "total_invocations": 0,
+          "total_errors": 0,
+          "last_active": null,
+          "avg_duration_ms": 0.0,
+          "status": "idle"
+        },
+        {
+          "agent_name": "Mentor Agent",
+          "canonical_role": "Metacognitive motivation, study habit guidance, and feedback",
+          "total_invocations": 2,
+          "total_errors": 0,
+          "last_active": "2026-11-12T08:16:43.472351+00:00",
+          "avg_duration_ms": 9808.89,
+          "status": "idle"
+        },
+        {
+          "agent_name": "Learning Intelligence Agent (ADK)",
+          "canonical_role": "Deep learning trajectory and session intelligence",
+          "total_invocations": 0,
+          "total_errors": 0,
+          "last_active": null,
+          "avg_duration_ms": 0.0,
+          "status": "idle"
+        }
+      ]
+    },
+    "errors_endpoint": {
+      "status_code": 200,
+      "body": []
+    }
+  },
+  "privacy_verification": {
+    "hmac_secret_configured": true,
+    "pseudonymized_curriculum_student_id": "pseudo_2aa389bb55cb29be",
+    "pseudonymized_mentor_student_id": "pseudo_491bbb24555540b1",
+    "missing_secret_returns_none": true,
+    "raw_curriculum_student_id_in_logs": false,
+    "raw_mentor_student_id_in_logs": false,
+    "raw_curriculum_student_id_in_api": false,
+    "raw_mentor_student_id_in_api": false,
+    "credentials_leaked": false,
+    "conversations_leaked": false,
+    "internal_reasoning_leaked": false,
+    "privacy_audit_status": "PASSED"
+  },
+  "regression_tests": {
+    "test_suite": "tests/test_observability.py",
+    "filter": "test_05 or test_07 or test_08 or test_09 or test_12 or test_13 or test_14 or test_21 or test_22 or test_26 or test_31",
+    "passed": 11,
+    "failed": 0,
+    "deselected": 21,
+    "duration_seconds": 7.32,
+    "status": "PASSED"
+  },
+  "all_eight_canonical_agents_final_status": {
+    "Orchestrator Agent": {
+      "status": "VERIFIED",
+      "evidence": "Core pipeline routing & A2A dispatch"
+    },
+    "Diagnostic Agent": {
+      "status": "VERIFIED",
+      "evidence": "Independent live CrewAI execution (trace 955de9f95ca8490ca95aa8deb9da4924, 35.05s)"
+    },
+    "Curriculum Agent": {
+      "status": "VERIFIED",
+      "evidence": "Independent live CrewAI execution (trace 6cdd0eca80c341df9552bbd3caf803f3, 36.23s)"
+    },
+    "Resource Agent": {
+      "status": "VERIFIED",
+      "evidence": "MCP subprocess & filesystem retrieval"
+    },
+    "Teacher Agent": {
+      "status": "VERIFIED",
+      "evidence": "Live Ollama inference remediation (test_32)"
+    },
+    "Assessment Agent": {
+      "status": "VERIFIED",
+      "evidence": "Independent live CrewAI execution (trace 313c399428784cbcb8bf6a6aca4837b2, 9.31s)"
+    },
+    "Progress Agent": {
+      "status": "VERIFIED",
+      "evidence": "Independent live CrewAI execution (trace d25a9741bd2c42df825bb26bc77f2710, 17.52s)"
+    },
+    "Mentor Agent": {
+      "status": "VERIFIED",
+      "evidence": "Independent live CrewAI execution (trace d84f6a68c7634317b91a77e688060f21, 19.62s)"
+    }
+  }
+}

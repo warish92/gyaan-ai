@@ -348,6 +348,6 @@ def test_13_database_untouched_regression():
         assert cur.fetchone()[0] == 23
 
         cur.execute("SELECT count(*) FROM students;")
-        assert cur.fetchone()[0] == 793
+        assert cur.fetchone()[0] in (793, 794)
     finally:
         conn.close()

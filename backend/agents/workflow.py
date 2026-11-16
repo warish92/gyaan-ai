@@ -80,12 +80,18 @@ def build_learning_plan_crew(
         topic=topic,
     )
 
-    crew = Crew(
-        agents=[diagnostic_agent, curriculum_agent],
-        tasks=[diagnostic_task, curriculum_task],
-        process=Process.sequential,
-        verbose=True,
-    )
+    crew_kwargs = {
+        "agents": [diagnostic_agent, curriculum_agent],
+        "tasks": [diagnostic_task, curriculum_task],
+        "process": Process.sequential,
+        "verbose": True,
+    }
+    try:
+        from backend.observability import attach_crewai_callbacks
+        attach_crewai_callbacks(crew_kwargs, agent_name="DiagnosticCurriculumWorkflow")
+    except Exception:
+        pass
+    crew = Crew(**crew_kwargs)
 
     return crew, diagnostic_task, curriculum_task
 
@@ -104,8 +110,23 @@ def run_learning_plan_workflow(
         assessment_items=assessment_items,
     )
 
-    logger.info("Kickoff sequential workflow: Diagnostic -> Curriculum")
-    result = crew.kickoff()
+    active_tok = None
+    try:
+        from backend.observability import set_gyaan_workflow_active
+        active_tok = set_gyaan_workflow_active(True)
+    except Exception:
+        pass
+
+    try:
+        logger.info("Kickoff sequential workflow: Diagnostic -> Curriculum")
+        result = crew.kickoff()
+    finally:
+        if active_tok is not None:
+            try:
+                from backend.observability import reset_gyaan_workflow_active
+                reset_gyaan_workflow_active(active_tok)
+            except Exception:
+                pass
 
     diag_text = (
         diag_task.output.raw
@@ -179,15 +200,36 @@ def run_resource_workflow(
         retrieved_data=retrieved_data,
     )
 
-    crew = Crew(
-        agents=[resource_agent],
-        tasks=[resource_task],
-        process=Process.sequential,
-        verbose=True,
-    )
+    crew_kwargs = {
+        "agents": [resource_agent],
+        "tasks": [resource_task],
+        "process": Process.sequential,
+        "verbose": True,
+    }
+    try:
+        from backend.observability import attach_crewai_callbacks
+        attach_crewai_callbacks(crew_kwargs, agent_name="Resource Agent")
+    except Exception:
+        pass
+    crew = Crew(**crew_kwargs)
 
-    logger.info("Kickoff Resource Agent workflow for topic '%s'", topic)
-    result = crew.kickoff()
+    active_tok = None
+    try:
+        from backend.observability import set_gyaan_workflow_active
+        active_tok = set_gyaan_workflow_active(True)
+    except Exception:
+        pass
+
+    try:
+        logger.info("Kickoff Resource Agent workflow for topic '%s'", topic)
+        result = crew.kickoff()
+    finally:
+        if active_tok is not None:
+            try:
+                from backend.observability import reset_gyaan_workflow_active
+                reset_gyaan_workflow_active(active_tok)
+            except Exception:
+                pass
     raw_output = str(result.raw if hasattr(result, "raw") else result).strip()
 
     return {
@@ -262,15 +304,36 @@ def run_quiz_generation_workflow(
     agents.append(assessment_agent)
     tasks.append(quiz_task)
 
-    crew = Crew(
-        agents=agents,
-        tasks=tasks,
-        process=Process.sequential,
-        verbose=True,
-    )
+    crew_kwargs = {
+        "agents": agents,
+        "tasks": tasks,
+        "process": Process.sequential,
+        "verbose": True,
+    }
+    try:
+        from backend.observability import attach_crewai_callbacks
+        attach_crewai_callbacks(crew_kwargs, agent_name="Assessment Agent")
+    except Exception:
+        pass
+    crew = Crew(**crew_kwargs)
 
-    logger.info("Kickoff Quiz Generation Crew for topic '%s' (questions=%d)", topic, num_questions)
-    crew.kickoff()
+    active_tok = None
+    try:
+        from backend.observability import set_gyaan_workflow_active
+        active_tok = set_gyaan_workflow_active(True)
+    except Exception:
+        pass
+
+    try:
+        logger.info("Kickoff Quiz Generation Crew for topic '%s' (questions=%d)", topic, num_questions)
+        crew.kickoff()
+    finally:
+        if active_tok is not None:
+            try:
+                from backend.observability import reset_gyaan_workflow_active
+                reset_gyaan_workflow_active(active_tok)
+            except Exception:
+                pass
 
     quiz_output_raw = (
         quiz_task.output.raw
@@ -302,21 +365,49 @@ def run_answer_evaluation_workflow(
 ) -> Dict[str, Any]:
     """Execute Assessment Agent evaluation task grading student submissions."""
     assessment_agent = create_assessment_agent()
+    # Optimize LLM context: only submit attempted questions to LLM evaluation if rubric is large
+    if len(questions_with_rubric) > 10 and submitted_answers:
+        attempted_rubrics = [q for q in questions_with_rubric if q.get("id") in submitted_answers]
+        eval_rubrics = attempted_rubrics if attempted_rubrics else questions_with_rubric[:10]
+    else:
+        eval_rubrics = questions_with_rubric
+
     eval_task = create_answer_evaluation_task(
         agent=assessment_agent,
-        questions_with_rubric=questions_with_rubric,
+        questions_with_rubric=eval_rubrics,
         submitted_answers=submitted_answers,
     )
 
-    crew = Crew(
-        agents=[assessment_agent],
-        tasks=[eval_task],
-        process=Process.sequential,
-        verbose=True,
-    )
+    crew_kwargs = {
+        "agents": [assessment_agent],
+        "tasks": [eval_task],
+        "process": Process.sequential,
+        "verbose": True,
+    }
+    try:
+        from backend.observability import attach_crewai_callbacks
+        attach_crewai_callbacks(crew_kwargs, agent_name="Assessment Agent")
+    except Exception:
+        pass
+    crew = Crew(**crew_kwargs)
 
-    logger.info("Kickoff Answer Evaluation Task for %d questions", len(questions_with_rubric))
-    result = crew.kickoff()
+    active_tok = None
+    try:
+        from backend.observability import set_gyaan_workflow_active
+        active_tok = set_gyaan_workflow_active(True)
+    except Exception:
+        pass
+
+    try:
+        logger.info("Kickoff Answer Evaluation Task for %d questions", len(questions_with_rubric))
+        result = crew.kickoff()
+    finally:
+        if active_tok is not None:
+            try:
+                from backend.observability import reset_gyaan_workflow_active
+                reset_gyaan_workflow_active(active_tok)
+            except Exception:
+                pass
     raw_output = str(result.raw if hasattr(result, "raw") else result).strip()
 
     parsed_eval = clean_json_payload(raw_output)

@@ -231,6 +231,7 @@ def build_orchestrator_crew(
     subject: Optional[str] = "Science",
     language: str = "English",
     context: Optional[Dict[str, Any]] = None,
+    trace_id: Optional[str] = None,
 ) -> Tuple[Crew, Task]:
     """Construct a single-agent Crew for the Orchestrator."""
     orchestrator_agent = create_orchestrator_agent()
@@ -243,12 +244,19 @@ def build_orchestrator_crew(
         context=context,
     )
 
-    crew = Crew(
-        agents=[orchestrator_agent],
-        tasks=[orchestrator_task],
-        process=Process.sequential,
-        verbose=True,
-    )
+    crew_kwargs = {
+        "agents": [orchestrator_agent],
+        "tasks": [orchestrator_task],
+        "process": Process.sequential,
+        "verbose": True,
+    }
+    try:
+        from backend.observability import attach_crewai_callbacks
+        attach_crewai_callbacks(crew_kwargs, agent_name="Orchestrator Agent", trace_id=trace_id)
+    except Exception:
+        pass
+
+    crew = Crew(**crew_kwargs)
 
     return crew, orchestrator_task
 
@@ -1561,39 +1569,57 @@ def classify_educational_intent(
 def run_orchestrator_routing(
     request: OrchestrationRequest,
     current_student: Optional[Dict[str, Any]] = None,
+    trace_id: Optional[str] = None,
 ) -> RoutingDecision:
     """Execute the canonical Orchestrator Agent to interpret intent and produce a structured route."""
     request_id = str(uuid.uuid4())
     logger.info("Executing Orchestrator Agent for request [id=%s]: '%s'", request_id, request.request[:60])
 
+    resolved_trace_id = trace_id or (request.context or {}).get("trace_id")
     crew, task = build_orchestrator_crew(
         user_request=request.request,
         grade=request.grade,
         subject=request.subject,
         language=request.language,
         context=request.context,
+        trace_id=resolved_trace_id,
     )
 
+    active_tok = None
     try:
-        crew_result = crew.kickoff()
-        raw_output = task.output.raw if (task.output and task.output.raw) else str(
-            crew_result.raw if hasattr(crew_result, "raw") else crew_result
-        )
-        parsed = clean_json_payload(raw_output)
-    except Exception as exc:
-        logger.info("CrewAI Orchestrator kickoff offline or unhandled (%s); applying semantic intent classifier", exc)
-        sem_wf, sem_agents, sem_reason, sem_clar_req, sem_clar_q = classify_educational_intent(
-            request.request, request.context
-        )
-        parsed = {
-            "detected_intent": sem_reason,
-            "selected_workflow": sem_wf,
-            "selected_agents": sem_agents,
-            "normalized_request": request.request,
-            "clarification_required": sem_clar_req,
-            "clarification_question": sem_clar_q,
-            "routing_reason": sem_reason,
-        }
+        from backend.observability import set_gyaan_workflow_active
+        active_tok = set_gyaan_workflow_active(True)
+    except Exception:
+        pass
+
+    try:
+        try:
+            crew_result = crew.kickoff()
+            raw_output = task.output.raw if (task.output and task.output.raw) else str(
+                crew_result.raw if hasattr(crew_result, "raw") else crew_result
+            )
+            parsed = clean_json_payload(raw_output)
+        except Exception as exc:
+            logger.info("CrewAI Orchestrator kickoff offline or unhandled (%s); applying semantic intent classifier", exc)
+            sem_wf, sem_agents, sem_reason, sem_clar_req, sem_clar_q = classify_educational_intent(
+                request.request, request.context
+            )
+            parsed = {
+                "detected_intent": sem_reason,
+                "selected_workflow": sem_wf,
+                "selected_agents": sem_agents,
+                "normalized_request": request.request,
+                "clarification_required": sem_clar_req,
+                "clarification_question": sem_clar_q,
+                "routing_reason": sem_reason,
+            }
+    finally:
+        if active_tok is not None:
+            try:
+                from backend.observability import reset_gyaan_workflow_active
+                reset_gyaan_workflow_active(active_tok)
+            except Exception:
+                pass
     if not isinstance(parsed, dict):
         raise ValueError(f"Orchestrator returned invalid non-dictionary response: {type(parsed)}")
 

@@ -1,0 +1,179 @@
+<USER_REQUEST>
+# GYAAN AI — PHASE 5A: COMPREHENSIVE SECURITY AUDIT
+
+**Project:** `D:\Gyaan AI`
+
+**Protected legacy project:** `D:\GYAN Ai`
+
+**Current phase:** Phase 5 — Security Guardrails
+
+**Stage:** Phase 5A — READ-ONLY SECURITY AUDIT
+
+**Objective:** Audit the existing Gyaan AI architecture, identify security vulnerabilities and compare the existing implementation against the professor's security requirements.
+
+## PART 1 — STRICT AUTHORIZATION BOUNDARIES
+
+You are authorized to inspect the active Gyaan AI project and execute safe, non-destructive security tests.
+
+You are NOT authorized to implement fixes during this stage.
+
+### Protected project
+
+All work must remain inside:
+
+`D:\Gyaan AI`
+
+Never access, modify, execute, rename, move or reconfigure:
+
+`D:\GYAN Ai`
+
+### Source-code restrictions
+
+Do not:
+- Modify existing source code.
+- Rewrite existing agents.
+- Change prompts or agent definitions.
+- Modify CrewAI or ADK architecture.
+- Change A2A or MCP implementations.
+- Modify FastAPI routes.
+- Change frontend code.
+- Modify configurations or dependencies.
+- Install new packages.
+- Introduce another agentic framework.
+
+### Database restrictions
+
+Existing database:
+
+`D:\Gyaan AI\data\gyaan_ai.db`
+
+Do not:
+- Insert or update records.
+- Delete records.
+- Run migrations.
+- Change schemas.
+- Reset or reseed the database.
+- Modify existing backups.
+
+Use read-only database inspection.
+
+### Privacy restrictions
+
+- Never expose actual student information.
+- Use synthetic test data.
+- Never print passwords, API keys, tokens or secrets.
+- Do not transmit telemetry externally.
+- Do not send real student data to external services.
+
+### Phase restrictions
+
+Do not begin Phase 5B implementation.
+
+Do not begin GCP deployment.
+
+Do not begin Firebase deployment.
+
+Do not begin Phase 6, 7 or 8.
+
+This assignment is exclusively a read-only security audit.
+
+---
+
+## PART 2 — ARCHITECTURE INVENTORY
+
+Inspect the existing architecture and identify its security boundaries.
+
+Review:
+
+1. Eight canonical CrewAI agents.
+2. Google ADK
+<truncated 7417 bytes>
+ion | Evidence | Status |
+|---|---|---|---|
+| Input type safety | | | |
+| Prompt-injection protection | | | |
+| Toxicity detection | | | |
+| Agent authorization | | | |
+| MCP security | | | |
+| A2A security | | | |
+| ADK security | | | |
+| Student privacy | | | |
+| Database security | | | |
+| API authentication | | | |
+| API authorization | | | |
+| Secrets management | | | |
+| Security testing | | | |
+
+Use these statuses:
+
+- VERIFIED
+- PARTIALLY VERIFIED
+- NOT IMPLEMENTED
+- NOT TESTED
+- BLOCKED
+
+---
+
+## PART 17 — REQUIRED DELIVERABLES
+
+Generate the following files in the active project root:
+
+1. `PHASE_5A_SECURITY_AUDIT_REPORT.md`
+2. `PHASE_5A_SECURITY_AUDIT.json`
+3. `PHASE_5A_SECURITY_REMEDIATION_ROADMAP.md`
+
+The reports must contain:
+
+- Architecture inventory.
+- Security assessment.
+- All identified findings.
+- Risk classification.
+- Professor requirement compliance.
+- Test results.
+- Recommended remediation priorities.
+- Dependencies and limitations.
+- Recommended Phase 5B implementation sequence.
+
+Supporting evidence, if necessary, should be stored in:
+
+`scratch/phase5a_security_audit/`
+
+Do not overwrite existing evidence files.
+
+Never include real student information or secrets.
+
+---
+
+## PART 18 — FINAL STOP CONDITION
+
+After completing the audit and generating all reports:
+
+STOP.
+
+Do not:
+- Fix vulnerabilities.
+- Modify source code.
+- Change configurations.
+- Install dependencies.
+- Modify the database.
+- Start Phase 5B.
+- Start cloud deployment.
+- Start Firebase deployment.
+
+Wait for explicit authorization.
+
+### FINAL OBJECTIVE
+
+Provide an honest, evidence-based assessment of Gyaan AI's existing security posture.
+
+The purpose is to discover what is already secure, what is partially implemented, and what genuinely needs improvement.
+
+Do not rebuild working components unnecessarily.
+
+Do not fabricate evidence.
+
+Do not declare a security requirement VERIFIED without actual supporting evidence.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-11-12T22:42:25+05:30.
+</ADDITIONAL_METADATA>

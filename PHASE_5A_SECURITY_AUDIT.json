@@ -1,0 +1,473 @@
+{
+  "project": "Gyaan AI",
+  "phase": "Phase 5A - Security Audit",
+  "audit_type": "Read-only Security Assessment",
+  "status": "COMPLETED",
+  "summary": {
+    "audit_timestamp": "2026-11-13T11:33:15.966528+00:00",
+    "protected_project": "D:/GYAN Ai",
+    "protected_project_status": "UNTOUCHED",
+    "active_database_path": "D:/Gyaan AI/data/gyaan_ai.db",
+    "active_database_status": "HEALTHY (integrity ok, 23 tables)",
+    "backup_database_path": "D:/Gyaan AI/data/gyaan_ai.db.bak_phase4",
+    "backup_database_status": "PRESERVED (4,169,728 bytes)",
+    "total_findings": 14,
+    "findings_by_severity": {
+      "CRITICAL": 0,
+      "HIGH": 5,
+      "MEDIUM": 6,
+      "LOW": 3,
+      "INFORMATIONAL": 0
+    },
+    "compliance_summary": {
+      "VERIFIED": 3,
+      "PARTIALLY_VERIFIED": 9,
+      "NOT_IMPLEMENTED": 1,
+      "NOT_TESTED": 0,
+      "BLOCKED": 0
+    }
+  },
+  "test_results": {
+    "suites_executed": 7,
+    "total_tests_collected": 123,
+    "total_tests_passed": 119,
+    "total_tests_failed": 3,
+    "total_tests_skipped": 1,
+    "pass_rate_percent": 96.75,
+    "discrepancy_resolution": "The previous summary reported '114 passed, 3 failed, 1 skipped, 119 total'. Raw pytest execution logs prove that the actual total collected across the 7 suites was 123 tests: 119 passed, 3 failed, and 1 skipped (119 + 3 + 1 = 123). The previous figure of 119 was in fact the number of passed tests, which was erroneously misreported as the total count.",
+    "database_pollution_investigation": "Confirmed that running pytest test_auth_and_persistence.py directly modified the active development database (data/gyaan_ai.db), inserting 12 test student records (increasing count from 781 to 793). This caused hardcoded assertions in test_mcp_integration.py, test_a2a_interoperability.py, and test_observability.py to fail. The backup file (data/gyaan_ai.db.bak_phase4) remains untouched at 781 students and 782 sessions.",
+    "suites": [
+      {
+        "suite_name": "tests/test_auth_and_persistence.py",
+        "command": ".venv\\Scripts\\python -m pytest tests/test_auth_and_persistence.py -v",
+        "category": "Authentication & Database Access",
+        "classification": "Unit / Mocked Integration",
+        "is_mocked": true,
+        "collected": 11,
+        "passed": 11,
+        "failed": 0,
+        "skipped": 0,
+        "runtime_seconds": 4.81,
+        "status": "PASSED"
+      },
+      {
+        "suite_name": "tests/test_database.py",
+        "command": ".venv\\Scripts\\python -m pytest tests/test_database.py -v",
+        "category": "Database Security & Schema Access",
+        "classification": "Database access tests",
+        "is_mocked": true,
+        "collected": 5,
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0,
+        "runtime_seconds": 0.6,
+        "status": "PASSED"
+      },
+      {
+        "suite_name": "tests/test_api_unit.py",
+        "command": ".venv\\Scripts\\python -m pytest tests/test_api_unit.py -v",
+        "category": "API Unit & Request Validation",
+        "classification": "API unit tests",
+        "is_mocked": true,
+        "collected": 26,
+        "passed": 26,
+        "failed": 0,
+        "skipped": 0,
+        "runtime_seconds": 10.8,
+        "status": "PASSED"
+      },
+      {
+        "suite_name": "tests/test_mcp_integration.py",
+        "command": ".venv\\Scripts\\python -m pytest tests/test_mcp_integration.py -v",
+        "category": "MCP Security & Tool Access",
+        "classification": "MCP security tests",
+        "is_mocked": true,
+        "collected": 23,
+        "passed": 22,
+        "failed": 1,
+        "skipped": 0,
+        "runtime_seconds": 77.21,
+        "status": "FAILED (1 DB assertion failure due to row count 793 vs 781)"
+      },
+      {
+        "suite_name": "tests/test_a2a_interoperability.py",
+        "command": ".venv\\Scripts\\python -m pytest tests/test_a2a_interoperability.py -v",
+        "category": "A2A Security & Protocol Interoperability",
+        "classification": "A2A security tests",
+        "is_mocked": true,
+        "collected": 17,
+        "passed": 16,
+        "failed": 1,
+        "skipped": 0,
+        "runtime_seconds": 58.97,
+        "status": "FAILED (1 DB assertion failure due to row count 793 vs 781)"
+      },
+      {
+        "suite_name": "tests/test_adk_foundation.py",
+        "command": ".venv\\Scripts\\python -m pytest tests/test_adk_foundation.py -v",
+        "category": "Google ADK Foundation & Runner Security",
+        "classification": "ADK security tests",
+        "is_mocked": true,
+        "collected": 9,
+        "passed": 9,
+        "failed": 0,
+        "skipped": 0,
+        "runtime_seconds": 23.91,
+        "status": "PASSED"
+      },
+      {
+        "suite_name": "tests/test_observability.py",
+        "command": ".venv\\Scripts\\python -m pytest tests/test_observability.py -v",
+        "category": "Observability, Telemetry & Privacy Redaction",
+        "classification": "Unit / Mocked Integration",
+        "is_mocked": true,
+        "collected": 32,
+        "passed": 30,
+        "failed": 1,
+        "skipped": 1,
+        "runtime_seconds": 28.93,
+        "status": "FAILED (1 DB assertion failure; 1 skipped live Ollama inference)"
+      }
+    ]
+  },
+  "findings": [
+    {
+      "finding_id": "SEC-FIND-01",
+      "title": "Unauthenticated Access and IDOR on Student Assessment History & Learning Journeys",
+      "severity": "HIGH",
+      "category": "Authentication & Authorization / Student Data Privacy",
+      "affected_component": "FastAPI Core Application",
+      "affected_endpoint": "GET /api/v1/assessments/history/{student_id}, GET /api/v1/learning-journey/student/{student_id}",
+      "affected_files": [
+        "backend/app/main.py"
+      ],
+      "description": "Endpoints GET /api/v1/assessments/history/{student_id} and GET /api/v1/learning-journey/student/{student_id} rely on get_optional_current_student. The student ownership check (if current_student and current_student['id'] != student_id) is completely bypassed when an unauthenticated caller sends no Authorization header (current_student is None), allowing anonymous extraction of any student's complete historical scores, attempts, and chapter progress.",
+      "evidence": "Empirical TestClient verification: GET /api/v1/assessments/history/student_123 without Authorization header returned HTTP 200 OK with full student history payload.",
+      "security_impact": "Complete breakdown of student data privacy; unauthorized enumeration and scraping of student assessment history and learning journeys by anonymous attackers.",
+      "recommended_remediation": "Replace get_optional_current_student with mandatory Depends(get_current_student) and enforce strict matching: if current_student['id'] != student_id: raise HTTPException(403).",
+      "verification_status": "CONFIRMED_VULNERABLE"
+    },
+    {
+      "finding_id": "SEC-FIND-02",
+      "title": "Unauthenticated HTTP Execution of MCP Tools and Educational Research",
+      "severity": "HIGH",
+      "category": "Tool Execution Security & Access Control",
+      "affected_component": "MCP Integration Subsystem",
+      "affected_endpoint": "POST /api/v1/mcp/execute, POST /api/v1/mcp/research",
+      "affected_files": [
+        "backend/mcp_integration/client.py",
+        "backend/app/main.py"
+      ],
+      "description": "The MCP router endpoints POST /api/v1/mcp/execute and POST /api/v1/mcp/research possess zero authentication dependencies (dependencies=[]). Any network actor can execute approved MCP tools or web research over HTTP without a valid student session or API token.",
+      "evidence": "mcp_router route table inspection confirms APIRoute(path='/api/v1/mcp/execute', methods=['POST'], dependencies=[]).",
+      "security_impact": "Unrestricted consumption of local compute, educational filesystem access, and potential abuse of web search APIs by unauthorized parties.",
+      "recommended_remediation": "Add Depends(get_current_student) to mcp_router or individual tool execution endpoints to require active student authentication.",
+      "verification_status": "CONFIRMED_VULNERABLE"
+    },
+    {
+      "finding_id": "SEC-FIND-03",
+      "title": "Unauthenticated Execution of Google ADK Learning Intelligence Analysis",
+      "severity": "HIGH",
+      "category": "Multi-Agent Subsystem Access Control & Resource Governance",
+      "affected_component": "Google ADK Subsystem",
+      "affected_endpoint": "POST /api/v1/adk/learning-analysis",
+      "affected_files": [
+        "backend/adk/api.py"
+      ],
+      "description": "The Google ADK analysis endpoint POST /api/v1/adk/learning-analysis accepts LearningIntelligenceRequest and runs the ADK Runner without any authentication dependency. Anonymous callers can trigger intensive ADK multi-turn analysis and inject synthetic student identifiers.",
+      "evidence": "backend/adk/api.py line 39: async def run_learning_analysis(request: LearningIntelligenceRequest) has no Depends(get_current_student).",
+      "security_impact": "Denial of service via resource exhaustion of local Ollama LLM, session table contamination, and student identity spoofing.",
+      "recommended_remediation": "Add Depends(get_current_student) and verify that request.student_id matches current_student['id'].",
+      "verification_status": "CONFIRMED_VULNERABLE"
+    },
+    {
+      "finding_id": "SEC-FIND-04",
+      "title": "Unauthenticated Exposure of System Observability, Execution Traces, and Error Stacks",
+      "severity": "HIGH",
+      "category": "Observability & Information Disclosure",
+      "affected_component": "Observability & Monitoring Subsystem",
+      "affected_endpoint": "GET /api/v1/observability/traces, GET /api/v1/observability/traces/{trace_id}, GET /api/v1/observability/errors, GET /api/v1/observability/metrics, GET /api/v1/observability/agents, GET /api/v1/observability/status",
+      "affected_files": [
+        "backend/observability/service.py"
+      ],
+      "description": "All observability endpoints under /api/v1/observability/ have zero authentication dependencies. While student identifiers are pseudonymized when HMAC secret is present, internal execution traces, prompt structures, error traces, and operational metrics are exposed publicly.",
+      "evidence": "observability_router has no dependency enforcement. Anonymous GET /api/v1/observability/traces returns HTTP 200 OK with full system telemetry.",
+      "security_impact": "Information disclosure regarding system architecture, execution timings, internal agent failures, and backend error stack traces.",
+      "recommended_remediation": "Require admin/teacher authentication or an internal secret token on all /api/v1/observability routes except a minimal health probe.",
+      "verification_status": "CONFIRMED_VULNERABLE"
+    },
+    {
+      "finding_id": "SEC-FIND-05",
+      "title": "Complete Absence of Toxicity, Profanity, and Abusive Content Moderation",
+      "severity": "HIGH",
+      "category": "Content Safety & Educational Guardrails",
+      "affected_component": "Core Educational Ingestion & Agent Workflows",
+      "affected_endpoint": "POST /api/v1/teacher/chat, POST /api/v1/ask, POST /api/v1/orchestrate, POST /api/v1/assessments/submit",
+      "affected_files": [
+        "backend/app/main.py",
+        "backend/agents/teacher.py",
+        "backend/agents/orchestrator.py"
+      ],
+      "description": "Zero content moderation filters, toxicity classifiers (such as Llama Guard or NeMo Guardrails), or profanity heuristics exist in the codebase. Student inputs to chat, ask, assessment evaluation, and diagnostic analysis are passed directly to local LLMs without content safety checks.",
+      "evidence": "Comprehensive static scan across all 57 backend Python files yielded zero occurrences of toxicity/profanity/abuse moderation checks. Agent definitions have no safety or anti-bullying directives.",
+      "security_impact": "Exposure of students to abusive, hateful, or inappropriate content; potential manipulation of educational responses; non-compliance with student safety standards.",
+      "recommended_remediation": "Implement a lightweight pre-execution keyword/regex rule engine combined with post-execution safety filters and friendly pedagogical refusal messages.",
+      "verification_status": "CONFIRMED_MISSING"
+    },
+    {
+      "finding_id": "SEC-FIND-06",
+      "title": "Hardcoded A2A Protocol Fallback Secret and Non-Constant-Time Token Comparison",
+      "severity": "MEDIUM",
+      "category": "Inter-Agent Cryptography & Timing Attacks",
+      "affected_component": "A2A Protocol Subsystem",
+      "affected_endpoint": "POST /api/v1/a2a, POST /api/v1/a2a/tasks/learning-analysis",
+      "affected_files": [
+        "backend/a2a_protocol/security.py"
+      ],
+      "description": "backend/a2a_protocol/security.py defines DEFAULT_INTERNAL_SECRET = 'gyaan_ai_internal_a2a_secret_key_v1'. If A2A_INTERNAL_SECRET env var is unset, the system falls back to this hardcoded secret. Furthermore, token verification uses standard Python string comparison (provided_token != expected_token), introducing a timing side-channel attack.",
+      "evidence": "backend/a2a_protocol/security.py line 21: DEFAULT_INTERNAL_SECRET; line 66: provided_token != expected_token.",
+      "security_impact": "An attacker with knowledge of the default repository secret can forge inter-agent A2A requests; timing attacks could assist in brute-forcing secret tokens.",
+      "recommended_remediation": "Require A2A_INTERNAL_SECRET from environment (fail startup if missing); replace string comparison with secrets.compare_digest or hmac.compare_digest.",
+      "verification_status": "CONFIRMED_VULNERABLE"
+    },
+    {
+      "finding_id": "SEC-FIND-07",
+      "title": "A2A Student Session Isolation Format Bypass",
+      "severity": "MEDIUM",
+      "category": "Session Isolation & Cross-Student Protection",
+      "affected_component": "A2A Protocol Subsystem",
+      "affected_endpoint": "POST /api/v1/a2a/tasks/learning-analysis, POST /api/v1/a2a",
+      "affected_files": [
+        "backend/a2a_protocol/security.py"
+      ],
+      "description": "validate_student_isolation() only validates ownership if clean_session_id and ':' in clean_session_id. If a session_id format does not contain a colon (e.g. UUID format '6cdd0eca-80c3-41df-9552-bbd3caf803f3' or standard string), the isolation check is silently bypassed without database lookup.",
+      "evidence": "backend/a2a_protocol/security.py lines 103-104: if clean_session_id and ':' in clean_session_id: session_owner = clean_session_id.split(':')[0].",
+      "security_impact": "Cross-student session hijacking in A2A task dispatching when session IDs lack colon delimiters.",
+      "recommended_remediation": "Query SQLite database or session store to verify that session_id belongs to student_id regardless of string format.",
+      "verification_status": "CONFIRMED_VULNERABLE"
+    },
+    {
+      "finding_id": "SEC-FIND-08",
+      "title": "Missing Prompt Injection Guardrails on Student-Facing Endpoints & Brittle Regexes",
+      "severity": "MEDIUM",
+      "category": "Adversarial AI & Prompt Injection",
+      "affected_component": "FastAPI Core & Agent Definitions",
+      "affected_endpoint": "POST /api/v1/teacher/chat, POST /api/v1/ask, POST /api/v1/orchestrate",
+      "affected_files": [
+        "backend/app/main.py",
+        "backend/agents/teacher.py"
+      ],
+      "description": "While A2A and MCP wrappers contain basic regex pattern matching (5-6 patterns), student-facing endpoints in backend/app/main.py apply zero prompt-injection filtering. Furthermore, the regexes in A2A/MCP are trivial to bypass with basic paraphrasing, multilingual phrasing, or character substitutions.",
+      "evidence": "Static search in backend/app/main.py shows zero calls to sanitize_and_check_injection. Teacher agent prompt has no anti-jailbreak instructions.",
+      "security_impact": "Students or malicious callers can manipulate agent system prompts, induce out-of-scope behaviors, or extract system instructions.",
+      "recommended_remediation": "Deploy a multi-tier prompt injection filter on incoming student requests and reinforce system prompts with defensive delimiters and anti-jailbreak instructions.",
+      "verification_status": "CONFIRMED_VULNERABLE"
+    },
+    {
+      "finding_id": "SEC-FIND-09",
+      "title": "Missing Security Headers Middleware and Publicly Exposed API Documentation",
+      "severity": "MEDIUM",
+      "category": "Web Security & API Reconnaissance",
+      "affected_component": "FastAPI Web Layer",
+      "affected_endpoint": "All HTTP endpoints, /docs, /redoc, /openapi.json",
+      "affected_files": [
+        "backend/app/main.py"
+      ],
+      "description": "backend/app/main.py lacks security headers middleware (no X-Content-Type-Options: nosniff, X-Frame-Options: DENY, Strict-Transport-Security, or Content-Security-Policy). Additionally, FastAPI interactive API documentation (/docs, /redoc, /openapi.json) is enabled by default without authentication.",
+      "evidence": "main.py lines 240-259 show CORSMiddleware is added, but no custom or standard middleware adds security headers. docs_url and redoc_url are default.",
+      "security_impact": "Clickjacking, MIME-sniffing attacks, and public reconnaissance of internal API schema by unauthorized parties.",
+      "recommended_remediation": "Add security headers middleware to FastAPI; disable /docs and /redoc in production or gate behind administrative authentication.",
+      "verification_status": "CONFIRMED_VULNERABLE"
+    },
+    {
+      "finding_id": "SEC-FIND-10",
+      "title": "Missing Rate Limiting on Authentication and LLM Inference Endpoints",
+      "severity": "MEDIUM",
+      "category": "Denial of Service & Brute-Force Resilience",
+      "affected_component": "API Resilience & Request Governance",
+      "affected_endpoint": "POST /api/v1/auth/login, POST /api/v1/auth/register, POST /api/v1/ask, POST /api/v1/orchestrate",
+      "affected_files": [
+        "backend/app/main.py"
+      ],
+      "description": "No rate limiting middleware (such as slowapi) is configured on sensitive endpoints. /api/v1/auth/login, /api/v1/auth/register, /api/v1/ask, and /api/v1/orchestrate can be called repeatedly without throttling.",
+      "evidence": "No rate limiter decorators or middleware found in main.py or requirements.txt.",
+      "security_impact": "Credential brute-forcing on login endpoints and resource exhaustion / denial of service on local Ollama LLM inference.",
+      "recommended_remediation": "Integrate slowapi rate limiting (e.g. 5 requests/minute for login, 20 requests/minute for LLM chat).",
+      "verification_status": "CONFIRMED_VULNERABLE"
+    },
+    {
+      "finding_id": "SEC-FIND-11",
+      "title": "Frontend Storage of Authentication Tokens in Browser localStorage",
+      "severity": "MEDIUM",
+      "category": "Client-Side Security & Token Protection",
+      "affected_component": "Next.js Frontend",
+      "affected_endpoint": "Frontend Client Storage",
+      "affected_files": [
+        "frontend/components/auth/AuthContext.tsx",
+        "frontend/lib/api.ts"
+      ],
+      "description": "The Next.js frontend stores the session bearer token in window.localStorage under 'gyaan_auth_token'. JavaScript code has direct read access to this token.",
+      "evidence": "frontend/components/auth/AuthContext.tsx: localStorage.setItem(AUTH_TOKEN_KEY, response.token).",
+      "security_impact": "If an XSS vulnerability is introduced (e.g. via third-party npm package or unsanitized markdown renderer), an attacker can exfiltrate session tokens.",
+      "recommended_remediation": "Migrate session tokens to HttpOnly, Secure, SameSite=Strict cookies managed by the backend.",
+      "verification_status": "CONFIRMED_VULNERABLE"
+    },
+    {
+      "finding_id": "SEC-FIND-12",
+      "title": "Google ADK In-Memory Session Storage Lifecycle and Scale Limitations",
+      "severity": "LOW",
+      "category": "Session Lifecycle & Memory Management",
+      "affected_component": "Google ADK Subsystem",
+      "affected_endpoint": "POST /api/v1/adk/learning-analysis",
+      "affected_files": [
+        "backend/adk/services/adk_runner.py"
+      ],
+      "description": "backend/adk/services/adk_runner.py initializes InMemorySessionService(). Sessions reside strictly in single-process RAM with no eviction policy or disk backup. If the server process restarts, all active ADK sessions are lost.",
+      "evidence": "adk_runner.py line 54: self.session_service = InMemorySessionService().",
+      "security_impact": "Loss of student session context across service restarts and incompatibility with multi-process or clustered deployment.",
+      "recommended_remediation": "Implement an SQLite-backed or Redis-backed SessionService for production deployment with TTL-based session eviction.",
+      "verification_status": "CONFIRMED_LIMITATION"
+    },
+    {
+      "finding_id": "SEC-FIND-13",
+      "title": "Residual Legacy JWT Configuration in .env.example",
+      "severity": "LOW",
+      "category": "Configuration Hygiene",
+      "affected_component": "Configuration Template",
+      "affected_endpoint": "N/A (Configuration)",
+      "affected_files": [
+        ".env.example"
+      ],
+      "description": ".env.example lists JWT_SECRET_KEY, JWT_ALGORITHM, and ACCESS_TOKEN_EXPIRE_MINUTES, even though the application has migrated to opaque scrypt+SHA-256 session tokens.",
+      "evidence": ".env.example lines 26-28.",
+      "security_impact": "Developer confusion regarding the active authentication architecture and unnecessary secret provisioning.",
+      "recommended_remediation": "Update .env.example to reflect active opaque session token configuration.",
+      "verification_status": "CONFIRMED_DEFECT"
+    },
+    {
+      "finding_id": "SEC-FIND-14",
+      "title": "Test Suite Writes Directly to Development SQLite Database Without Fixture Isolation",
+      "severity": "LOW",
+      "category": "Testing Architecture & Database Integrity",
+      "affected_component": "Test Suites",
+      "affected_endpoint": "N/A (Testing Infrastructure)",
+      "affected_files": [
+        "tests/test_auth_and_persistence.py",
+        "tests/test_api_unit.py"
+      ],
+      "description": "tests/test_auth_and_persistence.py executes against the default database path (data/gyaan_ai.db) without using a temporary or in-memory database fixture. Running tests inserts test student records directly into the primary development database.",
+      "evidence": "Running pytest test_auth_and_persistence.py increased student count in data/gyaan_ai.db from 781 to 793, causing subsequent database preservation assertions to fail.",
+      "security_impact": "Database test data contamination and brittle test assertions in CI/CD pipelines.",
+      "recommended_remediation": "Configure pytest fixtures to use a temporary SQLite file or :memory: database via custom_path parameter.",
+      "verification_status": "CONFIRMED_DEFECT"
+    }
+  ],
+  "security_categories": [
+    "Authentication & Authorization",
+    "Student Data Privacy & Isolation",
+    "SQL Injection & Database Security",
+    "Prompt Injection & Adversarial AI",
+    "Toxicity & Abusive Language Moderation",
+    "Multi-Agent Subsystems (CrewAI, ADK, A2A, MCP)",
+    "API Endpoint Security & Architecture",
+    "Secrets & Credential Management",
+    "Observability & Telemetry Privacy",
+    "Frontend Client Security"
+  ],
+  "compliance_matrix": [
+    {
+      "requirement": "Input type safety",
+      "status": "VERIFIED",
+      "implementation": "Pydantic v2 schemas across all API endpoints, strict data typing, request model validation, malformed JSON handling",
+      "evidence": "8/8 input validation tests passed: malformed JSON (422), missing fields (422), wrong types (422), path traversal in tools (422)."
+    },
+    {
+      "requirement": "Prompt-injection protection",
+      "status": "PARTIALLY VERIFIED",
+      "implementation": "Basic 5-pattern heuristic regexes in A2A and 6-pattern in MCP; external web content wrapping in <external_untrusted_reference>",
+      "evidence": "Implemented in A2A and MCP wrappers; completely absent from student chat/ask/orchestrator endpoints in backend/app/main.py. Vulnerable to paraphrased adversarial prompts."
+    },
+    {
+      "requirement": "Toxicity detection",
+      "status": "NOT IMPLEMENTED",
+      "implementation": "None. Zero toxicity classifiers, profanity filters, or content moderation guardrails exist in backend code or agent prompts.",
+      "evidence": "Codebase-wide scan found zero profanity/toxicity filters. Teacher agent prompt contains zero safety or anti-bullying directives."
+    },
+    {
+      "requirement": "Agent authorization",
+      "status": "PARTIALLY VERIFIED",
+      "implementation": "Role separation enforced via distinct agent prompts, goals, and specialized orchestrator routing handlers",
+      "evidence": "CrewAI agents operate with distinct specialized goals. However, no cryptographic agent identity or fine-grained RBAC exists across inter-agent delegation."
+    },
+    {
+      "requirement": "MCP security",
+      "status": "PARTIALLY VERIFIED",
+      "implementation": "Strict tool allowlist (3 approved tools), path canonicalization, relative_to sandboxing in data/resources, allowed extensions (.json, .txt, .md, .csv)",
+      "evidence": "Directory traversal attacks safely blocked (422/SecurityError). However, HTTP API endpoints /api/v1/mcp/execute and /research lack authentication."
+    },
+    {
+      "requirement": "A2A security",
+      "status": "PARTIALLY VERIFIED",
+      "implementation": "Bearer token and X-A2A-Internal-Token header verification, JSON-RPC 2.0 schema validation, payload size limit (512 KB)",
+      "evidence": "A2A endpoints enforce internal token. However, uses hardcoded default fallback secret, non-constant-time string comparison, and colon-dependent session isolation check."
+    },
+    {
+      "requirement": "ADK security",
+      "status": "PARTIALLY VERIFIED",
+      "implementation": "Google ADK Runner with InMemorySessionService, student session registry, typed message schemas",
+      "evidence": "ADK foundation tests passed (9/9). However, sessions are memory-only (wiped on restart), and /api/v1/adk/learning-analysis endpoint lacks authentication."
+    },
+    {
+      "requirement": "Student privacy",
+      "status": "PARTIALLY VERIFIED",
+      "implementation": "HMAC-SHA256 telemetry redaction without fallback; scrypt password hashing; SHA-256 token hashing",
+      "evidence": "Redaction drops student IDs if secret missing. However, unauthenticated callers bypass IDOR check on history (/api/v1/assessments/history/{student_id})."
+    },
+    {
+      "requirement": "Database security",
+      "status": "VERIFIED",
+      "implementation": "100% parameterized SQL queries (?, ...), foreign key constraints enabled, WAL journal mode enabled, zero dynamic SQL concatenation",
+      "evidence": "Comprehensive SQL scan across all 57 backend files verified zero raw string formatting. PRAGMA integrity_check = ok."
+    },
+    {
+      "requirement": "API authentication",
+      "status": "PARTIALLY VERIFIED",
+      "implementation": "Bearer session token with scrypt verification and SHA-256 token lookup in SQLite; 37 authenticated endpoints",
+      "evidence": "Core endpoints enforce get_current_student. However, 17 endpoints use get_optional_current_student, and protocol routers (MCP, ADK, Observability) have unauthenticated routes."
+    },
+    {
+      "requirement": "API authorization",
+      "status": "PARTIALLY VERIFIED",
+      "implementation": "Student ownership checks (current_student['id'] == student_id) implemented on authenticated routes",
+      "evidence": "Authenticated students cannot view peers' data (403 Forbidden). However, unauthenticated callers bypass the check entirely due to get_optional_current_student."
+    },
+    {
+      "requirement": "Secrets management",
+      "status": "PARTIALLY VERIFIED",
+      "implementation": ".gitignore properly excludes .env, .env.local, *.db; telemetry secret loaded securely",
+      "evidence": "No committed credentials, but hardcoded fallback secret in A2A code (DEFAULT_INTERNAL_SECRET)."
+    },
+    {
+      "requirement": "Security testing",
+      "status": "VERIFIED",
+      "implementation": "Automated pytest suites covering auth, persistence, database, MCP, A2A, ADK, observability",
+      "evidence": "123 tests collected across 7 suites; 119 passed, 3 failed due to test database row count pollution, 1 skipped."
+    }
+  ],
+  "recommendations": [
+    "Enforce mandatory Depends(get_current_student) on all stateful student endpoints to eliminate IDOR vulnerabilities.",
+    "Secure MCP, ADK, and Observability HTTP endpoints with appropriate student or administrator authentication.",
+    "Implement a two-tier educational content moderation service for profanity, harassment, and abuse detection.",
+    "Harden A2A protocol by removing hardcoded fallback secrets, adopting constant-time comparison, and verifying session ownership in SQLite.",
+    "Deploy prompt-injection input scrubbing and reinforce agent system prompts with strict XML/Markdown delimiters.",
+    "Add SecurityHeadersMiddleware and SlowAPI rate limiting to FastAPI backend.",
+    "Migrate frontend session token storage from localStorage to HttpOnly, Secure, SameSite=Strict cookies.",
+    "Refactor test suite fixtures in tests/conftest.py to use temporary or in-memory SQLite databases."
+  ],
+  "limitations": [
+    "The security audit was strictly read-only; no code was modified, no remediation was applied, and no packages were installed.",
+    "Local LLM evaluations were restricted to static prompt inspection and unit tests to preserve system boundaries and avoid unmonitored model calls.",
+    "In accordance with project safety guidelines, the primary database was not reset or cleaned to preserve audit evidence."
+  ],
+  "next_phase": "Phase 5B - Security Implementation"
+}

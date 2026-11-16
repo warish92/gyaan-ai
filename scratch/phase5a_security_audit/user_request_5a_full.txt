@@ -1,0 +1,531 @@
+<USER_REQUEST>
+# GYAAN AI — PHASE 5A: COMPREHENSIVE SECURITY AUDIT
+
+**Project:** `D:\Gyaan AI`
+
+**Protected legacy project:** `D:\GYAN Ai`
+
+**Current phase:** Phase 5 — Security Guardrails
+
+**Stage:** Phase 5A — READ-ONLY SECURITY AUDIT
+
+**Objective:** Audit the existing Gyaan AI architecture, identify security vulnerabilities and compare the existing implementation against the professor's security requirements.
+
+## PART 1 — STRICT AUTHORIZATION BOUNDARIES
+
+You are authorized to inspect the active Gyaan AI project and execute safe, non-destructive security tests.
+
+You are NOT authorized to implement fixes during this stage.
+
+### Protected project
+
+All work must remain inside:
+
+`D:\Gyaan AI`
+
+Never access, modify, execute, rename, move or reconfigure:
+
+`D:\GYAN Ai`
+
+### Source-code restrictions
+
+Do not:
+- Modify existing source code.
+- Rewrite existing agents.
+- Change prompts or agent definitions.
+- Modify CrewAI or ADK architecture.
+- Change A2A or MCP implementations.
+- Modify FastAPI routes.
+- Change frontend code.
+- Modify configurations or dependencies.
+- Install new packages.
+- Introduce another agentic framework.
+
+### Database restrictions
+
+Existing database:
+
+`D:\Gyaan AI\data\gyaan_ai.db`
+
+Do not:
+- Insert or update records.
+- Delete records.
+- Run migrations.
+- Change schemas.
+- Reset or reseed the database.
+- Modify existing backups.
+
+Use read-only database inspection.
+
+### Privacy restrictions
+
+- Never expose actual student information.
+- Use synthetic test data.
+- Never print passwords, API keys, tokens or secrets.
+- Do not transmit telemetry externally.
+- Do not send real student data to external services.
+
+### Phase restrictions
+
+Do not begin Phase 5B implementation.
+
+Do not begin GCP deployment.
+
+Do not begin Firebase deployment.
+
+Do not begin Phase 6, 7 or 8.
+
+This assignment is exclusively a read-only security audit.
+
+---
+
+## PART 2 — ARCHITECTURE INVENTORY
+
+Inspect the existing architecture and identify its security boundaries.
+
+Review:
+
+1. Eight canonical CrewAI agents.
+2. Google ADK integration.
+3. A2A communication.
+4. MCP servers and tools.
+5. FastAPI backend.
+6. Pydantic schemas.
+7. SQLite database access.
+8. Frontend authentication and API communication.
+9. Observability and logging.
+10. Environment variables and secrets.
+
+Identify the actual implementation files and relevant functions.
+
+Do not assume a feature exists because it is mentioned in a previous report.
+
+Verify its implementation.
+
+---
+
+## PART 3 — INPUT VALIDATION AND TYPE SAFETY
+
+Inspect:
+
+- Pydantic request and response models.
+- API request validation.
+- Agent input validation.
+- Tool argument validation.
+- File-upload validation.
+- Database query parameters.
+
+Test safely with synthetic examples:
+
+- Missing required fields.
+- Incorrect data types.
+- Unexpected fields.
+- Extremely long inputs.
+- Malformed JSON.
+- Invalid identifiers.
+- Invalid file extensions.
+- Unexpected nested structures.
+
+Determine whether malformed inputs are rejected safely.
+
+Record the exact validation mechanisms and test evidence.
+
+---
+
+## PART 4 — PROMPT-INJECTION SECURITY
+
+Inspect protection against:
+
+- Direct prompt injection.
+- Indirect prompt injection.
+- Instructions embedded in retrieved documents.
+- Malicious MCP tool results.
+- Malicious A2A messages.
+- Attempts to override system instructions.
+- Attempts to access hidden prompts.
+- Attempts to retrieve secrets.
+- Attempts to bypass agent restrictions.
+
+Use synthetic adversarial test cases.
+
+Do not access actual private student data.
+
+Determine whether untrusted external content is appropriately isolated from trusted instructions.
+
+Identify which agents and workflows are protected.
+
+---
+
+## PART 5 — TOXICITY AND ABUSIVE LANGUAGE
+
+Inspect existing moderation and toxicity detection.
+
+Evaluate:
+
+- Abusive language.
+- Harassment.
+- Hate speech.
+- Threats.
+- Bullying.
+- Inappropriate educational content.
+- Attempts to manipulate educational responses.
+
+Determine whether detection is:
+- Implemented.
+- Integrated into actual agent workflows.
+- Tested.
+- Able to block or appropriately handle harmful input.
+
+Do not assume that a standalone classifier means the entire platform is protected.
+
+Report integration gaps.
+
+---
+
+## PART 6 — MULTI-AGENT SECURITY
+
+Audit all eight canonical agents.
+
+Check:
+
+- Agent identity.
+- Agent permissions.
+- Task delegation.
+- Unauthorized delegation attempts.
+- Context isolation.
+- Student-level access boundaries.
+- Unauthorized tool usage.
+- Inter-agent message validation.
+- Output validation.
+- Error propagation.
+
+Inspect whether one student can access another student's information through agent delegation.
+
+Use synthetic identities and controlled tests only.
+
+---
+
+## PART 7 — MCP SECURITY
+
+Inspect both existing MCP servers.
+
+Verify:
+
+- Tool allowlists.
+- Tool argument validation.
+- Filesystem sandboxing.
+- Path traversal protection.
+- File-extension restrictions.
+- Read/write restrictions.
+- External content handling.
+- Error handling.
+- Resource access boundaries.
+- Tool authorization.
+
+Test with synthetic paths and harmless adversarial inputs.
+
+Do not modify files or access locations outside the approved project.
+
+---
+
+## PART 8 — A2A SECURITY
+
+Inspect the existing A2A implementation.
+
+Evaluate:
+
+- Authentication.
+- Authorization.
+- Cross-student access protection.
+- Agent identity verification.
+- Message validation.
+- Task ownership.
+- Unauthorized task retrieval.
+- Prompt-injection handling.
+- Trace metadata exposure.
+- HTTP endpoint protection.
+
+Use safe synthetic requests.
+
+Clearly distinguish between:
+- Implemented security.
+- Tested security.
+- Missing security.
+- Security that depends on deployment configuration.
+
+---
+
+## PART 9 — GOOGLE ADK SECURITY
+
+Inspect:
+
+- ADK agent execution.
+- Runner configuration.
+- Session handling.
+- Context isolation.
+- Input validation.
+- Output validation.
+- Tool access.
+- Error handling.
+- Student data separation.
+
+Identify risks arising from in-memory sessions and deployment lifecycle.
+
+Do not redesign the ADK implementation.
+
+---
+
+## PART 10 — DATABASE AND STUDENT PRIVACY
+
+Inspect database access patterns.
+
+Evaluate:
+
+- SQL parameterization.
+- Unauthorized data access.
+- Student ownership checks.
+- Cross-student data leakage.
+- Sensitive data exposure.
+- Password storage, if applicable.
+- Database file permissions.
+- Backup protection.
+- Data minimization.
+- Logging of personal information.
+
+Use read-only queries and synthetic test cases.
+
+Never print real student records.
+
+Do not modify the database or backup.
+
+---
+
+## PART 11 — FASTAPI AND API SECURITY
+
+Inspect all relevant API endpoints.
+
+Evaluate:
+
+- Authentication.
+- Authorization.
+- Rate limiting.
+- Request validation.
+- CORS configuration.
+- Error responses.
+- Sensitive information disclosure.
+- Authentication bypass.
+- IDOR vulnerabilities.
+- Security headers.
+- File-upload restrictions.
+- API documentation exposure.
+- Administrative endpoint protection.
+
+Identify endpoints that are public, authenticated or restricted.
+
+Do not assume localhost-only development settings are production security.
+
+---
+
+## PART 12 — SECRETS AND CONFIGURATION SECURITY
+
+Inspect how the project handles:
+
+- API keys.
+- Database credentials.
+- HMAC secrets.
+- Model configuration.
+- Environment variables.
+- Configuration files.
+- Git-tracked secrets.
+- Logging of credentials.
+
+Never display actual secret values.
+
+Report only:
+- Secret category.
+- Storage mechanism.
+- Whether it is exposed or protected.
+- Whether configuration is production-ready.
+
+Do not rotate, delete or modify secrets.
+
+---
+
+## PART 13 — FRONTEND SECURITY
+
+Inspect the existing frontend.
+
+Evaluate:
+
+- Authentication flow.
+- Token storage.
+- API communication.
+- XSS exposure.
+- Unsafe HTML rendering.
+- Client-side access restrictions.
+- Sensitive information in browser storage.
+- Environment variable exposure.
+- Backend authorization assumptions.
+
+Remember: hiding a frontend button is not a substitute for backend authorization.
+
+Do not modify frontend code.
+
+---
+
+## PART 14 — SECURITY TESTING
+
+Run existing security tests where safe.
+
+Classify them as:
+
+1. Unit tests.
+2. Mocked integration tests.
+3. API integration tests.
+4. MCP security tests.
+5. A2A security tests.
+6. ADK security tests.
+7. Database access tests.
+8. Frontend security tests.
+
+For each test, report:
+
+- Exact command.
+- Test file.
+- Test name.
+- Result.
+- Runtime.
+- Whether it is mocked or live.
+- Any failures.
+
+Do not change test assertions.
+
+Do not describe untested protections as verified.
+
+---
+
+## PART 15 — RISK CLASSIFICATION
+
+Classify every identified issue:
+
+**CRITICAL:** Immediate risk of unauthorized access, credential exposure or serious data compromise.
+
+**HIGH:** Significant vulnerability affecting authentication, authorization, student privacy or agent security.
+
+**MEDIUM:** Security weakness requiring remediation but with limited exposure.
+
+**LOW:** Hardening opportunity or minor security concern.
+
+**INFORMATIONAL:** Configuration or deployment consideration.
+
+For each finding, provide:
+
+- Finding ID.
+- Component.
+- Affected files.
+- Vulnerability description.
+- Evidence.
+- Potential impact.
+- Risk severity.
+- Recommended remediation.
+- Suggested verification test.
+
+Do not invent vulnerabilities.
+
+Clearly distinguish confirmed findings from potential risks.
+
+---
+
+## PART 16 — PROFESSOR REQUIREMENT COMPLIANCE
+
+Prepare a compliance matrix covering:
+
+| Requirement | Existing implementation | Evidence | Status |
+|---|---|---|---|
+| Input type safety | | | |
+| Prompt-injection protection | | | |
+| Toxicity detection | | | |
+| Agent authorization | | | |
+| MCP security | | | |
+| A2A security | | | |
+| ADK security | | | |
+| Student privacy | | | |
+| Database security | | | |
+| API authentication | | | |
+| API authorization | | | |
+| Secrets management | | | |
+| Security testing | | | |
+
+Use these statuses:
+
+- VERIFIED
+- PARTIALLY VERIFIED
+- NOT IMPLEMENTED
+- NOT TESTED
+- BLOCKED
+
+---
+
+## PART 17 — REQUIRED DELIVERABLES
+
+Generate the following files in the active project root:
+
+1. `PHASE_5A_SECURITY_AUDIT_REPORT.md`
+2. `PHASE_5A_SECURITY_AUDIT.json`
+3. `PHASE_5A_SECURITY_REMEDIATION_ROADMAP.md`
+
+The reports must contain:
+
+- Architecture inventory.
+- Security assessment.
+- All identified findings.
+- Risk classification.
+- Professor requirement compliance.
+- Test results.
+- Recommended remediation priorities.
+- Dependencies and limitations.
+- Recommended Phase 5B implementation sequence.
+
+Supporting evidence, if necessary, should be stored in:
+
+`scratch/phase5a_security_audit/`
+
+Do not overwrite existing evidence files.
+
+Never include real student information or secrets.
+
+---
+
+## PART 18 — FINAL STOP CONDITION
+
+After completing the audit and generating all reports:
+
+STOP.
+
+Do not:
+- Fix vulnerabilities.
+- Modify source code.
+- Change configurations.
+- Install dependencies.
+- Modify the database.
+- Start Phase 5B.
+- Start cloud deployment.
+- Start Firebase deployment.
+
+Wait for explicit authorization.
+
+### FINAL OBJECTIVE
+
+Provide an honest, evidence-based assessment of Gyaan AI's existing security posture.
+
+The purpose is to discover what is already secure, what is partially implemented, and what genuinely needs improvement.
+
+Do not rebuild working components unnecessarily.
+
+Do not fabricate evidence.
+
+Do not declare a security requirement VERIFIED without actual supporting evidence.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-11-12T15:06:58+05:30.
+</ADDITIONAL_METADATA>
